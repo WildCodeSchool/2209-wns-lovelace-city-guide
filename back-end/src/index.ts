@@ -14,6 +14,8 @@ import AppUserRepository from "./models/AppUser/AppUser.repository";
 import SessionRepository from "./models/AppUser/Session.repository";
 import { getSessionIdInCookie } from "./http-utils";
 import AppUser from "./models/AppUser/AppUser.entity";
+import PinRepository from "./models/Pin/Pin.repository";
+import PinResolver from "./resolvers/Pin/Pin.resolver";
 
 export type GlobalContext = ExpressContext & {
   user: AppUser | null;
@@ -22,7 +24,7 @@ export type GlobalContext = ExpressContext & {
 const startServer = async () => {
   const server = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [WilderResolver, AppUserResolver],
+      resolvers: [WilderResolver, AppUserResolver, PinResolver],
       authChecker: async ({ context }) => {
         return Boolean(context.user);
       },
@@ -54,10 +56,12 @@ const startServer = async () => {
   await WilderRepository.initializeRepository();
   await AppUserRepository.initializeRepository();
   await SessionRepository.initializeRepository();
+  await PinRepository.initializeRepository();
 
   await SkillRepository.initializeSkills();
   await SchoolRepository.initializeSchools();
   await WilderRepository.initializeWilders();
+  await PinRepository.intializePins();
 
   console.log(`🚀  Server ready at ${url}`);
 };
