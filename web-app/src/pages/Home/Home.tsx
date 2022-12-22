@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { CardRow } from "./Home.styled";
 import Wilder from "../../components/Wilder/Wilder";
 import Loader from "../../components/Loader";
+import Map from "../../components/Map/Map"
 import { SectionTitle } from "../../styles/base-styles";
 import { CREATE_WILDER_PATH } from "../paths";
 import { useQuery, gql } from "@apollo/client";
@@ -58,6 +59,7 @@ const Home = () => {
   return (
     <>
       <SectionTitle>Wilders</SectionTitle>
+      <Map/>
       <Link to={CREATE_WILDER_PATH}>Ajouter un nouveau Wilder</Link>
       <br />
       <br />
