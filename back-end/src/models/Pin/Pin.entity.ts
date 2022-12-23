@@ -11,8 +11,8 @@ import { Field, ID, ObjectType } from "type-graphql";
 export default class Pin {
   constructor(
     name: string,
-    category: string, //change relationship and type later :Category[]
     address: string,
+    category: string, //change relationship and type later :Category[]
     description: string,
     //photo: Photo[],
     latitude: number,
@@ -23,8 +23,8 @@ export default class Pin {
     //pinner: Pinner,
   ) {
     this.name = name;
-    this.category = category;
     this.address = address;
+    this.category = category;
     this.description = description;
     this.latitude = latitude;
     this.longitude = longitude;
@@ -49,11 +49,11 @@ export default class Pin {
 
   @Column()
   @Field()
-  category: string;
+  address: string;
 
   @Column()
   @Field()
-  address: string;
+  category: string;
 
   @Column()
   @Field()

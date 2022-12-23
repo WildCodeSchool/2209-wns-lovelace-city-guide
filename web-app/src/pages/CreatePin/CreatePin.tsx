@@ -27,8 +27,8 @@ const CREATE_PIN = gql`
     ) {
       id
       name
-      category
       address
+      category
       description
       latitude
       longitude
