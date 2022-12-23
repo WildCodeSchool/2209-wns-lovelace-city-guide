@@ -49,8 +49,9 @@ const CreatePin = () => {
     CreatePinMutationVariables
   >(CREATE_PIN);
 
-  const submit = async () => {
+  const onSubmit = async (event: React.MouseEvent<HTMLElement>) => {
     try {
+      event.preventDefault();
       await createPin({
         variables: {
           name,
@@ -76,17 +77,14 @@ const CreatePin = () => {
 
   return (
     <>
-      <Text>Ajouter un nouveau Pin</Text>
-      <form
-        onSubmit={async (event) => {
-          event.preventDefault();
-          await submit();
-        }}
-      >
-        <label>Nom</label>
-        <input
+      <Text fontSize={32} textTransform="uppercase">
+        Ajouter un nouveau Pin
+      </Text>
+
+      <FormControl>
+        <FormLabel>Nom</FormLabel>
+        <Input
           type="text"
-          required
           id="name"
           name="name"
           value={name}
@@ -94,11 +92,12 @@ const CreatePin = () => {
             setName(event.target.value);
           }}
         />
-        <br />
-        <label>Adresse</label>
-        <input
+      </FormControl>
+
+      <FormControl mt={4}>
+        <FormLabel>Adresse</FormLabel>
+        <Input
           type="text"
-          required
           id="address"
           name="address"
           value={address}
@@ -106,11 +105,11 @@ const CreatePin = () => {
             setAddress(event.target.value);
           }}
         />
-        <br />
-        <label>Catégorie</label>
-        <input
+      </FormControl>
+      <FormControl mt={4}>
+        <FormLabel>Catégorie</FormLabel>
+        <Input
           type="text"
-          required
           id="category"
           name="category"
           value={category}
@@ -118,11 +117,11 @@ const CreatePin = () => {
             setCategory(event.target.value);
           }}
         />
-        <br />
-        <label>Description</label>
-        <input
-          type="text"
-          required
+      </FormControl>
+      <FormControl mt={4}>
+        <FormLabel>Description</FormLabel>
+        <Input
+          type="textarea"
           id="description"
           name="description"
           value={description}
@@ -130,11 +129,11 @@ const CreatePin = () => {
             setDescription(event.target.value);
           }}
         />
-        <br />
-        <label>Latitude</label>
-        <input
+      </FormControl>
+      <FormControl mt={4}>
+        <FormLabel>Latitude</FormLabel>
+        <Input
           type="number"
-          required
           id="latitude"
           name="latitude"
           value={latitude}
@@ -142,11 +141,11 @@ const CreatePin = () => {
             setLatitude(parseFloat(event.target.value));
           }}
         />
-        <br />
-        <label>Logitude</label>
-        <input
+      </FormControl>
+      <FormControl mt={4}>
+        <FormLabel>Longitude</FormLabel>
+        <Input
           type="number"
-          required
           id="longitude"
           name="longitude"
           value={longitude}
@@ -154,9 +153,10 @@ const CreatePin = () => {
             setLongitude(parseFloat(event.target.value));
           }}
         />
-        <br />
-        <button>Envoyer</button>
-      </form>
+      </FormControl>
+      <Button onClick={onSubmit} colorScheme="teal" mt={3}>
+        Envoyer
+      </Button>
     </>
   );
 };
