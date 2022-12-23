@@ -3,10 +3,14 @@ import React from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { MyProfileQuery } from "../gql/graphql";
+import AllPinsTable from "../pages/Admin/AllPinsTable";
+import CreatePin from "../pages/CreatePin/CreatePin";
 
 import CreateWilder from "../pages/CreateWilder/CreateWilder";
 import Home from "../pages/Home/Home";
 import {
+  ADMIN_ALL_PINS_PATH,
+  CREATE_PIN_PATH,
   CREATE_WILDER_PATH,
   HOME_PATH,
   SIGN_IN_PATH,
@@ -58,6 +62,8 @@ function App() {
           <Route path={CREATE_WILDER_PATH} element={<CreateWilder />} />
           <Route path={SIGN_UP_PATH} element={<SignUp />} />
           <Route path={SIGN_IN_PATH} element={<SignIn onSuccess={refetch} />} />
+          <Route path={CREATE_PIN_PATH} element={<CreatePin />} />
+          <Route path={ADMIN_ALL_PINS_PATH} element={<AllPinsTable />} />
         </Routes>
       </MainContainer>
       <Footer>
