@@ -16,7 +16,6 @@ import {
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import {
-  Pin,
   UpdatePinMutation,
   UpdatePinMutationVariables,
 } from "../../gql/graphql";
