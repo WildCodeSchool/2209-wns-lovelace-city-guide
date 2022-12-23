@@ -1,6 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
 import {
-  Button,
   Table,
   TableCaption,
   TableContainer,
@@ -10,7 +9,6 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { useState } from "react";
 import ConfirmationDeleteDialog from "../../components/Dialog/ConfirmationDeleteDialog";
 import Loader from "../../components/Loader";
 import UpdatePinModal from "../../components/Modal/UpdatePinModal";
@@ -38,7 +36,6 @@ const AllPinsTable = () => {
   const { data, loading, error, refetch } = useQuery<GetPinsQuery>(GET_PINS, {
     fetchPolicy: "cache-and-network",
   });
-  const [isEdit, setIsEdit] = useState(false);
 
   const renderPins = () => {
     if (loading) {
