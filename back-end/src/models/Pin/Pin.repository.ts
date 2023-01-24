@@ -7,16 +7,16 @@ export default class PinRepository extends PinDb {
 
     const firstResto = new Pin(
       "Pokebowl",
-      "Restaurant",
       "42 rue Michel Felizat",
+      "Restaurant",
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum, erat eget tempus gravida, est nunc congue purus, et accumsan libero augue ut mi. Mauris egestas imperdiet mauris, eget interdum.",
       45.73615111648431,
       4.837501130044736
     );
     const secondResto = new Pin(
       "Noodle",
-      "Restaurant",
       "33 rue Michel Felizat",
+      "Restaurant",
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum, erat eget tempus gravida, est nunc congue purus, et accumsan libero augue ut mi. Mauris egestas imperdiet mauris, eget interdum.",
       45.73887680449488,
       4.839947304488192
@@ -33,16 +33,16 @@ export default class PinRepository extends PinDb {
 
   static async createPin(
     name: string,
-    category: string, //Change later
     address: string,
+    category: string, //Change later
     description: string,
     latitude: number,
     longitude: number
   ): Promise<Pin> {
     const newPin = this.repository.create({
       name,
-      category,
       address,
+      category,
       description,
       latitude,
       longitude,
@@ -54,8 +54,8 @@ export default class PinRepository extends PinDb {
   static async updatePin(
     id: string,
     name: string,
-    category: string,
     address: string,
+    category: string,
     description: string,
     latitude: number,
     longitude: number
@@ -63,8 +63,8 @@ export default class PinRepository extends PinDb {
     {
       id: string;
       name: string;
-      category: string;
       address: string;
+      category: string;
       description: string;
       latitude: number;
       longitude: number;
@@ -77,8 +77,8 @@ export default class PinRepository extends PinDb {
     return this.repository.save({
       id,
       name,
-      category,
       address,
+      category,
       description,
       latitude,
       longitude,
