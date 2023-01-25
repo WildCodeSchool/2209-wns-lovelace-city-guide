@@ -13,7 +13,7 @@ export default class Category {
   @Field()
   categoryName: string;
 
-  @ManyToMany(() => Pin)
+  @ManyToMany(() => Pin, (pin) => pin.categories)
   @Field(() => [Pin])
   pins: Pin[];
 }

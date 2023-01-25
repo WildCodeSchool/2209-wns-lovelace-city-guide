@@ -32,29 +32,29 @@ export default class PinResolver {
     );
   }
 
-  // @Mutation(() => Pin)
-  // updatePin(
-  //   @Args()
-  //   {
-  //     id,
-  //     name,
-  //     address,
-  //     categories,
-  //     description,
-  //     latitude,
-  //     longitude,
-  //   }: UpdatePinArgs
-  // ): Promise<Pin> {
-  //   return PinRepository.updatePin(
-  //     id,
-  //     name,
-  //     address,
-  //     categories,
-  //     description,
-  //     latitude,
-  //     longitude
-  //   );
-  // }
+  @Mutation(() => Pin)
+  updatePin(
+    @Args()
+    {
+      id,
+      name,
+      address,
+      categories,
+      description,
+      latitude,
+      longitude,
+    }: UpdatePinArgs
+  ): Promise<Pin> {
+    return PinRepository.updatePin(
+      id,
+      name,
+      address,
+      categories,
+      description,
+      latitude,
+      longitude
+    );
+  }
 
   @Mutation(() => Pin)
   deletePin(@Arg("id") id: string): Promise<Pin> {

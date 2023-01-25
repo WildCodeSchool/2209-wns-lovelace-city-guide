@@ -12,6 +12,7 @@ import AppUser from "./models/AppUser/AppUser.entity";
 import PinRepository from "./models/Pin/Pin.repository";
 import PinResolver from "./resolvers/Pin/Pin.resolver";
 import CategoryRepository from "./models/Category/Category.repository";
+import CategoryResolver from "./resolvers/Category/Category.resolver";
 
 export type GlobalContext = ExpressContext & {
   user: AppUser | null;
@@ -20,7 +21,7 @@ export type GlobalContext = ExpressContext & {
 const startServer = async () => {
   const server = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [AppUserResolver, PinResolver],
+      resolvers: [AppUserResolver, PinResolver, CategoryResolver],
       authChecker: async ({ context }) => {
         return Boolean(context.user);
       },

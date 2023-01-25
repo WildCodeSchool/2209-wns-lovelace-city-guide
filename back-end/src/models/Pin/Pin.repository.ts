@@ -58,39 +58,45 @@ export default class PinRepository extends PinDb {
     return newPin;
   }
 
-  // static async updatePin(
-  //   id: string,
-  //   name: string,
-  //   address: string,
-  //   categoriesNames: string[],
-  //   description: string,
-  //   latitude: number,
-  //   longitude: number
-  // ): Promise<
-  //   {
-  //     id: string;
-  //     name: string;
-  //     address: string;
-  //     category: string;
-  //     description: string;
-  //     latitude: number;
-  //     longitude: number;
-  //   } & Pin
-  // > {
-  //   const existingPin = await this.repository.findOneBy({ id });
-  //   if (!existingPin) {
-  //     throw Error("Le Pin avec un identifiant demandé introuvable");
-  //   }
-  //   return this.repository.save({
-  //     id,
-  //     name,
-  //     address,
-  //     category,
-  //     description,
-  //     latitude,
-  //     longitude,
-  //   });
-  // }
+  static async updatePin(
+    id: string,
+    name: string,
+    address: string,
+    categoriesNames: string[],
+    description: string,
+    latitude: number,
+    longitude: number
+  ): Promise<
+    {
+      id: string;
+      name: string;
+      address: string;
+      categories: Category[];
+      description: string;
+      latitude: number;
+      longitude: number;
+    } & Pin
+  > {
+    const existingPin = await this.repository.findOneBy({ id });
+    console.log(existingPin);
+    const categories = (await this.getCategories(
+      categoriesNames
+    )) as Category[];
+    console.log(categories);
+    console.log(categoriesNames);
+    if (!existingPin) {
+      throw Error("Le Pin avec un identifiant demandé introuvable");
+    }
+    return this.repository.save({
+      id,
+      name,
+      address,
+      categories,
+      description,
+      latitude,
+      longitude,
+    });
+  }
 
   static async deletePin(id: string): Promise<Pin> {
     const existingPin = await this.findPinById(id);

@@ -84,6 +84,6 @@ export default class Pin {
   isOutdoor: boolean;
 
   @CreateDateColumn()
-  @Field()
+  @Field(() => String, { nullable: true })
   createdAt: Date;
 }

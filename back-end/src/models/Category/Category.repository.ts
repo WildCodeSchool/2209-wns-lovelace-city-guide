@@ -30,7 +30,7 @@ export default class CategoryRepository extends CategoryDb {
   ): Promise<{ id: string; categoryName: string } & Category> {
     const existingCategory = await this.repository.findOneBy({ id });
     if (!existingCategory) {
-      throw Error("No category match ID");
+      throw Error("NLa catégorie avec un identifiant demandé introuvable");
     }
     return this.repository.save({
       id,
@@ -41,9 +41,10 @@ export default class CategoryRepository extends CategoryDb {
   static async deleteCategory(id: string): Promise<Category> {
     const existingCategory = await this.findCategoryById(id);
     if (!existingCategory) {
-      throw Error("No category match ID");
+      throw Error("La catégorie avec un identifiant demandé introuvable");
     }
     await this.repository.remove(existingCategory);
+    existingCategory.id = id;
     return existingCategory;
   }
 
