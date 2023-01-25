@@ -7,6 +7,7 @@ import {
   MinLength,
 } from "class-validator";
 import { ArgsType, Field, ID } from "type-graphql";
+import Category from "../../models/Category/Category.entity";
 
 @ArgsType()
 class CreatePinArgs {
@@ -22,11 +23,8 @@ class CreatePinArgs {
   })
   address: string;
 
-  @Field()
-  @MinLength(2, {
-    message: "Change later",
-  })
-  category: string;
+  @Field(() => [String])
+  categories: string[];
 
   @Field()
   @MinLength(10, {

@@ -13,41 +13,48 @@ export default class PinResolver {
   @Mutation(() => Pin)
   createPin(
     @Args()
-    { name, address, category, description, latitude, longitude }: CreatePinArgs
+    {
+      name,
+      address,
+      categories,
+      description,
+      latitude,
+      longitude,
+    }: CreatePinArgs
   ): Promise<Pin> {
     return PinRepository.createPin(
       name,
       address,
-      category,
+      categories,
       description,
       latitude,
       longitude
     );
   }
 
-  @Mutation(() => Pin)
-  updatePin(
-    @Args()
-    {
-      id,
-      name,
-      address,
-      category,
-      description,
-      latitude,
-      longitude,
-    }: UpdatePinArgs
-  ): Promise<Pin> {
-    return PinRepository.updatePin(
-      id,
-      name,
-      address,
-      category,
-      description,
-      latitude,
-      longitude
-    );
-  }
+  // @Mutation(() => Pin)
+  // updatePin(
+  //   @Args()
+  //   {
+  //     id,
+  //     name,
+  //     address,
+  //     categories,
+  //     description,
+  //     latitude,
+  //     longitude,
+  //   }: UpdatePinArgs
+  // ): Promise<Pin> {
+  //   return PinRepository.updatePin(
+  //     id,
+  //     name,
+  //     address,
+  //     categories,
+  //     description,
+  //     latitude,
+  //     longitude
+  //   );
+  // }
 
   @Mutation(() => Pin)
   deletePin(@Arg("id") id: string): Promise<Pin> {

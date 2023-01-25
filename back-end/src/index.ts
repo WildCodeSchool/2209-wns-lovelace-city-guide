@@ -16,6 +16,7 @@ import { getSessionIdInCookie } from "./http-utils";
 import AppUser from "./models/AppUser/AppUser.entity";
 import PinRepository from "./models/Pin/Pin.repository";
 import PinResolver from "./resolvers/Pin/Pin.resolver";
+import CategoryRepository from "./models/Category/Category.repository";
 
 export type GlobalContext = ExpressContext & {
   user: AppUser | null;
@@ -51,16 +52,18 @@ const startServer = async () => {
 
   // The `listen` method launches a web server.
   const { url } = await server.listen();
-  await SkillRepository.initializeRepository();
-  await SchoolRepository.initializeRepository();
-  await WilderRepository.initializeRepository();
+  //await SkillRepository.initializeRepository();
+  //await SchoolRepository.initializeRepository();
+  //await WilderRepository.initializeRepository();
   await AppUserRepository.initializeRepository();
   await SessionRepository.initializeRepository();
+  await CategoryRepository.initializeRepository();
   await PinRepository.initializeRepository();
 
-  await SkillRepository.initializeSkills();
-  await SchoolRepository.initializeSchools();
-  await WilderRepository.initializeWilders();
+  //await SkillRepository.initializeSkills();
+  //await SchoolRepository.initializeSchools();
+  //await WilderRepository.initializeWilders();
+  await CategoryRepository.initializeCategories();
   await PinRepository.intializePins();
 
   console.log(`🚀  Server ready at ${url}`);
