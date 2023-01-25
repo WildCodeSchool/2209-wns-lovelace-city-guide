@@ -13,12 +13,19 @@ export default class PinResolver {
   @Mutation(() => Pin)
   createPin(
     @Args()
-    { name, address, category, description, latitude, longitude }: CreatePinArgs
+    {
+      name,
+      address,
+      categories,
+      description,
+      latitude,
+      longitude,
+    }: CreatePinArgs
   ): Promise<Pin> {
     return PinRepository.createPin(
       name,
       address,
-      category,
+      categories,
       description,
       latitude,
       longitude
@@ -32,7 +39,7 @@ export default class PinResolver {
       id,
       name,
       address,
-      category,
+      categories,
       description,
       latitude,
       longitude,
@@ -42,7 +49,7 @@ export default class PinResolver {
       id,
       name,
       address,
-      category,
+      categories,
       description,
       latitude,
       longitude

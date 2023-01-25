@@ -2,9 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Field, ID, ObjectType } from "type-graphql";
+import Category from "../Category/Category.entity";
 
 @Entity()
 @ObjectType()
@@ -12,7 +15,7 @@ export default class Pin {
   constructor(
     name: string,
     address: string,
-    category: string, //change relationship and type later :Category[]
+    categories: Category[],
     description: string,
     //photo: Photo[],
     latitude: number,
@@ -24,7 +27,7 @@ export default class Pin {
   ) {
     this.name = name;
     this.address = address;
-    this.category = category;
+    this.categories = categories;
     this.description = description;
     this.latitude = latitude;
     this.longitude = longitude;
@@ -51,9 +54,10 @@ export default class Pin {
   @Field()
   address: string;
 
-  @Column()
-  @Field()
-  category: string;
+  @ManyToMany(() => Category, { eager: true })
+  @Field(() => [Category])
+  @JoinTable()
+  categories: Category[];
 
   @Column()
   @Field()
@@ -80,6 +84,6 @@ export default class Pin {
   isOutdoor: boolean;
 
   @CreateDateColumn()
-  @Field()
+  @Field(() => String, { nullable: true })
   createdAt: Date;
 }

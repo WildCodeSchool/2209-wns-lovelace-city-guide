@@ -1,3 +1,5 @@
+import Category from "../Category/Category.entity";
+import CategoryRepository from "../Category/Category.repository";
 import PinDb from "./Pin.db";
 import Pin from "./Pin.entity";
 
@@ -5,10 +7,14 @@ export default class PinRepository extends PinDb {
   static async intializePins(): Promise<void> {
     await this.clearRepository();
 
+    const restaurantCat = (await CategoryRepository.getCategoryByName(
+      "Restaurant"
+    )) as Category;
+
     const firstResto = new Pin(
       "Pokebowl",
       "42 rue Michel Felizat",
-      "Restaurant",
+      [restaurantCat],
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum, erat eget tempus gravida, est nunc congue purus, et accumsan libero augue ut mi. Mauris egestas imperdiet mauris, eget interdum.",
       45.73615111648431,
       4.837501130044736
@@ -16,13 +22,11 @@ export default class PinRepository extends PinDb {
     const secondResto = new Pin(
       "Noodle",
       "33 rue Michel Felizat",
-      "Restaurant",
+      [restaurantCat],
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum, erat eget tempus gravida, est nunc congue purus, et accumsan libero augue ut mi. Mauris egestas imperdiet mauris, eget interdum.",
       45.73887680449488,
       4.839947304488192
     );
-
-    console.log(firstResto);
 
     await this.repository.save([firstResto, secondResto]);
   }
@@ -34,15 +38,18 @@ export default class PinRepository extends PinDb {
   static async createPin(
     name: string,
     address: string,
-    category: string, //Change later
+    categoriesNames: string[],
     description: string,
     latitude: number,
     longitude: number
   ): Promise<Pin> {
+    const categories = (await this.getCategories(
+      categoriesNames
+    )) as Category[];
     const newPin = this.repository.create({
       name,
       address,
-      category,
+      categories,
       description,
       latitude,
       longitude,
@@ -55,7 +62,7 @@ export default class PinRepository extends PinDb {
     id: string,
     name: string,
     address: string,
-    category: string,
+    categoriesNames: string[],
     description: string,
     latitude: number,
     longitude: number
@@ -64,13 +71,16 @@ export default class PinRepository extends PinDb {
       id: string;
       name: string;
       address: string;
-      category: string;
+      categories: Category[];
       description: string;
       latitude: number;
       longitude: number;
     } & Pin
   > {
     const existingPin = await this.repository.findOneBy({ id });
+    const categories = (await this.getCategories(
+      categoriesNames
+    )) as Category[];
     if (!existingPin) {
       throw Error("Le Pin avec un identifiant demandé introuvable");
     }
@@ -78,7 +88,7 @@ export default class PinRepository extends PinDb {
       id,
       name,
       address,
-      category,
+      categories,
       description,
       latitude,
       longitude,
@@ -93,5 +103,13 @@ export default class PinRepository extends PinDb {
     await this.repository.remove(existingPin);
     existingPin.id = id;
     return existingPin;
+  }
+
+  static async getCategories(categoriesNames: string[]) {
+    let result: (Category | null)[] = [];
+    for (const categoryName of categoriesNames) {
+      result.push(await CategoryRepository.getCategoryByName(categoryName));
+    }
+    return result;
   }
 }

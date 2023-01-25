@@ -1,11 +1,4 @@
-import {
-  isNumber,
-  IsNumber,
-  IsNumberString,
-  IsUUID,
-  IS_NUMBER,
-  MinLength,
-} from "class-validator";
+import { IsNumber, IsUUID, MinLength } from "class-validator";
 import { ArgsType, Field, ID } from "type-graphql";
 
 @ArgsType()
@@ -22,11 +15,8 @@ class CreatePinArgs {
   })
   address: string;
 
-  @Field()
-  @MinLength(2, {
-    message: "Change later",
-  })
-  category: string;
+  @Field(() => [String])
+  categories: string[];
 
   @Field()
   @MinLength(10, {
