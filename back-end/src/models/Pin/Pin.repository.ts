@@ -43,14 +43,9 @@ export default class PinRepository extends PinDb {
     latitude: number,
     longitude: number
   ): Promise<Pin> {
-    const getCategories = async () => {
-      let result: (Category | null)[] = [];
-      for (const categoryName of categoriesNames) {
-        result.push(await CategoryRepository.getCategoryByName(categoryName));
-      }
-      return result;
-    };
-    const categories = (await getCategories()) as Category[];
+    const categories = (await this.getCategories(
+      categoriesNames
+    )) as Category[];
     const newPin = this.repository.create({
       name,
       address,
@@ -105,5 +100,13 @@ export default class PinRepository extends PinDb {
     await this.repository.remove(existingPin);
     existingPin.id = id;
     return existingPin;
+  }
+
+  static async getCategories(categoriesNames: string[]) {
+    let result: (Category | null)[] = [];
+    for (const categoryName of categoriesNames) {
+      result.push(await CategoryRepository.getCategoryByName(categoryName));
+    }
+    return result;
   }
 }

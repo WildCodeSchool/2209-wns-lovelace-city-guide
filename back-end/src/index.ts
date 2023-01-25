@@ -4,11 +4,6 @@ import { ExpressContext } from "apollo-server-express";
 import { ApolloServerPluginLandingPageLocalDefault } from "apollo-server-core";
 import { buildSchema } from "type-graphql";
 
-import SchoolRepository from "./models/School/School.repository";
-import SkillRepository from "./models/Skill/Skill.repository";
-import WilderRepository from "./models/Wilder/Wilder.repository";
-
-import WilderResolver from "./resolvers/Wilder/Wilder.resolver";
 import AppUserResolver from "./resolvers/AppUser/AppUser.resolver";
 import AppUserRepository from "./models/AppUser/AppUser.repository";
 import SessionRepository from "./models/AppUser/Session.repository";
@@ -25,7 +20,7 @@ export type GlobalContext = ExpressContext & {
 const startServer = async () => {
   const server = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [WilderResolver, AppUserResolver, PinResolver],
+      resolvers: [AppUserResolver, PinResolver],
       authChecker: async ({ context }) => {
         return Boolean(context.user);
       },
@@ -52,17 +47,11 @@ const startServer = async () => {
 
   // The `listen` method launches a web server.
   const { url } = await server.listen();
-  //await SkillRepository.initializeRepository();
-  //await SchoolRepository.initializeRepository();
-  //await WilderRepository.initializeRepository();
   await AppUserRepository.initializeRepository();
   await SessionRepository.initializeRepository();
   await CategoryRepository.initializeRepository();
   await PinRepository.initializeRepository();
 
-  //await SkillRepository.initializeSkills();
-  //await SchoolRepository.initializeSchools();
-  //await WilderRepository.initializeWilders();
   await CategoryRepository.initializeCategories();
   await PinRepository.intializePins();
 

@@ -1,13 +1,5 @@
-import {
-  isNumber,
-  IsNumber,
-  IsNumberString,
-  IsUUID,
-  IS_NUMBER,
-  MinLength,
-} from "class-validator";
+import { IsNumber, IsUUID, MinLength } from "class-validator";
 import { ArgsType, Field, ID } from "type-graphql";
-import Category from "../../models/Category/Category.entity";
 
 @ArgsType()
 class CreatePinArgs {

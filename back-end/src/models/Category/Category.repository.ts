@@ -1,5 +1,3 @@
-import { Repository } from "typeorm";
-import { getRepository } from "../../database/utils";
 import CategoryDb from "./Category.db";
 import Category from "./Category.entity";
 
