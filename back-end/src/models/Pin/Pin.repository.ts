@@ -78,12 +78,9 @@ export default class PinRepository extends PinDb {
     } & Pin
   > {
     const existingPin = await this.repository.findOneBy({ id });
-    console.log(existingPin);
     const categories = (await this.getCategories(
       categoriesNames
     )) as Category[];
-    console.log(categories);
-    console.log(categoriesNames);
     if (!existingPin) {
       throw Error("Le Pin avec un identifiant demandé introuvable");
     }
