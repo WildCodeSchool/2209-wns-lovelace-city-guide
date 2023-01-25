@@ -1,12 +1,11 @@
-import React from "react";
-import { Link } from "react-router-dom";
-
-import { CardRow } from "./Home.styled";
-import Wilder from "../../components/Wilder/Wilder";
+import { 
+  Marker, 
+  Popup, 
+  TileLayer, 
+  useMap 
+} from 'react-leaflet';
+import { LeafletContainer } from "./Home.styled";
 import Loader from "../../components/Loader";
-import Map from "../../components/Map/Map"
-import { SectionTitle } from "../../styles/base-styles";
-import { CREATE_WILDER_PATH } from "../paths";
 import { useQuery, gql } from "@apollo/client";
 import { GetWildersQuery } from "../../gql/graphql";
 
@@ -23,6 +22,20 @@ const GET_WILDERS = gql`
     }
   }
 `;
+
+
+type PropType = { id: string; name: string; latitude: number; longitude: number; }
+
+const Pin = ({ id, name, latitude, longitude }: PropType) => {
+  return (
+    <Marker position={[latitude, longitude]}>
+      <Popup>
+        {name}
+      </Popup>
+    </Marker>
+  )
+}
+
 
 const Home = () => {
   const { data, loading, error, refetch } = useQuery<GetWildersQuery>(
@@ -41,28 +54,26 @@ const Home = () => {
       return "Aucun wilder à afficher.";
     }
     return (
-      <CardRow>
+      <LeafletContainer center={[45.750, 4.85]} zoom={13} scrollWheelZoom={true}>
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />      
         {data.wilders.map((wilder) => (
-          <Wilder
-            key={wilder.id}
-            id={wilder.id}
-            firstName={wilder.firstName}
-            lastName={wilder.lastName}
-            skills={wilder.skills}
-            onDelete={refetch}
-          />
-        ))}
-      </CardRow>
+        <Pin
+          key={wilder.id}
+          id={wilder.id}
+          name={wilder.firstName}
+          latitude={45 + Math.random()}
+          longitude={4 + Math.random()}
+        />
+      ))}
+      </LeafletContainer>
     );
   };
 
   return (
     <>
-      <SectionTitle>Wilders</SectionTitle>
-      <Map/>
-      <Link to={CREATE_WILDER_PATH}>Ajouter un nouveau Wilder</Link>
-      <br />
-      <br />
       {renderMainContent()}
     </>
   );

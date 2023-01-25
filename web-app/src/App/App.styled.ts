@@ -9,7 +9,7 @@ export const Container = styled.div`
 `;
 
 export const MainContainer = styled.main`
-  ${baseContainerStyles}
+  padding: 0;
 `;
 
 export const Header = styled.header`
