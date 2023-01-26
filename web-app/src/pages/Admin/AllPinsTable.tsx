@@ -64,7 +64,7 @@ const AllPinsTable = () => {
               <Tr>
                 <Th>Nom</Th>
                 <Th>Adresse</Th>
-                <Th>Catégorie</Th>
+                <Th>Catégories</Th>
                 <Th colSpan={2}>Actions</Th>
               </Tr>
             </Thead>

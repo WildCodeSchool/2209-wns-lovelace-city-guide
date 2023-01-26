@@ -25,8 +25,8 @@ export default class PinRepository extends PinDb {
       "33 rue Michel Felizat",
       [restaurantCategory],
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum, erat eget tempus gravida, est nunc congue purus, et accumsan libero augue ut mi. Mauris egestas imperdiet mauris, eget interdum.",
-      45.73887680449488,
-      4.839947304488192
+      45.72,
+      4.84
     );
 
     await this.repository.save([firstResto, secondResto]);
