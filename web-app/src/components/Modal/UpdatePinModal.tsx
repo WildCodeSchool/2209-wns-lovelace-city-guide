@@ -15,36 +15,36 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import {
-  UpdatePinMutation,
-  UpdatePinMutationVariables,
-} from "../../gql/graphql";
+// import {
+//   UpdatePinMutation,
+//   UpdatePinMutationVariables,
+// } from "../../gql/graphql";
 import { getErrorMessage } from "../../utils";
 
-const UPDATE_PIN = gql`
-  mutation UpdatePin(
-    $id: ID!
-    $name: String!
-    $address: String!
-    $category: String!
-    $description: String!
-    $latitude: Float!
-    $longitude: Float!
-  ) {
-    updatePin(
-      id: $id
-      name: $name
-      address: $address
-      category: $category
-      description: $description
-      latitude: $latitude
-      longitude: $longitude
-    ) {
-      id
-      name
-    }
-  }
-`;
+// const UPDATE_PIN = gql`
+//   mutation UpdatePin(
+//     $id: ID!
+//     $name: String!
+//     $address: String!
+//     $category: String!
+//     $description: String!
+//     $latitude: Float!
+//     $longitude: Float!
+//   ) {
+//     updatePin(
+//       id: $id
+//       name: $name
+//       address: $address
+//       category: $category
+//       description: $description
+//       latitude: $latitude
+//       longitude: $longitude
+//     ) {
+//       id
+//       name
+//     }
+//   }
+// `;
 
 type updatePinModalProps = {
   id: string;
@@ -57,10 +57,10 @@ type updatePinModalProps = {
 };
 
 const UpdatePinModal = (pin: updatePinModalProps) => {
-  const [updatePin] = useMutation<
-    UpdatePinMutation,
-    UpdatePinMutationVariables
-  >(UPDATE_PIN);
+  // const [updatePin] = useMutation<
+  //   UpdatePinMutation,
+  //   UpdatePinMutationVariables
+  // >(UPDATE_PIN);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [id, setId] = useState(pin.id);
   const [name, setName] = useState(pin.name);
@@ -71,24 +71,24 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
   const [longitude, setLongitude] = useState(pin.longitude);
 
   const onSubmit = async (event: React.MouseEvent<HTMLElement>) => {
-    try {
-      event.preventDefault();
-      await updatePin({
-        variables: {
-          id,
-          name,
-          address,
-          category,
-          description,
-          latitude,
-          longitude,
-        },
-      });
-      toast.success(`succès.`);
-      onClose();
-    } catch (error) {
-      toast.error(getErrorMessage(error));
-    }
+    // try {
+    //   event.preventDefault();
+    //   await updatePin({
+    //     variables: {
+    //       id,
+    //       name,
+    //       address,
+    //       category,
+    //       description,
+    //       latitude,
+    //       longitude,
+    //     },
+    //   });
+    //   toast.success(`succès.`);
+    //   onClose();
+    // } catch (error) {
+    //   toast.error(getErrorMessage(error));
+    // }
   };
 
   return (

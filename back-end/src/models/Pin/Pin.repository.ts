@@ -1,5 +1,7 @@
 import Category from "../Category/Category.entity";
 import CategoryRepository from "../Category/Category.repository";
+import Image from "../Image/Image.entity";
+import ImageRepository from "../Image/Image.repository";
 import PinDb from "./Pin.db";
 import Pin from "./Pin.entity";
 
@@ -7,14 +9,14 @@ export default class PinRepository extends PinDb {
   static async intializePins(): Promise<void> {
     await this.clearRepository();
 
-    const restaurantCat = (await CategoryRepository.getCategoryByName(
+    const restaurantCategory = (await CategoryRepository.getCategoryByName(
       "Restaurant"
     )) as Category;
 
     const firstResto = new Pin(
       "Pokebowl",
       "42 rue Michel Felizat",
-      [restaurantCat],
+      [restaurantCategory],
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum, erat eget tempus gravida, est nunc congue purus, et accumsan libero augue ut mi. Mauris egestas imperdiet mauris, eget interdum.",
       45.73615111648431,
       4.837501130044736
@@ -22,7 +24,7 @@ export default class PinRepository extends PinDb {
     const secondResto = new Pin(
       "Noodle",
       "33 rue Michel Felizat",
-      [restaurantCat],
+      [restaurantCategory],
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum, erat eget tempus gravida, est nunc congue purus, et accumsan libero augue ut mi. Mauris egestas imperdiet mauris, eget interdum.",
       45.73887680449488,
       4.839947304488192
@@ -111,5 +113,18 @@ export default class PinRepository extends PinDb {
       result.push(await CategoryRepository.getCategoryByName(categoryName));
     }
     return result;
+  }
+
+  static async addImageToPin(pinId: string, fileName: string): Promise<Pin> {
+    const pin = await this.repository.findOneBy({ id: pinId });
+    if (!pin) {
+      throw Error("Pin doesn't exist");
+    }
+    const image = await ImageRepository.getImageByFileName(fileName);
+    if (!image) {
+      throw Error("Image doesn't exist");
+    }
+    pin.images = [...pin.images, image];
+    return this.repository.save(pin);
   }
 }

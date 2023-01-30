@@ -35,7 +35,15 @@ app.post(
   "/api/image-upload",
   upload.single("file"),
   (req: Request, res: Response) => {
-    res.json({});
+    const fileName = req.file?.filename;
+    const originalName = req.file?.originalname;
+    const filePath = req.file?.path;
+    res.send({
+      message: "Image uploaded",
+      filename: fileName,
+      originalname: originalName,
+      filepath: filePath,
+    });
   }
 );
 

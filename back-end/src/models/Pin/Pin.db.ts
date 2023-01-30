@@ -8,7 +8,7 @@ export default class PinDb {
     this.repository = await getRepository(Pin);
   }
 
-  protected static findPinById(pinId: string) {
+  public static findPinById(pinId: string) {
     return this.repository.findOneBy({ id: pinId });
   }
 

@@ -8,6 +8,7 @@ import {
 } from "typeorm";
 import { Field, ID, ObjectType } from "type-graphql";
 import Category from "../Category/Category.entity";
+import Image from "../Image/Image.entity";
 
 @Entity()
 @ObjectType()
@@ -17,7 +18,7 @@ export default class Pin {
     address: string,
     categories: Category[],
     description: string,
-    //photo: Photo[],
+    //images: Image[],
     latitude: number,
     longitude: number,
     isAccessible?: boolean,
@@ -29,6 +30,7 @@ export default class Pin {
     this.address = address;
     this.categories = categories;
     this.description = description;
+    //this.images = images;
     this.latitude = latitude;
     this.longitude = longitude;
     if (isAccessible) {
@@ -62,6 +64,11 @@ export default class Pin {
   @Column()
   @Field()
   description: string;
+
+  @ManyToMany(() => Image, { eager: true })
+  @Field(() => [Image], { nullable: true })
+  @JoinTable()
+  images: Image[];
 
   @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
   @Field()
