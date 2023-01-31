@@ -26,7 +26,7 @@ var storage = multer.diskStorage({
     file: Express.Multer.File,
     callback: FileNameCallback
   ) {
-    callback(null, Date.now() + "-" + file.originalname);
+    callback(null, file.originalname);
   },
 });
 var upload = multer({ storage: storage });

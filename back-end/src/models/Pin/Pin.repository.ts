@@ -1,6 +1,5 @@
 import Category from "../Category/Category.entity";
 import CategoryRepository from "../Category/Category.repository";
-import Image from "../Image/Image.entity";
 import ImageRepository from "../Image/Image.repository";
 import PinDb from "./Pin.db";
 import Pin from "./Pin.entity";
@@ -120,10 +119,7 @@ export default class PinRepository extends PinDb {
     if (!pin) {
       throw Error("Pin doesn't exist");
     }
-    const image = await ImageRepository.getImageByFileName(fileName);
-    if (!image) {
-      throw Error("Image doesn't exist");
-    }
+    const image = await ImageRepository.addImage(fileName);
     pin.images = [...pin.images, image];
     return this.repository.save(pin);
   }

@@ -8,4 +8,9 @@ export default class ImageResolver {
   images(): Promise<Image[]> {
     return ImageRepository.getImages();
   }
+
+  @Mutation(() => Image)
+  addImage(@Arg("fileName") fileName: string): Promise<Image> {
+    return ImageRepository.addImage(fileName);
+  }
 }

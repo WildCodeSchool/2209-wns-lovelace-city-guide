@@ -18,7 +18,6 @@ export default class Pin {
     address: string,
     categories: Category[],
     description: string,
-    //images: Image[],
     latitude: number,
     longitude: number,
     isAccessible?: boolean,
@@ -30,7 +29,6 @@ export default class Pin {
     this.address = address;
     this.categories = categories;
     this.description = description;
-    //this.images = images;
     this.latitude = latitude;
     this.longitude = longitude;
     if (isAccessible) {
