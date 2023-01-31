@@ -54,7 +54,6 @@
       "last 1 safari version"
     ]
   },
-  "type": "module",
   "proxy": "http://back-end:4000",
   "devDependencies": {
     "@graphql-codegen/cli": "2.13.7",

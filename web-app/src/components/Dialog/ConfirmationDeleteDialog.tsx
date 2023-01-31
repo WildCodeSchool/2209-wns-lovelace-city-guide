@@ -16,46 +16,48 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { toast } from "react-toastify";
-import {
-  DeletePinMutation,
-  DeletePinMutationVariables,
-  GetPinsQuery,
-} from "../../gql/graphql";
+// import {
+//   DeletePinMutation,
+//   DeletePinMutationVariables,
+//   GetPinsQuery,
+// } from "../../gql/graphql";
 
-const DELETE_PIN = gql`
-  mutation DeletePin($id: String!) {
-    deletePin(id: $id) {
-      id
-      name
-    }
+// const DELETE_PIN = gql`
+//   mutation DeletePin($id: String!) {
+//     deletePin(id: $id) {
+//       id
+//       name
+//     }
+//   }
+// `;
+
+// type confirmationDeleteDialogProps = {
+//   id: string;
+//   refetch: (
+//     variables?: Partial<OperationVariables> | undefined
+//   ) => Promise<ApolloQueryResult<GetPinsQuery>>;
+// };
+
+const ConfirmationDeleteDialog = (
+  {
+    // id,
+    // refetch,
   }
-`;
-
-type confirmationDeleteDialogProps = {
-  id: string;
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<GetPinsQuery>>;
-};
-
-const ConfirmationDeleteDialog = ({
-  id,
-  refetch,
-}: confirmationDeleteDialogProps) => {
-  const [deletePin] = useMutation<
-    DeletePinMutation,
-    DeletePinMutationVariables
-  >(DELETE_PIN);
+) => {
+  // const [deletePin] = useMutation<
+  //   DeletePinMutation,
+  //   DeletePinMutationVariables
+  // >(DELETE_PIN);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef(null);
 
-  const onDelete = async () => {
-    await deletePin({ variables: { id } });
-    await refetch();
-    toast.success(`Pin deleted `);
-    onClose();
-  };
+  // const onDelete = async () => {
+  //   await deletePin({ variables: { id } });
+  //   await refetch();
+  //   toast.success(`Pin deleted `);
+  //   onClose();
+  // };
 
   return (
     <>
@@ -82,9 +84,9 @@ const ConfirmationDeleteDialog = ({
               <Button ref={cancelRef} onClick={onClose}>
                 Annuler
               </Button>
-              <Button colorScheme="red" onClick={onDelete} ml={3}>
+              {/* <Button colorScheme="red" onClick={onDelete} ml={3}>
                 Supprimer
-              </Button>
+              </Button> */}
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialogOverlay>

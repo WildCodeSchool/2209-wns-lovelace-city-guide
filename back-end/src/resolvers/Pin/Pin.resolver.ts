@@ -60,4 +60,17 @@ export default class PinResolver {
   deletePin(@Arg("id") id: string): Promise<Pin> {
     return PinRepository.deletePin(id);
   }
+
+  @Query(() => Pin)
+  getPinById(@Arg("id") id: string): Promise<Pin | null> {
+    return PinRepository.findPinById(id);
+  }
+
+  @Mutation(() => Pin)
+  addImageToPin(
+    @Arg("pinId") pinId: string,
+    @Arg("fileName") fileName: string
+  ): Promise<Pin> {
+    return PinRepository.addImageToPin(pinId, fileName);
+  }
 }

@@ -13,6 +13,8 @@ import PinRepository from "./models/Pin/Pin.repository";
 import PinResolver from "./resolvers/Pin/Pin.resolver";
 import CategoryRepository from "./models/Category/Category.repository";
 import CategoryResolver from "./resolvers/Category/Category.resolver";
+import ImageRepository from "./models/Image/Image.repository";
+import ImageResolver from "./resolvers/Image/Image.resolver";
 
 export type GlobalContext = ExpressContext & {
   user: AppUser | null;
@@ -21,7 +23,12 @@ export type GlobalContext = ExpressContext & {
 const startServer = async () => {
   const server = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [AppUserResolver, PinResolver, CategoryResolver],
+      resolvers: [
+        AppUserResolver,
+        PinResolver,
+        CategoryResolver,
+        ImageResolver,
+      ],
       authChecker: async ({ context }) => {
         return Boolean(context.user);
       },
@@ -51,9 +58,11 @@ const startServer = async () => {
   await AppUserRepository.initializeRepository();
   await SessionRepository.initializeRepository();
   await CategoryRepository.initializeRepository();
+  await ImageRepository.initializeRepository();
   await PinRepository.initializeRepository();
 
   await CategoryRepository.initializeCategories();
+  await ImageRepository.initializeImages();
   await PinRepository.intializePins();
 
   console.log(`🚀  Server ready at ${url}`);

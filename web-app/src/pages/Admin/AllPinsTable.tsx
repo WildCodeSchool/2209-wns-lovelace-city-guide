@@ -1,5 +1,6 @@
 import { gql, useQuery } from "@apollo/client";
 import {
+  Button,
   Table,
   TableCaption,
   TableContainer,
@@ -9,24 +10,25 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 import ConfirmationDeleteDialog from "../../components/Dialog/ConfirmationDeleteDialog";
 import Loader from "../../components/Loader";
 import UpdatePinModal from "../../components/Modal/UpdatePinModal";
 import { GetPinsQuery } from "../../gql/graphql";
 
 const GET_PINS = gql`
-  query GetPins {
+  query getPins {
     pins {
       id
       name
       address
-      category
+      categories {
+        categoryName
+        id
+      }
       description
       latitude
       longitude
-      isOutdoor
-      isAccessible
-      isChildFriendly
       createdAt
     }
   }
@@ -72,21 +74,24 @@ const AllPinsTable = () => {
                   <Tr key={pin.id}>
                     <Td>{pin.name}</Td>
                     <Td>{pin.address}</Td>
-                    <Td>{pin.category}</Td>
                     <Td>
-                      <UpdatePinModal
+                      <Link to={`/preview-pin/${pin.id}`}>
+                        <Button>Voir Pin</Button>
+                      </Link>
+                    </Td>
+                    <Td>
+                      {/* <UpdatePinModal
                         id={pin.id}
                         name={pin.name}
                         address={pin.address}
-                        category={pin.category}
                         description={pin.description}
                         latitude={pin.latitude}
                         longitude={pin.longitude}
-                      />
+                      /> */}
                     </Td>
-                    <Td>
+                    {/* <Td>
                       <ConfirmationDeleteDialog id={pin.id} refetch={refetch} />
-                    </Td>
+                    </Td> */}
                   </Tr>
                 );
               })}
