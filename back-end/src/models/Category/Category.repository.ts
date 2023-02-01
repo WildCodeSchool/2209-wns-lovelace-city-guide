@@ -10,6 +10,12 @@ export default class CategoryRepository extends CategoryDb {
     await this.repository.save({
       categoryName: "Musée",
     });
+    await this.repository.save({
+      categoryName: "Hôtel",
+    });
+    await this.repository.save({
+      categoryName: "Parc",
+    });
   }
 
   static async getCategories(): Promise<Category[]> {
