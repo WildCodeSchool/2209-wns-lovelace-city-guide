@@ -11,4 +11,11 @@ export default class SessionRepository extends SessionDb {
   static findById(id: string): Promise<Session | null> {
     return this.repository.findOneBy({ id });
   }
+
+  static async deleteSession(user: AppUser): Promise<Session> {
+    const currentSession = (await this.repository.findOne({
+      where: { user: user },
+    })) as Session;
+    return this.removeSession(currentSession);
+  }
 }

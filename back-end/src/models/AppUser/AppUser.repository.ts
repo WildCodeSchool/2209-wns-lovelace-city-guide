@@ -1,5 +1,5 @@
 import AppUserDb from "./AppUser.db";
-import AppUser from "./AppUser.entity";
+import AppUser, { UserStatus } from "./AppUser.entity";
 
 import { hashSync, compareSync } from "bcryptjs";
 import SessionRepository from "./Session.repository";
@@ -7,6 +7,9 @@ import Session from "./Session.entity";
 import { ERROR_NO_USER_SIGNED_IN } from "./error-messages";
 
 export default class AppUserRepository extends AppUserDb {
+  static async getUsers(): Promise<AppUser[]> {
+    return this.repository.find();
+  }
   static createUser(
     firstName: string,
     lastName: string,
@@ -17,7 +20,8 @@ export default class AppUserRepository extends AppUserDb {
       firstName,
       lastName,
       emailAddress,
-      hashSync(password)
+      hashSync(password),
+      UserStatus.USER
     );
     return this.saveUser(user);
   }
@@ -41,5 +45,14 @@ export default class AppUserRepository extends AppUserDb {
       return null;
     }
     return session.user;
+  }
+
+  static async signOut(id: string): Promise<AppUser> {
+    const currentUser = await this.repository.findOneBy({ id });
+    if (!currentUser) {
+      throw Error("User not found");
+    }
+    await SessionRepository.deleteSession(currentUser);
+    return currentUser;
   }
 }

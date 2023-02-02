@@ -1,4 +1,12 @@
-import { Args, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Args,
+  Authorized,
+  Ctx,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import AppUser from "../../models/AppUser/AppUser.entity";
 import AppUserRepository from "../../models/AppUser/AppUser.repository";
 import { SignInArgs, SignUpArgs } from "./AppUser.input";
@@ -7,6 +15,11 @@ import { GlobalContext } from "../..";
 
 @Resolver(AppUser)
 export default class AppUserResolver {
+  @Query(() => AppUser)
+  users(): Promise<AppUser[]> {
+    return AppUserRepository.getUsers();
+  }
+
   @Mutation(() => AppUser)
   signUp(
     @Args() { firstName, lastName, emailAddress, password }: SignUpArgs
@@ -36,5 +49,10 @@ export default class AppUserResolver {
   @Query(() => AppUser)
   async myProfile(@Ctx() context: GlobalContext): Promise<AppUser> {
     return context.user as AppUser;
+  }
+
+  @Mutation(() => AppUser)
+  async signOut(@Arg("id") id: string): Promise<AppUser> {
+    return AppUserRepository.signOut(id);
   }
 }

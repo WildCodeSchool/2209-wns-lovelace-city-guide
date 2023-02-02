@@ -14,6 +14,10 @@ export default class SessionDb {
   }
 
   static async clearRepository(): Promise<void> {
-    this.repository.delete({});
+    await this.repository.delete({});
+  }
+
+  protected static async removeSession(session: Session): Promise<Session> {
+    return this.repository.remove(session);
   }
 }
