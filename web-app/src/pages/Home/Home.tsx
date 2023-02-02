@@ -7,19 +7,19 @@ import {
   Pane,
   Tooltip
 } from 'react-leaflet';
-import L from 'leaflet';
 import { 
   LeafletContainer, 
   PinPopup, 
-  CreateNewPin,
-  Container
+  PickPinLoc,
+  SetPinLoc,
+  Container,
+  MapLoader
 } from "./Home.styled";
-import Loader from "../../components/Loader";
 import { useQuery, gql } from "@apollo/client";
 import { GetPinsQuery } from "../../gql/graphql";
-import markerIcon from "../../media/markers/marker.png"
-import shadowIcon from "../../media/markers/shadow.png"
-import draggableIcon from "../../media/markers/draggable.png"
+
+import { DragMarker, PinMarker } from 'components/PinMarkers';
+
 
 import "./TooltipStyle.css"
 import { FaHeart } from 'react-icons/fa';
@@ -46,37 +46,25 @@ const GET_PINS = gql`
   }
 `;
 
-const outer = [
-  [50.505, -29.09],
-  [52.505, 29.09],
-]
-const inner = [
-  [49.505, -2.09],
-  [53.505, 2.09],
-]
 
+function CreateNewPin() {
+  const [newPin, setNewPin] = useState(false);
+  if (!newPin) {
+    return (
+      <PickPinLoc onClick={() => setNewPin(true)}>
+        Ajouter un pin
+      </PickPinLoc>
+    )
+  }
+  if (newPin) {
+    return (
+      <SetPinLoc>
+        On le met ici ?
+      </SetPinLoc>
+    )
+  }
+}
 
-const PinMarker  = new L.Icon({
-  iconUrl: markerIcon,
-  shadowUrl: shadowIcon,
-
-  iconSize:     [42, 57], // size of the icon
-  shadowSize:   [38, 55], // size of the shadow
-  iconAnchor:   [22, 74], // point of the icon which will correspond to marker's location
-  shadowAnchor: [0, 82],  // the same for the shadow
-  popupAnchor:  [6, -76] // point from which the popup should open relative to the iconAnchor
-})
-
-const DragMarker  = new L.Icon({
-  iconUrl: draggableIcon,
-  shadowUrl: shadowIcon,
-
-  iconSize:     [42, 57], // size of the icon
-  shadowSize:   [38, 55], // size of the shadow
-  iconAnchor:   [22, 74], // point of the icon which will correspond to marker's location
-  shadowAnchor: [0, 82],  // the same for the shadow
-  popupAnchor:  [6, -76] // point from which the popup should open relative to the iconAnchor
-})
 
 const Location = () => {
   const map = useMap();
@@ -165,9 +153,10 @@ const Home = () => {
     { fetchPolicy: "cache-and-network" }
   );
 
+
   const renderMainContent = () => {
     if (loading) {
-      return <Loader />;
+      return <MapLoader />;
     }
     if (error) {
       return error.message;
@@ -176,11 +165,7 @@ const Home = () => {
       return "Aucun pin à afficher.";
     }
     return (
-      <LeafletContainer center={[45.75, 4.85]} zoom={13} scrollWheelZoom={true}>
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        /> 
-        <Pane name='fixed' style={{ zIndex: 499 }} />
+      <>
         <Location/>
         {data.pins.map((pin) => (
         <Pin
@@ -192,14 +177,19 @@ const Home = () => {
           address={pin.address}
           description={pin.description}
         />
-      ))} */}
-      </LeafletContainer>
+      ))}
+    </>
     );
   };
   return (
     <Container>
+      <LeafletContainer center={[45.750, 4.85]} zoom={13} scrollWheelZoom={true}>
+        <TileLayer
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        /> 
       {renderMainContent()}
-      <CreateNewPin> Ajouter un pin </CreateNewPin>
+      </LeafletContainer>
+      <CreateNewPin/>
     </Container>
   );
 };
