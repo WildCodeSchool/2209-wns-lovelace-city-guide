@@ -1,6 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
 import { Button } from "@chakra-ui/button";
-import { Img } from "@chakra-ui/react";
 import { Link, useParams } from "react-router-dom";
 import Loader from "../../components/Loader";
 import { GetPinByIdQuery } from "../../gql/graphql";
@@ -49,7 +48,11 @@ const PreviewPin = () => {
         <p>Name : {data.getPinById.name}</p>
         {images &&
           images.map((image) => (
-            <img src={`http://localhost:5000/${image.fileName}`} alt="pin" />
+            <img
+              key={image.id}
+              src={`http://localhost:5000/${image.fileName}`}
+              alt="pin"
+            />
           ))}
         <Link to={`/upload-image/${pinId}`}>
           <Button>Ajoute image</Button>
