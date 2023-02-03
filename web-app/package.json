@@ -5,7 +5,7 @@
   "dependencies": {
     "@apollo/client": "^3.7.0",
     "@chakra-ui/cra-template-typescript": "^2.0.6",
-    "@chakra-ui/icons": "^2.0.14",
+    "@chakra-ui/icons": "^2.0.17",
     "@chakra-ui/react": "^2.4.4",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",

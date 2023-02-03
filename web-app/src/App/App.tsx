@@ -1,8 +1,12 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import React from "react";
-import { Routes, Route, Link } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import { MyProfileQuery } from "../gql/graphql";
+import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import {
+  MyProfileQuery,
+  SignOutMutation,
+  SignOutMutationVariables,
+} from "../gql/graphql";
 import AllPinsTable from "../pages/Admin/AllPinsTable";
 import CreatePin from "../pages/CreatePin/CreatePin";
 import PreviewPin from "../pages/CreatePin/PreviewPin";
@@ -20,6 +24,7 @@ import {
 } from "../pages/paths";
 import SignIn from "../pages/SignIn/SignIn";
 import SignUp from "../pages/SignUp/SignUp";
+import { getErrorMessage } from "../utils";
 import {
   Container,
   Footer,
@@ -32,13 +37,44 @@ import {
 const MY_PROFILE = gql`
   query MyProfile {
     myProfile {
+      id
+      firstName
+      lastName
       emailAddress
+      userStatus
+    }
+  }
+`;
+
+const SIGN_OUT = gql`
+  mutation SignOut($currentUserId: String!) {
+    signOut(id: $currentUserId) {
+      id
     }
   }
 `;
 
 function App() {
   const { data, refetch } = useQuery<MyProfileQuery>(MY_PROFILE);
+  const navigate = useNavigate();
+  const currentUserId = data?.myProfile.id as string;
+  const [signOut] = useMutation<SignOutMutation, SignOutMutationVariables>(
+    SIGN_OUT,
+    {
+      variables: { currentUserId },
+      onCompleted: () => {
+        toast.success(`Vous vous êtes déconnecté avec succès.`);
+        navigate(HOME_PATH);
+      },
+      onError: (error) => {
+        toast.error(getErrorMessage(error));
+      },
+    }
+  );
+
+  const handleSignOut = async (): Promise<void> => {
+    await signOut();
+  };
 
   return (
     <>
@@ -48,7 +84,12 @@ function App() {
             <PageTitleLink to={HOME_PATH}>Wilders Book</PageTitleLink>
           </PageTitle>
           {data?.myProfile ? (
-            <i>{data?.myProfile.emailAddress}</i>
+            <>
+              <i>{data?.myProfile.emailAddress}</i>
+              <button type="submit" onClick={handleSignOut}>
+                Sign out
+              </button>
+            </>
           ) : (
             <nav>
               <Link to={SIGN_UP_PATH}>Inscription</Link>
