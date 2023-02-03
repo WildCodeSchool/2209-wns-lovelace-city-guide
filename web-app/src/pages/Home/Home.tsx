@@ -13,10 +13,15 @@ import {
   PickPinLoc,
   SetPinLoc,
   Container,
-  MapLoader
+  MapLoader,
+  Header,
+  Logo,
+  HomeBtn
 } from "./Home.styled";
 import { useQuery, gql } from "@apollo/client";
 import { GetPinsQuery } from "../../gql/graphql";
+import PinMeLogo from "../../media/logo.png";
+import { FaHome } from 'react-icons/fa';
 
 import { DragMarker, PinMarker } from 'components/PinMarkers';
 
@@ -46,61 +51,6 @@ const GET_PINS = gql`
   }
 `;
 
-
-function CreateNewPin() {
-  const [newPin, setNewPin] = useState(false);
-  if (!newPin) {
-    return (
-      <PickPinLoc onClick={() => setNewPin(true)}>
-        Ajouter un pin
-      </PickPinLoc>
-    )
-  }
-  if (newPin) {
-    return (
-      <SetPinLoc>
-        On le met ici ?
-      </SetPinLoc>
-    )
-  }
-}
-
-
-const Location = () => {
-  const map = useMap();
-  const markerRef = useRef(null)
-  const [position, setPosition] = useState<any | null>(null)
-
-  const eventHandlers = useMemo(
-    () => ({
-      dragend(e: any) {
-        console.log(e.target.getLatLng()); 
-      },
-    }),
-    [],
-  )
-
-  useEffect(() => {
-    map.locate({
-      setView: true
-    })
-    map.on('locationfound', (event) => {
-      setPosition(event.latlng)
-    })
-  }, [map])
-
-  return position
-  ? (
-    <>
-      <Marker icon={ DragMarker } 
-      draggable={true} 
-      eventHandlers={eventHandlers} 
-      position={position}
-      ref={markerRef} />
-    </>
-  )
-  : null
-}
 
 type PropType = { id: string; name: string; latitude: number; longitude: number; address: string; description: string;}
 
@@ -148,10 +98,70 @@ const Pin = ({ id, name, latitude, longitude, address, description }: PropType) 
 
 
 const Home = () => {
+  const [newPin, setNewPin] = useState(false);
+  const [newPinLocation, setNewPinLocation] = useState<any | null>(null);
+
+
   const { data, loading, error, refetch } = useQuery<GetPinsQuery>(
     GET_PINS,
     { fetchPolicy: "cache-and-network" }
   );
+
+  function CreateNewPin() {
+    if (!newPin) {
+      return (
+        <PickPinLoc onClick={() => setNewPin(true)}>
+          Ajouter un pin
+        </PickPinLoc>
+      )
+    }
+    if (newPin) {
+      return (
+        <SetPinLoc >
+          On le met ici ?
+        </SetPinLoc>
+      )
+    }
+  }
+
+  
+  const Location = () => {
+    const map = useMap();
+    const markerRef = useRef(null)
+    const [position, setPosition] = useState<any | null>(null)
+  
+    const eventHandlers = useMemo(
+      () => ({
+        dragend(e: any) {
+          console.log(e.target.getLatLng())
+        },
+      }),
+      [],
+    )
+  
+
+    useEffect(() => {
+      map.locate({
+        setView: true
+      })
+      map.on('locationfound', (event) => {
+        !position &&
+        setPosition(event.latlng)
+      })
+    }, [map])
+  
+    return position
+    ? (
+      <>
+        <Marker icon={ DragMarker } 
+        draggable={true} 
+        eventHandlers={eventHandlers} 
+        position={position}
+        ref={markerRef} />
+      </>
+    )
+    : null
+  }
 
 
   const renderMainContent = () => {
@@ -166,7 +176,10 @@ const Home = () => {
     }
     return (
       <>
-        <Location/>
+        {newPin && (
+          <Location/>
+          )
+        }
         {data.pins.map((pin) => (
         <Pin
           key={pin.id}
@@ -182,6 +195,11 @@ const Home = () => {
     );
   };
   return (
+    <>
+    <Header>
+      <HomeBtn><FaHome/></HomeBtn> 
+      <Logo src={PinMeLogo} />
+    </Header>
     <Container>
       <LeafletContainer center={[45.750, 4.85]} zoom={13} scrollWheelZoom={true}>
         <TileLayer
@@ -191,6 +209,7 @@ const Home = () => {
       </LeafletContainer>
       <CreateNewPin/>
     </Container>
+    </>
   );
 };
 
