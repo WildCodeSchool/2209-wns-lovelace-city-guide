@@ -48,7 +48,12 @@ const CREATE_PIN = gql`
       longitude
       createdAt
     }
+    description
+    latitude
+    longitude
+    createdAt
   }
+}
 `;
 
 const CreatePin = () => {

@@ -12,11 +12,6 @@ export const MainContainer = styled.main`
   padding: 0;
 `;
 
-export const Header = styled.header`
-  background-color: ${MAIN_THEME_COLOR};
-  color: #fff;
-`;
-
 export const Footer = styled.footer`
   border-top: 2px solid ${MAIN_THEME_COLOR};
 `;

@@ -9,8 +9,8 @@ import {
 } from "../gql/graphql";
 import AllPinsTable from "../pages/Admin/AllPinsTable";
 import CreatePin from "../pages/CreatePin/CreatePin";
-import PreviewPin from "../pages/CreatePin/PreviewPin";
-import UploadImage from "../pages/CreatePin/UploadImage";
+import PinMeLogo from "../media/logo.png";
+import { FaHome } from 'react-icons/fa';
 
 import Home from "../pages/Home/Home";
 import {
@@ -28,7 +28,6 @@ import { getErrorMessage } from "../utils";
 import {
   Container,
   Footer,
-  Header,
   MainContainer,
   PageTitle,
   PageTitleLink,
@@ -79,25 +78,8 @@ function App() {
   return (
     <>
       <Header>
-        <Container>
-          <PageTitle>
-            <PageTitleLink to={HOME_PATH}>Wilders Book</PageTitleLink>
-          </PageTitle>
-          {data?.myProfile ? (
-            <>
-              <i>{data?.myProfile.emailAddress}</i>
-              <button type="submit" onClick={handleSignOut}>
-                Sign out
-              </button>
-            </>
-          ) : (
-            <nav>
-              <Link to={SIGN_UP_PATH}>Inscription</Link>
-              {" | "}
-              <Link to={SIGN_IN_PATH}>Connexion</Link>
-            </nav>
-          )}
-        </Container>
+        <HomeBtn><FaHome/></HomeBtn> 
+        <Logo src={PinMeLogo} />
       </Header>
       <MainContainer>
         <Routes>
