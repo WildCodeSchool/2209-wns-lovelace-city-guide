@@ -1,5 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { useToast } from "@chakra-ui/react";
 import {
   Box,
   Flex,
@@ -15,6 +16,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Loader from "../../components/Loader";
+import NavbarPage from "../../components/Navbar/NavbarPage";
 import { SignInMutation, SignInMutationVariables } from "../../gql/graphql";
 import { getErrorMessage } from "../../utils";
 import { HOME_PATH } from "../paths";
@@ -41,22 +43,34 @@ const SignIn = ({ onSuccess }: { onSuccess: () => {} }) => {
     SignInMutationVariables
   >(SIGN_IN);
   const navigate = useNavigate();
+  const toast = useToast();
 
   const submit = async () => {
     try {
       await signIn({
         variables: { emailAddress, password },
       });
-      toast.success(`Vous vous êtes connecté avec succès.`);
+      toast({
+        title: "Vous vous êtes connecté avec succès.",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
       onSuccess();
       navigate(HOME_PATH);
     } catch (error) {
-      toast.error(getErrorMessage(error));
+      toast({
+        title: "Something went wrong",
+        description: getErrorMessage(error),
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 
   return (
     <>
+      <NavbarPage />
       <Flex width="full" align="center" justifyContent="center">
         <Box
           p={8}

@@ -50,7 +50,7 @@ export default class AppUser {
   @Column()
   hashedPassword: string;
 
-  @Column()
+  @Column({ nullable: true })
   @Field((type) => UserStatus)
   userStatus: UserStatus;
 }

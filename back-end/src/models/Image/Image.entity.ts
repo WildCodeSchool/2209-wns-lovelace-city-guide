@@ -18,5 +18,6 @@ export default class Image {
   // commentId: string;
 
   @ManyToOne(() => Pin, (pin) => pin.images)
+  @Field(() => Pin)
   pin: Pin;
 }

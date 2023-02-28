@@ -4,6 +4,7 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Field, ID, ObjectType } from "type-graphql";
@@ -63,9 +64,8 @@ export default class Pin {
   @Field()
   description: string;
 
-  @ManyToMany(() => Image, { eager: true })
+  @OneToMany(() => Image, (image) => image.pin, { eager: true })
   @Field(() => [Image], { nullable: true })
-  @JoinTable()
   images: Image[];
 
   @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })

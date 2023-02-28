@@ -1,14 +1,23 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Button, FormControl, FormLabel, Input, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  useToast,
+} from "@chakra-ui/react";
 import Select, { MultiValue } from "react-select";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import {
   CreatePinMutation,
   CreatePinMutationVariables,
   GetCategoriesQuery,
 } from "../../gql/graphql";
 import { getErrorMessage } from "../../utils";
+import NavbarPage from "../../components/Navbar/NavbarPage";
 
 const GET_CATEGORIES = gql`
   query getCategories {
@@ -58,6 +67,7 @@ const CreatePin = () => {
   const [description, setDescription] = useState("");
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
+  const toast = useToast();
 
   const { data, loading, error } = useQuery<GetCategoriesQuery>(
     GET_CATEGORIES,
@@ -105,8 +115,12 @@ const CreatePin = () => {
           longitude,
         },
       });
-      toast.success(`Pin ${name} a été créé avec succès.`);
-      console.log(name, address, categories, description, latitude, longitude);
+      toast({
+        title: `Pin ${name} a été créé avec succès.`,
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
       setName("");
       setAddress("");
       setCategories([]);
@@ -114,84 +128,106 @@ const CreatePin = () => {
       setLatitude(0);
       setLongitude(0);
     } catch (error) {
-      toast.error(getErrorMessage(error));
+      toast({
+        title: "Something went wrong",
+        description: getErrorMessage(error),
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 
   return (
     <>
-      <Text fontSize={32} textTransform="uppercase">
-        Ajouter un nouveau Pin
-      </Text>
+      <NavbarPage />
+      <Flex width="full" align="center" justifyContent="center">
+        <Box
+          p={8}
+          width="500px"
+          maxWidth="800px"
+          borderWidth={1}
+          borderRadius={8}
+          boxShadow="lg"
+        >
+          <Box textAlign="center">
+            <Heading>Ajoute un Pin</Heading>
+          </Box>
+          <Box my={4} textAlign="left">
+            <FormControl>
+              <FormLabel>Nom</FormLabel>
+              <Input
+                type="text"
+                id="name"
+                name="name"
+                value={name}
+                onChange={(event) => {
+                  setName(event.target.value);
+                }}
+              />
+            </FormControl>
 
-      <FormControl>
-        <FormLabel>Nom</FormLabel>
-        <Input
-          type="text"
-          id="name"
-          name="name"
-          value={name}
-          onChange={(event) => {
-            setName(event.target.value);
-          }}
-        />
-      </FormControl>
-
-      <FormControl mt={4}>
-        <FormLabel>Adresse</FormLabel>
-        <Input
-          type="text"
-          id="address"
-          name="address"
-          value={address}
-          onChange={(event) => {
-            setAddress(event.target.value);
-          }}
-        />
-      </FormControl>
-      <FormControl mt={4}>
-        <FormLabel>Catégorie</FormLabel>
-        <Select options={optionsCategoies} isMulti onChange={handleSelect} />
-      </FormControl>
-      <FormControl mt={4}>
-        <FormLabel>Description</FormLabel>
-        <Input
-          type="textarea"
-          id="description"
-          name="description"
-          value={description}
-          onChange={(event) => {
-            setDescription(event.target.value);
-          }}
-        />
-      </FormControl>
-      <FormControl mt={4}>
-        <FormLabel>Latitude</FormLabel>
-        <Input
-          type="number"
-          id="latitude"
-          name="latitude"
-          value={latitude}
-          onChange={(event) => {
-            setLatitude(parseFloat(event.target.value));
-          }}
-        />
-      </FormControl>
-      <FormControl mt={4}>
-        <FormLabel>Longitude</FormLabel>
-        <Input
-          type="number"
-          id="longitude"
-          name="longitude"
-          value={longitude}
-          onChange={(event) => {
-            setLongitude(parseFloat(event.target.value));
-          }}
-        />
-      </FormControl>
-      <Button onClick={onSubmit} colorScheme="teal" mt={3}>
-        Envoyer
-      </Button>
+            <FormControl mt={4}>
+              <FormLabel>Adresse</FormLabel>
+              <Input
+                type="text"
+                id="address"
+                name="address"
+                value={address}
+                onChange={(event) => {
+                  setAddress(event.target.value);
+                }}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Catégorie</FormLabel>
+              <Select
+                options={optionsCategoies}
+                isMulti
+                onChange={handleSelect}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Description</FormLabel>
+              <Input
+                type="textarea"
+                id="description"
+                name="description"
+                value={description}
+                onChange={(event) => {
+                  setDescription(event.target.value);
+                }}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Latitude</FormLabel>
+              <Input
+                type="number"
+                id="latitude"
+                name="latitude"
+                value={latitude}
+                onChange={(event) => {
+                  setLatitude(parseFloat(event.target.value));
+                }}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Longitude</FormLabel>
+              <Input
+                type="number"
+                id="longitude"
+                name="longitude"
+                value={longitude}
+                onChange={(event) => {
+                  setLongitude(parseFloat(event.target.value));
+                }}
+              />
+            </FormControl>
+            <Button onClick={onSubmit} colorScheme="teal" width="full" mt={4}>
+              Envoyer
+            </Button>
+          </Box>
+        </Box>
+      </Flex>
     </>
   );
 };

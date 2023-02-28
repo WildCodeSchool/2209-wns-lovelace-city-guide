@@ -1,20 +1,15 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import React from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import {
-  MyProfileQuery,
-  SignOutMutation,
-  SignOutMutationVariables,
-} from "../gql/graphql";
+import { ToastContainer } from "react-toastify";
+import { MyProfileQuery } from "../gql/graphql";
 import AllPinsTable from "../pages/Admin/AllPinsTable";
 import CreatePin from "../pages/CreatePin/CreatePin";
 import PreviewPin from "../pages/CreatePin/PreviewPin";
 import UploadImage from "../pages/CreatePin/UploadImage";
 
-
 import PinMeLogo from "../media/logo.png";
-import { FaHome } from 'react-icons/fa';
+import { FaHome } from "react-icons/fa";
 
 import Home from "../pages/Home/Home";
 import {
@@ -49,36 +44,8 @@ const MY_PROFILE = gql`
   }
 `;
 
-const SIGN_OUT = gql`
-  mutation SignOut($currentUserId: String!) {
-    signOut(id: $currentUserId) {
-      id
-    }
-  }
-`;
-
 function App() {
   const { data, refetch } = useQuery<MyProfileQuery>(MY_PROFILE);
-  const navigate = useNavigate();
-  const currentUserId = data?.myProfile.id as string;
-  const [signOut] = useMutation<SignOutMutation, SignOutMutationVariables>(
-    SIGN_OUT,
-    {
-      variables: { currentUserId },
-      onCompleted: () => {
-        toast.success(`Vous vous êtes déconnecté avec succès.`);
-        navigate(HOME_PATH);
-      },
-      onError: (error) => {
-        toast.error(getErrorMessage(error));
-      },
-    }
-  );
-
-  const handleSignOut = async (): Promise<void> => {
-    await signOut();
-  };
-
   return (
     <>
       <MainContainer>
