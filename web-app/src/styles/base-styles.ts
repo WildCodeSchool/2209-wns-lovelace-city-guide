@@ -20,3 +20,36 @@ export const SectionTitle = styled.h2`
   ${baseTitleStyles}
   font-size: 28px;
 `;
+
+export const BtnRedSquare = styled.button`
+  padding: 8px;
+  color: #222231;
+  font-size: 1.2rem;
+  background-color: #FF8787;
+  box-shadow: 3px 3px 0 #912B2B;
+`;
+
+export const BtnBlueRounded = styled.button`
+  margin: 10px;
+  padding: 6px;
+  border-radius: 15px;
+  background-color: #93CFD2;
+  box-shadow: 3px 3px 0 #31777A;
+`;
+
+export const BtnYellowRounded = styled.button`
+  margin: 10px;
+  padding: 6px;
+  border-radius: 15px;
+  background-color: #FFEE93;
+  box-shadow: 3px 3px 0 #EFAA59;
+`;
+
+export const BtnRedRounded = styled.button`
+  margin: 10px;
+  padding: 6px;
+  border-radius: 15px;
+  background-color: #FF8787;
+  box-shadow: 3px 3px 0 #912B2B;
+  color: #fff;
+`;

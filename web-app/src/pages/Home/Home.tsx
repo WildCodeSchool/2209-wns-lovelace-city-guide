@@ -7,27 +7,34 @@ import {
   Pane,
   Tooltip
 } from 'react-leaflet';
+
 import { 
   LeafletContainer, 
   PinPopup, 
-  PickPinLoc,
-  SetPinLoc,
   Container,
   MapLoader,
   Header,
   Logo,
-  HomeBtn
+  ControlBoard
 } from "./Home.styled";
+
+import {
+  BtnRedSquare, 
+  BtnBlueRounded, 
+  BtnYellowRounded, 
+  BtnRedRounded
+} from "../../styles/base-styles"
+
 import { useQuery, gql } from "@apollo/client";
 import { GetPinsQuery } from "../../gql/graphql";
 import PinMeLogo from "../../media/logo.png";
-import { FaHome } from 'react-icons/fa';
+import { FaHome, FaHeart } from 'react-icons/fa';
+import { IoClose } from 'react-icons/io5';
 
 import { DragMarker, PinMarker } from 'components/PinMarkers';
 
 
 import "./TooltipStyle.css"
-import { FaHeart } from 'react-icons/fa';
 
 
 const GET_PINS = gql`
@@ -96,73 +103,81 @@ const Pin = ({ id, name, latitude, longitude, address, description }: PropType) 
 //   )
 // }
 
+function CreateNewPin({newPin, setNewPin, position}) {
+  if (!newPin) {
+    return (
+      <BtnYellowRounded onClick={() => setNewPin(true)}>
+        Ajouter un pin
+      </BtnYellowRounded>
+    )
+  }
+  else {
+    return (
+      <>
+        <BtnBlueRounded onClick={() => console.log(position.lat)}>
+          On le met ici ?
+        </BtnBlueRounded>
+        <BtnRedRounded onClick={() => setNewPin(false)}>
+          <IoClose/>
+        </BtnRedRounded>
+      </>
+    )
+  }
+}
+
+
+const Location = ({position, setPosition}) => {
+  const map = useMap();
+  const markerRef = useRef(null)
+
+  const eventHandlers = useMemo(
+    () => ({
+      dragend(e: any) {
+        const marker = markerRef.current
+        if (marker != null) {
+          setPosition(marker.getLatLng())
+        }
+      //  console.log(e.target.getLatLng())
+      },
+    }),
+    [],
+  )
+
+
+  useEffect(() => {
+    map.locate({
+      setView: true
+    })
+    map.on('locationfound', (event) => {
+      !position &&
+      setPosition(event.latlng)
+    })
+  }, [map])
+
+  return position
+  ? (
+    <>
+      <Marker icon={ DragMarker } 
+      draggable={true} 
+      eventHandlers={eventHandlers} 
+      position={position}
+      ref={markerRef} />
+    </>
+  )
+  : null
+}
+
 
 const Home = () => {
   const [newPin, setNewPin] = useState(false);
-  const [newPinLocation, setNewPinLocation] = useState<any | null>(null);
+  // const [newPinLocation, setNewPinLocation] = useState<any | null>(null);
+  const [position, setPosition] = useState<any | null>(null)
 
 
   const { data, loading, error, refetch } = useQuery<GetPinsQuery>(
     GET_PINS,
     { fetchPolicy: "cache-and-network" }
   );
-
-  function CreateNewPin() {
-    if (!newPin) {
-      return (
-        <PickPinLoc onClick={() => setNewPin(true)}>
-          Ajouter un pin
-        </PickPinLoc>
-      )
-    }
-    if (newPin) {
-      return (
-        <SetPinLoc >
-          On le met ici ?
-        </SetPinLoc>
-      )
-    }
-  }
-
-  
-  const Location = () => {
-    const map = useMap();
-    const markerRef = useRef(null)
-    const [position, setPosition] = useState<any | null>(null)
-  
-    const eventHandlers = useMemo(
-      () => ({
-        dragend(e: any) {
-          console.log(e.target.getLatLng())
-        },
-      }),
-      [],
-    )
-  
-
-    useEffect(() => {
-      map.locate({
-        setView: true
-      })
-      map.on('locationfound', (event) => {
-        !position &&
-        setPosition(event.latlng)
-      })
-    }, [map])
-  
-    return position
-    ? (
-      <>
-        <Marker icon={ DragMarker } 
-        draggable={true} 
-        eventHandlers={eventHandlers} 
-        position={position}
-        ref={markerRef} />
-      </>
-    )
-    : null
-  }
-
 
   const renderMainContent = () => {
     if (loading) {
@@ -177,7 +192,7 @@ const Home = () => {
     return (
       <>
         {newPin && (
-          <Location/>
+          <Location setPosition={setPosition} position={position}/>
           )
         }
         {data.pins.map((pin) => (
@@ -197,7 +212,7 @@ const Home = () => {
   return (
     <>
     <Header>
-      <HomeBtn><FaHome/></HomeBtn> 
+      <BtnRedSquare><FaHome/></BtnRedSquare> 
       <Logo src={PinMeLogo} />
     </Header>
     <Container>
@@ -207,7 +222,9 @@ const Home = () => {
         /> 
       {renderMainContent()}
       </LeafletContainer>
-      <CreateNewPin/>
+      <ControlBoard>
+        <CreateNewPin newPin={newPin} setNewPin={setNewPin} position={position}/>
+      </ControlBoard>
     </Container>
     </>
   );
