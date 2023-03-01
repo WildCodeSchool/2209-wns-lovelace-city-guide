@@ -1,6 +1,9 @@
 import { gql, useMutation } from "@apollo/client";
+import { Box, Button, Flex, Heading, Input } from "@chakra-ui/react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import NavbarPage from "../../components/Navbar/NavbarPage";
+import { PREVIEW_PIN } from "../paths";
 import {
   AddImageToPinMutation,
   AddImageToPinMutationVariables,
@@ -33,6 +36,7 @@ type PinIdParams = {
 
 const UploadImage = () => {
   let { pinId } = useParams() as PinIdParams;
+  const navigate = useNavigate();
   const [image, setImage] = useState({ preview: "", data: "" });
   const [status, setStatus] = useState("");
   const [fileName, setFileName] = useState("");
@@ -64,6 +68,7 @@ const UploadImage = () => {
       console.log(responseAddImageToPin);
       if (responseUploadImage && responseAddImageToPin) {
         setStatus(responseUploadImage.statusText);
+        navigate(`/preview-pin/${pinId}`);
       }
     } catch (err) {
       console.log(err);
@@ -79,19 +84,34 @@ const UploadImage = () => {
     setFileName(event.target.files[0].name);
   };
   return (
-    <div>
-      <h1>Pin : {pinId}</h1>
-      <h1>Upload image to server</h1>
-      {image.preview && (
-        <img alt="preview" src={image.preview} width="100" height="100" />
-      )}
-      <hr></hr>
-      <form onSubmit={handleSubmit}>
-        <input type="file" name="file" onChange={handleFileChange}></input>
-        <button type="submit">Submit</button>
-      </form>
-      {status && <h4>{status}</h4>}
-    </div>
+    <>
+      <NavbarPage />
+      <Flex width="full" align="center" justifyContent="center">
+        <Box
+          p={8}
+          maxWidth="500px"
+          borderWidth={1}
+          borderRadius={8}
+          boxShadow="lg"
+        >
+          <Box textAlign="center">
+            <Heading>Ajoute une image</Heading>
+          </Box>
+          <Box my={4} textAlign="left">
+            {image.preview && (
+              <img alt="preview" src={image.preview} width="100" height="100" />
+            )}
+            <form onSubmit={handleSubmit}>
+              <input type="file" name="file" onChange={handleFileChange} />
+              <Button colorScheme="teal" type="submit">
+                Submit
+              </Button>
+            </form>
+            {status && <h4>{status}</h4>}
+          </Box>
+        </Box>
+      </Flex>
+    </>
   );
 };
 

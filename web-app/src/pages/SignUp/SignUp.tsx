@@ -11,11 +11,12 @@ import {
   InputGroup,
   InputRightElement,
 } from "@chakra-ui/react";
+import { useToast } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
 import Loader from "../../components/Loader";
+import NavbarPage from "../../components/Navbar/NavbarPage";
 import { SignUpMutation, SignUpMutationVariables } from "../../gql/graphql";
 import { getErrorMessage } from "../../utils";
 import { SIGN_IN_PATH } from "../paths";
@@ -53,23 +54,35 @@ const SignUp = () => {
     SignUpMutationVariables
   >(SIGN_UP);
   const navigate = useNavigate();
+  const toast = useToast();
 
   const submit = async () => {
     try {
       await signUp({
         variables: { firstName, lastName, emailAddress, password },
       });
-      toast.success(
-        `Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.`
-      );
+      toast({
+        title:
+          "Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.",
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
+
       navigate(SIGN_IN_PATH);
     } catch (error) {
-      toast.error(getErrorMessage(error));
+      toast({
+        title: "Something went wrong",
+        description: getErrorMessage(error),
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 
   return (
     <>
+      <NavbarPage />
       <Flex width="full" align="center" justifyContent="center">
         <Box
           p={8}

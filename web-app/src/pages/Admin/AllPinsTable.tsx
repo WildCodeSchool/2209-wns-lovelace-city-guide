@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import ConfirmationDeleteDialog from "../../components/Dialog/ConfirmationDeleteDialog";
 import Loader from "../../components/Loader";
 import UpdatePinModal from "../../components/Modal/UpdatePinModal";
+import NavbarPage from "../../components/Navbar/NavbarPage";
 import { GetPinsQuery } from "../../gql/graphql";
 
 const GET_PINS = gql`
@@ -51,6 +52,7 @@ const AllPinsTable = () => {
     }
     return (
       <>
+        <NavbarPage />
         <TableContainer>
           <Table>
             <TableCaption
