@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components";
 import { APP_FUNCTIONAL_WIDTH } from "./style-constants";
+import { Link } from "react-router-dom";
 
 export const baseTitleStyles = css`
   margin: 0 0 0.35em;
@@ -21,14 +22,35 @@ export const SectionTitle = styled.h2`
   font-size: 28px;
 `;
 
-export const RedButton = styled.button`
-  margin: 10px;
-  padding: 8px;
-  color: ${props => props.light ? "#222231" : "white"} ;
-  font-size: 1.2rem;
-  border-radius: ${props => props.rounded ? "15px" : "0px"};
+export const RedButton = styled(Link)<{rounded?:boolean, icon?:boolean, light?:boolean}>`
+  margin: 5px;
+  text-align: center;
+  padding: ${props => props.icon ? "8px" : "5px"};
+  color: ${props => props.light ? "white" : "#222231"} ;
+  font-size: ${props => props.icon ? "1.3rem" : "1.2rem"};
+  border-radius: ${props => props.rounded ? "25px" : "0px"};
   background-color: #FF8787;
   box-shadow: 3px 3px 0 #912B2B;
+`;
+
+export const BlueButton = styled(RedButton)`
+  background-color: #93CFD2;
+  box-shadow: 3px 3px 0 #31777A;
+`;
+
+export const YellowButton = styled(RedButton)`
+  background-color: #FFEE93;
+  box-shadow: 3px 3px 0 #EFAA59;
+`;
+
+export const HollowButtonTitle = styled.h1<{rounded:boolean}>`
+text-align: center;
+padding: 5px;
+font-size: 1.2rem;
+border-radius: ${props => props.rounded ? "25px" : "0px"};
+background-color: #FF8787;
+margin: 10px ;
+box-shadow: -3px -3px 0 #912B2B;
 `;
 
 export const BtnRedSquare = styled.button`
