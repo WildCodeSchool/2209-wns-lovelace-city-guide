@@ -78,7 +78,7 @@ const PreviewPin = () => {
             >
               {images &&
                 images.map((image) => (
-                  <Card maxW="md">
+                  <Card maxW="md" key={image.id}>
                     <CardBody>
                       <Image
                         objectFit="cover"

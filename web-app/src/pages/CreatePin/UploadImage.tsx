@@ -3,7 +3,7 @@ import { Box, Button, Flex, Heading, Input } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NavbarPage from "../../components/Navbar/NavbarPage";
-import { ADMIN_ALL_PINS_PATH } from "../paths";
+import { PREVIEW_PIN } from "../paths";
 import {
   AddImageToPinMutation,
   AddImageToPinMutationVariables,
@@ -68,7 +68,7 @@ const UploadImage = () => {
       console.log(responseAddImageToPin);
       if (responseUploadImage && responseAddImageToPin) {
         setStatus(responseUploadImage.statusText);
-        navigate(ADMIN_ALL_PINS_PATH);
+        navigate(`/preview-pin/${pinId}`);
       }
     } catch (err) {
       console.log(err);
