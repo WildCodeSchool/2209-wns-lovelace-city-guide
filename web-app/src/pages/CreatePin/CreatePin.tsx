@@ -18,6 +18,8 @@ import {
 } from "../../gql/graphql";
 import { getErrorMessage } from "../../utils";
 import NavbarPage from "../../components/Navbar/NavbarPage";
+import { useLocation, useNavigate } from "react-router-dom";
+import { HOME_PATH } from "pages/paths";
 
 const GET_CATEGORIES = gql`
   query getCategories {
@@ -57,17 +59,19 @@ const CREATE_PIN = gql`
       longitude
       createdAt
     }
-  }`
-;
-
+  }
+`;
 const CreatePin = () => {
+  let { state } = useLocation();
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
   const [description, setDescription] = useState("");
-  const [latitude, setLatitude] = useState(0);
-  const [longitude, setLongitude] = useState(0);
+  const [latitude, setLatitude] = useState(state.position.lat);
+  const [longitude, setLongitude] = useState(state.position.lng);
   const toast = useToast();
+
+  const navigate = useNavigate();
 
   const { data, loading, error } = useQuery<GetCategoriesQuery>(
     GET_CATEGORIES,
@@ -127,6 +131,7 @@ const CreatePin = () => {
       setDescription("");
       setLatitude(0);
       setLongitude(0);
+      navigate(HOME_PATH);
     } catch (error) {
       toast({
         title: "Something went wrong",
@@ -204,7 +209,7 @@ const CreatePin = () => {
                 type="number"
                 id="latitude"
                 name="latitude"
-                value={latitude}
+                value={state.position.lat}
                 onChange={(event) => {
                   setLatitude(parseFloat(event.target.value));
                 }}
@@ -216,7 +221,7 @@ const CreatePin = () => {
                 type="number"
                 id="longitude"
                 name="longitude"
-                value={longitude}
+                value={state.position.lng}
                 onChange={(event) => {
                   setLongitude(parseFloat(event.target.value));
                 }}
