@@ -31,6 +31,12 @@ export const RedButton = styled(Link)<{rounded?:boolean, icon?:boolean, light?:b
   border-radius: ${props => props.rounded ? "25px" : "0px"};
   background-color: #FF8787;
   box-shadow: 3px 3px 0 #912B2B;
+  transition: 0.1s;
+  &:hover, :focus {
+    opacity: 0.9;
+    transform: translate(3px, 3px);
+    box-shadow: none;
+  }
 `;
 
 export const BlueButton = styled(RedButton)`
