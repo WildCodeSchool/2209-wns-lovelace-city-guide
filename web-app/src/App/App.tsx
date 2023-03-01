@@ -9,6 +9,10 @@ import {
 } from "../gql/graphql";
 import AllPinsTable from "../pages/Admin/AllPinsTable";
 import CreatePin from "../pages/CreatePin/CreatePin";
+import PreviewPin from "../pages/CreatePin/PreviewPin";
+import UploadImage from "../pages/CreatePin/UploadImage";
+
+
 import PinMeLogo from "../media/logo.png";
 import { FaHome } from 'react-icons/fa';
 
@@ -77,10 +81,6 @@ function App() {
 
   return (
     <>
-      <Header>
-        <HomeBtn><FaHome/></HomeBtn> 
-        <Logo src={PinMeLogo} />
-      </Header>
       <MainContainer>
         <Routes>
           <Route path={HOME_PATH} element={<Home />} />

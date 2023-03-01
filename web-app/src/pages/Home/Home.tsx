@@ -102,8 +102,8 @@ const Pin = ({ id, name, latitude, longitude, address, description }: PropType) 
 //     </div>
 //   )
 // }
-
-function CreateNewPin({newPin, setNewPin, position}) {
+type NewPinPropType = {newPin: boolean, setNewPin: (argument: boolean) => void, position: any[] | [] | null }
+function CreateNewPin({newPin, setNewPin, position}:NewPinPropType) {
   if (!newPin) {
     return (
       <BtnYellowRounded onClick={() => setNewPin(true)}>
@@ -114,7 +114,7 @@ function CreateNewPin({newPin, setNewPin, position}) {
   else {
     return (
       <>
-        <BtnBlueRounded onClick={() => console.log(position.lat)}>
+        <BtnBlueRounded onClick={() => console.log(position)}>
           On le met ici ?
         </BtnBlueRounded>
         <BtnRedRounded onClick={() => setNewPin(false)}>
@@ -125,10 +125,11 @@ function CreateNewPin({newPin, setNewPin, position}) {
   }
 }
 
+type LocationPropType = {position: any , setPosition: (argument: any) => void }
 
-const Location = ({position, setPosition}) => {
+const Location = ({position, setPosition}: LocationPropType) => {
   const map = useMap();
-  const markerRef = useRef(null)
+  const markerRef = useRef<any>(null)
 
   const eventHandlers = useMemo(
     () => ({
@@ -171,7 +172,7 @@ const Location = ({position, setPosition}) => {
 const Home = () => {
   const [newPin, setNewPin] = useState(false);
   // const [newPinLocation, setNewPinLocation] = useState<any | null>(null);
-  const [position, setPosition] = useState<any | null>(null)
+  const [position, setPosition] = useState<any[] | [] | null>(null)
 
 
   const { data, loading, error, refetch } = useQuery<GetPinsQuery>(
