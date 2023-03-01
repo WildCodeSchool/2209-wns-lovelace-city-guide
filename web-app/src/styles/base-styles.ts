@@ -21,6 +21,16 @@ export const SectionTitle = styled.h2`
   font-size: 28px;
 `;
 
+export const RedButton = styled.button`
+  margin: 10px;
+  padding: 8px;
+  color: ${props => props.light ? "#222231" : "white"} ;
+  font-size: 1.2rem;
+  border-radius: ${props => props.rounded ? "15px" : "0px"};
+  background-color: #FF8787;
+  box-shadow: 3px 3px 0 #912B2B;
+`;
+
 export const BtnRedSquare = styled.button`
   padding: 8px;
   color: #222231;
