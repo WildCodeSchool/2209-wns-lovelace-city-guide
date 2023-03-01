@@ -10,6 +10,7 @@ export const Container = styled.div`
 
 export const MainContainer = styled.main`
   padding: 0;
+  background-color: #222231;
 `;
 
 export const Footer = styled.footer`
