@@ -63,6 +63,7 @@ const PreviewPin = () => {
         <NavbarPage />
         <Flex width="full" align="center" justifyContent="center">
           <Box
+            bg="#fff"
             p={8}
             width="1000px"
             borderWidth={1}

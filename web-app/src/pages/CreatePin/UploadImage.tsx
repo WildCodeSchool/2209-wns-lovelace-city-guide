@@ -88,6 +88,7 @@ const UploadImage = () => {
       <NavbarPage />
       <Flex width="full" align="center" justifyContent="center">
         <Box
+          bg="#fff"
           p={8}
           maxWidth="500px"
           borderWidth={1}

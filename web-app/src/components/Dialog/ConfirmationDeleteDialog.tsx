@@ -16,6 +16,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React from "react";
+import { FaTrashAlt } from "react-icons/fa";
 import {
   DeletePinMutation,
   DeletePinMutationVariables,
@@ -68,7 +69,7 @@ const ConfirmationDeleteDialog = ({
   return (
     <>
       <Button colorScheme="red" onClick={onOpen}>
-        Supprimer
+        <FaTrashAlt />
       </Button>
 
       <AlertDialog

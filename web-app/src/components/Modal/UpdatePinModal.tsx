@@ -12,10 +12,11 @@ import {
   FormLabel,
   Input,
   ModalFooter,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
+import { FaPen } from "react-icons/fa";
 import Select, { MultiValue } from "react-select";
-import { toast } from "react-toastify";
 import {
   GetCategoriesQuery,
   UpdatePinMutation,
@@ -78,6 +79,7 @@ type updatePinModalProps = {
 };
 
 const UpdatePinModal = (pin: updatePinModalProps) => {
+  const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [id, setId] = useState(pin.id);
   const [name, setName] = useState(pin.name);
@@ -146,16 +148,28 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
           longitude,
         },
       });
-      toast.success(`succès.`);
+      toast({
+        title: `Pin ${name} a été modifié avec succès.`,
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
       onClose();
     } catch (error) {
-      toast.error(getErrorMessage(error));
+      toast({
+        title: "Something went wrong",
+        description: getErrorMessage(error),
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 
   return (
     <>
-      <Button onClick={onOpen}>Modifier</Button>
+      <Button colorScheme="teal" onClick={onOpen}>
+        <FaPen />
+      </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
