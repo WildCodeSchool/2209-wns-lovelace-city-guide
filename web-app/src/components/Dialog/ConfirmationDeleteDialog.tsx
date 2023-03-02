@@ -13,51 +13,57 @@ import {
   AlertDialogOverlay,
   Button,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import React from "react";
-import { toast } from "react-toastify";
-// import {
-//   DeletePinMutation,
-//   DeletePinMutationVariables,
-//   GetPinsQuery,
-// } from "../../gql/graphql";
+import {
+  DeletePinMutation,
+  DeletePinMutationVariables,
+  GetPinsAdminPageQuery,
+} from "../../gql/graphql";
 
-// const DELETE_PIN = gql`
-//   mutation DeletePin($id: String!) {
-//     deletePin(id: $id) {
-//       id
-//       name
-//     }
-//   }
-// `;
-
-// type confirmationDeleteDialogProps = {
-//   id: string;
-//   refetch: (
-//     variables?: Partial<OperationVariables> | undefined
-//   ) => Promise<ApolloQueryResult<GetPinsQuery>>;
-// };
-
-const ConfirmationDeleteDialog = (
-  {
-    // id,
-    // refetch,
+const DELETE_PIN = gql`
+  mutation DeletePin($id: String!) {
+    deletePin(id: $id) {
+      id
+      name
+    }
   }
-) => {
-  // const [deletePin] = useMutation<
-  //   DeletePinMutation,
-  //   DeletePinMutationVariables
-  // >(DELETE_PIN);
+`;
+
+type confirmationDeleteDialogProps = {
+  id: string;
+  name: string;
+  refetch: (
+    variables?: Partial<OperationVariables> | undefined
+  ) => Promise<ApolloQueryResult<GetPinsAdminPageQuery>>;
+};
+
+const ConfirmationDeleteDialog = ({
+  id,
+  name,
+  refetch,
+}: confirmationDeleteDialogProps) => {
+  const [deletePin] = useMutation<
+    DeletePinMutation,
+    DeletePinMutationVariables
+  >(DELETE_PIN);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef(null);
+  const toast = useToast();
 
-  // const onDelete = async () => {
-  //   await deletePin({ variables: { id } });
-  //   await refetch();
-  //   toast.success(`Pin deleted `);
-  //   onClose();
-  // };
+  const onDelete = async () => {
+    await deletePin({ variables: { id } });
+    await refetch();
+    toast({
+      title: `Pin ${name} a été supprimé avec succès.`,
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
+    onClose();
+  };
 
   return (
     <>
@@ -84,9 +90,9 @@ const ConfirmationDeleteDialog = (
               <Button ref={cancelRef} onClick={onClose}>
                 Annuler
               </Button>
-              {/* <Button colorScheme="red" onClick={onDelete} ml={3}>
+              <Button colorScheme="red" onClick={onDelete} ml={3}>
                 Supprimer
-              </Button> */}
+              </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialogOverlay>

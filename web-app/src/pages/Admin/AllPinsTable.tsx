@@ -15,10 +15,10 @@ import ConfirmationDeleteDialog from "../../components/Dialog/ConfirmationDelete
 import Loader from "../../components/Loader";
 import UpdatePinModal from "../../components/Modal/UpdatePinModal";
 import NavbarPage from "../../components/Navbar/NavbarPage";
-import { GetPinsQuery } from "../../gql/graphql";
+import { GetPinsAdminPageQuery } from "../../gql/graphql";
 
-const GET_PINS = gql`
-  query getPins {
+const GET_PINS_ADMIN_PAGE = gql`
+  query getPinsAdminPage {
     pins {
       id
       name
@@ -36,9 +36,12 @@ const GET_PINS = gql`
 `;
 
 const AllPinsTable = () => {
-  const { data, loading, error, refetch } = useQuery<GetPinsQuery>(GET_PINS, {
-    fetchPolicy: "cache-and-network",
-  });
+  const { data, loading, error, refetch } = useQuery<GetPinsAdminPageQuery>(
+    GET_PINS_ADMIN_PAGE,
+    {
+      fetchPolicy: "cache-and-network",
+    }
+  );
 
   const renderPins = () => {
     if (loading) {
@@ -82,18 +85,23 @@ const AllPinsTable = () => {
                       </Link>
                     </Td>
                     <Td>
-                      {/* <UpdatePinModal
+                      <UpdatePinModal
                         id={pin.id}
                         name={pin.name}
                         address={pin.address}
+                        categories={pin.categories}
                         description={pin.description}
                         latitude={pin.latitude}
                         longitude={pin.longitude}
-                      /> */}
+                      />
                     </Td>
-                    {/* <Td>
-                      <ConfirmationDeleteDialog id={pin.id} refetch={refetch} />
-                    </Td> */}
+                    <Td>
+                      <ConfirmationDeleteDialog
+                        id={pin.id}
+                        name={pin.name}
+                        refetch={refetch}
+                      />
+                    </Td>
                   </Tr>
                 );
               })}
