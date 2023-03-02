@@ -13,7 +13,7 @@ export default class Category {
   @Field()
   categoryName: string;
 
-  @ManyToMany(() => Pin, (pin) => pin.categories)
+  @ManyToMany(() => Pin, (pin) => pin.categories, { onDelete: "CASCADE" })
   @Field(() => [Pin])
   pins: Pin[];
 }

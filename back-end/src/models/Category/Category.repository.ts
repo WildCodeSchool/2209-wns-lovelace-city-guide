@@ -26,6 +26,12 @@ export default class CategoryRepository extends CategoryDb {
     const newCategory = this.repository.create({
       categoryName,
     });
+    const categories = await this.repository.find();
+    const categoryList = categories.map((category) => category.categoryName);
+
+    if (categoryList.includes(categoryName)) {
+      throw Error(`Categorie: ${categoryName} déjà existe`);
+    }
     await this.repository.save(newCategory);
     return newCategory;
   }
@@ -36,7 +42,7 @@ export default class CategoryRepository extends CategoryDb {
   ): Promise<{ id: string; categoryName: string } & Category> {
     const existingCategory = await this.repository.findOneBy({ id });
     if (!existingCategory) {
-      throw Error("NLa catégorie avec un identifiant demandé introuvable");
+      throw Error("La catégorie avec un identifiant demandé introuvable");
     }
     return this.repository.save({
       id,
