@@ -38,7 +38,7 @@ import {
   PageTitle,
   PageTitleLink,
 } from "./App.styled";
-import AdminCategories from "pages/Admin/AdminCategories";
+import AdminCategories from "../pages/Admin/AdminCategories";
 
 const MY_PROFILE = gql`
   query MyProfile {
