@@ -11,7 +11,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { FaUser, FaHome, FaSignOutAlt } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   MyProfileQuery,
   SignOutMutation,
@@ -20,7 +20,7 @@ import {
 import { HOME_PATH, SIGN_IN_PATH, SIGN_UP_PATH } from "../../pages/paths";
 import { getErrorMessage } from "../../utils";
 import PinMeLogo from "../../media/logo.png";
-import SquareButton from "../SquareBtn/SquareButton";
+import { BlueButton, RedButton } from "styles/base-styles";
 
 const MY_PROFILE = gql`
   query MyProfile {
@@ -80,13 +80,10 @@ const NavbarPage = () => {
     <>
       <Container maxW="100%">
         <Flex minWidth="max-content" alignItems="center" gap="2">
-          <Box p="2">
-            <Link to={HOME_PATH}>
-              <SquareButton>
-                <FaHome />
-              </SquareButton>
-            </Link>
-          </Box>
+          <RedButton to={HOME_PATH} icon>
+            <FaHome />
+          </RedButton>
+
           <Spacer />
           {data?.myProfile ? (
             <>
@@ -97,16 +94,12 @@ const NavbarPage = () => {
             </>
           ) : (
             <ButtonGroup gap="2">
-              <Link to={SIGN_UP_PATH}>
-                <SquareButton>
-                  <FaUser />
-                </SquareButton>
-              </Link>
-              <Link to={SIGN_IN_PATH}>
-                <SquareButton>
-                  <FaSignOutAlt />
-                </SquareButton>
-              </Link>
+              <RedButton to={SIGN_UP_PATH} icon>
+                <FaUser />
+              </RedButton>
+              <BlueButton to={SIGN_IN_PATH} icon>
+                <FaSignOutAlt />
+              </BlueButton>
             </ButtonGroup>
           )}
         </Flex>
