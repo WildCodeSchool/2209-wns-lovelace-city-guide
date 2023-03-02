@@ -5,62 +5,54 @@ import {
   useMutation,
 } from "@apollo/client";
 import {
+  Button,
   AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
   AlertDialogBody,
   AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  Button,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
+import { GetCategoriesQuery } from "gql/graphql";
 import React from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { getErrorMessage } from "utils";
-import {
-  DeletePinMutation,
-  DeletePinMutationVariables,
-  GetPinsAdminPageQuery,
-} from "../../gql/graphql";
 
-const DELETE_PIN = gql`
-  mutation DeletePin($id: String!) {
-    deletePin(id: $id) {
+const DELETE_CATEGORY = gql`
+  mutation DeleteCategory($categoryId: String!) {
+    deleteCategory(id: $categoryId) {
       id
-      name
+      categoryName
     }
   }
 `;
 
-type confirmationDeleteDialogProps = {
-  id: string;
-  name: string;
+type confirmDeleteCategoryProps = {
+  categoryId: string;
+  categoryName: string;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<GetPinsAdminPageQuery>>;
+  ) => Promise<ApolloQueryResult<GetCategoriesQuery>>;
 };
-
-const ConfirmationDeleteDialog = ({
-  id,
-  name,
+const ConfirmDeleteCategory = ({
+  categoryId,
+  categoryName,
   refetch,
-}: confirmationDeleteDialogProps) => {
-  const [deletePin] = useMutation<
-    DeletePinMutation,
-    DeletePinMutationVariables
-  >(DELETE_PIN);
-
+}: confirmDeleteCategoryProps) => {
+  const [deleteCategory] = useMutation(DELETE_CATEGORY);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef(null);
   const toast = useToast();
 
   const onDelete = async () => {
     try {
-      await deletePin({ variables: { id } });
+      await deleteCategory({ variables: { categoryId } });
+      await refetch();
       await refetch();
       toast({
-        title: `Pin ${name} a été supprimé avec succès.`,
+        title: `Catégorie : ${categoryName} a été supprimé avec succès.`,
         status: "success",
         duration: 9000,
         isClosable: true,
@@ -91,18 +83,18 @@ const ConfirmationDeleteDialog = ({
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Supprimer ce Pin?
+              Supprimer cette catégorie?
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              Etes-vous sûr de vouloir supprimer ce Pin?
+              {`Etes-vous sûr de vouloir supprimer catégorie : ${categoryName}?`}
             </AlertDialogBody>
 
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onClose}>
                 Annuler
               </Button>
-              <Button colorScheme="red" onClick={onDelete} ml={3}>
+              <Button onClick={onDelete} colorScheme="red" ml={3}>
                 Supprimer
               </Button>
             </AlertDialogFooter>
@@ -113,4 +105,4 @@ const ConfirmationDeleteDialog = ({
   );
 };
 
-export default ConfirmationDeleteDialog;
+export default ConfirmDeleteCategory;

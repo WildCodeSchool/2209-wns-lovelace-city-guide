@@ -156,7 +156,8 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
       onClose();
     } catch (error) {
       toast({
-        title: "Something went wrong",
+        title: "Erreur",
+        status: "error",
         description: getErrorMessage(error),
         duration: 9000,
         isClosable: true,

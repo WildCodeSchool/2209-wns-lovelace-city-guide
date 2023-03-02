@@ -22,7 +22,8 @@ import {
   SIGN_IN_PATH,
   SIGN_UP_PATH,
   UPLOAD_IMAGE,
-  MAP_PATH
+  MAP_PATH,
+  ADMIN_CATEGORIES,
 } from "../pages/paths";
 import SignIn from "../pages/SignIn/SignIn";
 import SignUp from "../pages/SignUp/SignUp";
@@ -34,6 +35,7 @@ import {
   PageTitle,
   PageTitleLink,
 } from "./App.styled";
+import AdminCategories from "pages/Admin/AdminCategories";
 
 const MY_PROFILE = gql`
   query MyProfile {
@@ -61,6 +63,7 @@ function App() {
           <Route path={ADMIN_ALL_PINS_PATH} element={<AllPinsTable />} />
           <Route path={UPLOAD_IMAGE} element={<UploadImage />} />
           <Route path={PREVIEW_PIN} element={<PreviewPin />} />
+          <Route path={ADMIN_CATEGORIES} element={<AdminCategories />} />
         </Routes>
       </MainContainer>
       <Footer>
