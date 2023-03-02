@@ -12,7 +12,7 @@ import PinMeLogo from "../media/logo.png";
 import { FaHome } from "react-icons/fa";
 
 import Home from "../pages/Home/Home";
-import Homepage from "../pages/Homepage/Homepage";
+import Map from "../pages/Map/Map";
 
 import {
   ADMIN_ALL_PINS_PATH,
@@ -22,7 +22,7 @@ import {
   SIGN_IN_PATH,
   SIGN_UP_PATH,
   UPLOAD_IMAGE,
-  HOMEPAGE_PATH
+  MAP_PATH
 } from "../pages/paths";
 import SignIn from "../pages/SignIn/SignIn";
 import SignUp from "../pages/SignUp/SignUp";
@@ -54,7 +54,7 @@ function App() {
       <MainContainer>
         <Routes>
           <Route path={HOME_PATH} element={<Home />} />
-          <Route path={HOMEPAGE_PATH} element={<Homepage />} />
+          <Route path={MAP_PATH} element={<Map />} />
           <Route path={SIGN_UP_PATH} element={<SignUp />} />
           <Route path={SIGN_IN_PATH} element={<SignIn onSuccess={refetch} />} />
           <Route path={CREATE_PIN_PATH} element={<CreatePin />} />

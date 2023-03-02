@@ -1,5 +1,5 @@
 export const HOME_PATH = "/";
-export const HOMEPAGE_PATH = "/home";
+export const MAP_PATH = "/map";
 export const SIGN_UP_PATH = "/sign-up";
 export const SIGN_IN_PATH = "/sign-in";
 
