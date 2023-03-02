@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   useDisclosure,
   Button,
@@ -12,88 +12,163 @@ import {
   FormLabel,
   Input,
   ModalFooter,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { toast } from "react-toastify";
-// import {
-//   UpdatePinMutation,
-//   UpdatePinMutationVariables,
-// } from "../../gql/graphql";
+import { FaPen } from "react-icons/fa";
+import Select, { MultiValue } from "react-select";
+import {
+  GetCategoriesQuery,
+  UpdatePinMutation,
+  UpdatePinMutationVariables,
+} from "../../gql/graphql";
 import { getErrorMessage } from "../../utils";
-
-// const UPDATE_PIN = gql`
-//   mutation UpdatePin(
-//     $id: ID!
-//     $name: String!
-//     $address: String!
-//     $category: String!
-//     $description: String!
-//     $latitude: Float!
-//     $longitude: Float!
-//   ) {
-//     updatePin(
-//       id: $id
-//       name: $name
-//       address: $address
-//       category: $category
-//       description: $description
-//       latitude: $latitude
-//       longitude: $longitude
-//     ) {
-//       id
-//       name
-//     }
-//   }
-// `;
+const GET_CATEGORIES = gql`
+  query getCategories {
+    categories {
+      id
+      categoryName
+    }
+  }
+`;
+const UPDATE_PIN = gql`
+  mutation UpdatePin(
+    $pinId: ID!
+    $name: String!
+    $address: String!
+    $categories: [String!]!
+    $description: String!
+    $latitude: Float!
+    $longitude: Float!
+  ) {
+    updatePin(
+      id: $pinId
+      name: $name
+      address: $address
+      categories: $categories
+      description: $description
+      latitude: $latitude
+      longitude: $longitude
+    ) {
+      id
+      name
+      address
+      categories {
+        categoryName
+        id
+      }
+      description
+      latitude
+      longitude
+    }
+  }
+`;
 
 type updatePinModalProps = {
   id: string;
   name: string;
   address: string;
-  category: string;
+  categories: {
+    __typename?: "Category" | undefined;
+    categoryName: string;
+    id: string;
+  }[];
   description: string;
   latitude: number;
   longitude: number;
 };
 
 const UpdatePinModal = (pin: updatePinModalProps) => {
-  // const [updatePin] = useMutation<
-  //   UpdatePinMutation,
-  //   UpdatePinMutationVariables
-  // >(UPDATE_PIN);
+  const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [id, setId] = useState(pin.id);
   const [name, setName] = useState(pin.name);
   const [address, setAddress] = useState(pin.address);
-  const [category, setCategory] = useState(pin.category);
+  const [categories, setCategories] = useState(
+    pin.categories.map((category) => category.categoryName)
+  );
   const [description, setDescription] = useState(pin.description);
   const [latitude, setLatitude] = useState(pin.latitude);
   const [longitude, setLongitude] = useState(pin.longitude);
 
+  const { data, loading, error } = useQuery<GetCategoriesQuery>(
+    GET_CATEGORIES,
+    {
+      fetchPolicy: "cache-and-network",
+    }
+  );
+  const [updatePin] = useMutation<
+    UpdatePinMutation,
+    UpdatePinMutationVariables
+  >(UPDATE_PIN);
+
+  const renderSelectedCategories = () => {
+    const result = pin.categories.map((category) => ({
+      id: category.id,
+      value: category.categoryName,
+      label: category.categoryName,
+    }));
+    return result;
+  };
+  const selectedCategories = renderSelectedCategories();
+
+  const renderOptions = () => {
+    const result = data?.categories?.map((category) => ({
+      id: category.id,
+      value: category.categoryName,
+      label: category.categoryName,
+    }));
+    return result;
+  };
+  const optionsCategoies = renderOptions();
+
+  const handleSelect = (
+    selectedOptions: MultiValue<{
+      id: string;
+      value: string;
+      label: string;
+    }>
+  ) => {
+    const selected = selectedOptions.map((option) => option.value);
+    setCategories(selected);
+  };
+
   const onSubmit = async (event: React.MouseEvent<HTMLElement>) => {
-    // try {
-    //   event.preventDefault();
-    //   await updatePin({
-    //     variables: {
-    //       id,
-    //       name,
-    //       address,
-    //       category,
-    //       description,
-    //       latitude,
-    //       longitude,
-    //     },
-    //   });
-    //   toast.success(`succès.`);
-    //   onClose();
-    // } catch (error) {
-    //   toast.error(getErrorMessage(error));
-    // }
+    try {
+      event.preventDefault();
+      await updatePin({
+        variables: {
+          pinId: id,
+          name,
+          address,
+          categories,
+          description,
+          latitude,
+          longitude,
+        },
+      });
+      toast({
+        title: `Pin ${name} a été modifié avec succès.`,
+        status: "success",
+        duration: 9000,
+        isClosable: true,
+      });
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Something went wrong",
+        description: getErrorMessage(error),
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
     <>
-      <Button onClick={onOpen}>Modifier</Button>
+      <Button colorScheme="teal" onClick={onOpen}>
+        <FaPen />
+      </Button>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -128,14 +203,11 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
             </FormControl>
             <FormControl mt={4}>
               <FormLabel>Catégorie</FormLabel>
-              <Input
-                type="text"
-                id="category"
-                name="category"
-                value={category}
-                onChange={(event) => {
-                  setCategory(event.target.value);
-                }}
+              <Select
+                options={optionsCategoies}
+                isMulti
+                defaultValue={selectedCategories}
+                onChange={handleSelect}
               />
             </FormControl>
             <FormControl mt={4}>

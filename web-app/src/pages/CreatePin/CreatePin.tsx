@@ -147,6 +147,7 @@ const CreatePin = () => {
       <NavbarPage />
       <Flex width="full" align="center" justifyContent="center">
         <Box
+          bg="#fff"
           p={8}
           width="500px"
           maxWidth="800px"
