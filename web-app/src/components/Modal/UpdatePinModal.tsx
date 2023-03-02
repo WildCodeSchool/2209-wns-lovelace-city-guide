@@ -130,7 +130,6 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
     }>
   ) => {
     const selected = selectedOptions.map((option) => option.value);
-    console.log(selected);
     setCategories(selected);
   };
 
@@ -207,7 +206,7 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
               <Select
                 options={optionsCategoies}
                 isMulti
-                value={selectedCategories}
+                defaultValue={selectedCategories}
                 onChange={handleSelect}
               />
             </FormControl>
