@@ -59,6 +59,12 @@ margin: 10px ;
 box-shadow: -3px -3px 0 #912B2B;
 `;
 
+export const DashboardButton = styled(BlueButton)`
+  padding: 1rem;
+  font-size: 3rem;
+  margin: auto;
+`;
+
 export const BtnRedSquare = styled.button`
   padding: 8px;
   color: #222231;
