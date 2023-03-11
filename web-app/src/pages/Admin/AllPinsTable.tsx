@@ -17,7 +17,6 @@ import { Link } from "react-router-dom";
 import ConfirmationDeleteDialog from "../../components/Dialog/ConfirmationDeleteDialog";
 import Loader from "../../components/Loader";
 import UpdatePinModal from "../../components/Modal/UpdatePinModal";
-import NavbarPage from "../../components/Navbar/NavbarPage";
 import { GetPinsAdminPageQuery } from "../../gql/graphql";
 
 const GET_PINS_ADMIN_PAGE = gql`
@@ -58,7 +57,6 @@ const AllPinsTable = () => {
     }
     return (
       <>
-        <NavbarPage />
         <Flex width="full" align="center" justifyContent="center">
           <Box
             bg="#fff"

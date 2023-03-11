@@ -1,6 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { useToast } from "@chakra-ui/react";
+import { Spinner, useToast } from "@chakra-ui/react";
 import {
   Box,
   Flex,
@@ -11,15 +11,13 @@ import {
   Button,
   InputGroup,
   InputRightElement,
+  Text,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import Loader from "../../components/Loader";
-import NavbarPage from "../../components/Navbar/NavbarPage";
+import { Link, useNavigate } from "react-router-dom";
 import { SignInMutation, SignInMutationVariables } from "../../gql/graphql";
 import { getErrorMessage } from "../../utils";
-import { HOME_PATH } from "../paths";
+import { HOME_PATH, SIGN_UP_PATH } from "../paths";
 
 const SIGN_IN = gql`
   mutation SignIn($emailAddress: String!, $password: String!) {
@@ -53,16 +51,17 @@ const SignIn = ({ onSuccess }: { onSuccess: () => {} }) => {
       toast({
         title: "Vous vous êtes connecté avec succès.",
         status: "success",
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
       onSuccess();
       navigate(HOME_PATH);
     } catch (error) {
       toast({
-        title: "Something went wrong",
+        title: "Erreur",
+        status: "error",
         description: getErrorMessage(error),
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
     }
@@ -70,11 +69,11 @@ const SignIn = ({ onSuccess }: { onSuccess: () => {} }) => {
 
   return (
     <>
-      <NavbarPage />
       <Flex width="full" align="center" justifyContent="center">
         <Box
+          bg="#fff"
           p={8}
-          maxWidth="500px"
+          width="450px"
           borderWidth={1}
           borderRadius={8}
           boxShadow="lg"
@@ -132,9 +131,29 @@ const SignIn = ({ onSuccess }: { onSuccess: () => {} }) => {
                 type="submit"
                 disabled={loading}
               >
-                {loading ? <Loader /> : "Valider"}
+                {loading ? (
+                  <Spinner
+                    thickness="4px"
+                    speed="0.65s"
+                    emptyColor="gray.200"
+                    color="#FF8787"
+                    size="xl"
+                  />
+                ) : (
+                  "Valider"
+                )}
               </Button>
             </form>
+          </Box>
+          <Box>
+            <Text pr="5px">
+              Vous n'avez pas de compte?
+              <Link to={SIGN_UP_PATH}>
+                <span style={{ marginLeft: "5px", color: "#319795" }}>
+                  S'inscrire
+                </span>
+              </Link>
+            </Text>
           </Box>
         </Box>
       </Flex>

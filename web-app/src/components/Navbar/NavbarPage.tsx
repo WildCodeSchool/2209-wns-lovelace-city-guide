@@ -8,10 +8,11 @@ import {
   Flex,
   Image,
   Spacer,
+  Text,
   useToast,
 } from "@chakra-ui/react";
 import { FaUser, FaHome, FaSignOutAlt } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   MyProfileQuery,
   SignOutMutation,
@@ -20,7 +21,8 @@ import {
 import { HOME_PATH, SIGN_IN_PATH, SIGN_UP_PATH } from "../../pages/paths";
 import { getErrorMessage } from "../../utils";
 import PinMeLogo from "../../media/logo.png";
-import { BlueButton, RedButton } from "styles/base-styles";
+import { BlueButton, BtnBlueRounded, RedButton } from "styles/base-styles";
+import { useState } from "react";
 
 const MY_PROFILE = gql`
   query MyProfile {
@@ -41,9 +43,13 @@ const SIGN_OUT = gql`
     }
   }
 `;
+type PropType = {
+  data: MyProfileQuery | undefined;
+  isLoggedIn: boolean;
+  onSignOut: () => void;
+};
 
-const NavbarPage = () => {
-  const { data, refetch } = useQuery<MyProfileQuery>(MY_PROFILE);
+const NavbarPage = ({ data, isLoggedIn, onSignOut }: PropType) => {
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -56,16 +62,17 @@ const NavbarPage = () => {
         toast({
           title: "Vous vous êtes déconnecté avec succès.",
           status: "success",
-          duration: 9000,
+          duration: 5000,
           isClosable: true,
         });
         navigate(HOME_PATH);
       },
       onError: (error) => {
         toast({
-          title: "Something went wrong",
+          title: "Error",
+          status: "error",
           description: getErrorMessage(error),
-          duration: 9000,
+          duration: 5000,
           isClosable: true,
         });
       },
@@ -74,6 +81,7 @@ const NavbarPage = () => {
 
   const handleSignOut = async (): Promise<void> => {
     await signOut();
+    onSignOut();
   };
 
   return (
@@ -87,9 +95,11 @@ const NavbarPage = () => {
           <Spacer />
           {data?.myProfile ? (
             <>
-              <i>{data?.myProfile.emailAddress}</i>
+              <BtnBlueRounded>
+                {data?.myProfile.firstName} {data?.myProfile.lastName}
+              </BtnBlueRounded>
               <Button colorScheme="teal" type="submit" onClick={handleSignOut}>
-                Déconnexion
+                <FaSignOutAlt />
               </Button>
             </>
           ) : (
@@ -97,9 +107,6 @@ const NavbarPage = () => {
               <RedButton to={SIGN_UP_PATH} icon>
                 <FaUser />
               </RedButton>
-              <BlueButton to={SIGN_IN_PATH} icon>
-                <FaSignOutAlt />
-              </BlueButton>
             </ButtonGroup>
           )}
         </Flex>
