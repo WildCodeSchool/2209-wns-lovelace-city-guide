@@ -25,14 +25,10 @@ services:
     build:
       context: ./file-uploader-service
       target: prod
-    environment: 
-      NODE_ENV: production
     expose:
       - 5000
     volumes: 
-      - ./file-uploader-service:/app
-    depends-on:
-      - back-end
+      - file-uploader-data:/app/uploads
 
   database:
     image: postgres:14.5-alpine
@@ -59,3 +55,4 @@ services:
 volumes:
   database-content:
   web-app-build:
+  file-uploader-data:
