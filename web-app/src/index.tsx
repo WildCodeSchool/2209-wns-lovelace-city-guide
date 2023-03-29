@@ -8,7 +8,7 @@ import reportWebVitals from "./reportWebVitals";
 import { ChakraProvider } from "@chakra-ui/react";
 
 const client = new ApolloClient({
-  uri: "/",
+  uri: "/api",
   cache: new InMemoryCache(),
 });
 
