@@ -58,7 +58,7 @@ const UploadImage = () => {
 
     try {
       const responseUploadImage = await fetch(
-        "/api/image-upload",
+        "/image-upload",
         {
           method: "POST",
           body: formData,
