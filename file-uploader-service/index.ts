@@ -11,7 +11,6 @@ type FileNameCallback = (error: Error | null, filename: string) => void;
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static("uploads"));
 
 var storage = multer.diskStorage({
   destination: function (
@@ -32,7 +31,7 @@ var storage = multer.diskStorage({
 var upload = multer({ storage: storage });
 
 app.post(
-  "/image-upload",
+  "/uploader/image-upload",
   upload.single("file"),
   (req: Request, res: Response) => {
     const fileName = req.file?.filename;
@@ -46,6 +45,7 @@ app.post(
     });
   }
 );
+app.use("/uploader", express.static("uploads"));
 
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);

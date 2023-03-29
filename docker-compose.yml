@@ -1,8 +1,8 @@
-version: '3.8'
+version: "3.8"
 
 services:
   back-end:
-    build: 
+    build:
       context: ./back-end
       target: dev
     environment:
@@ -25,18 +25,18 @@ services:
       - /app/node_modules
     depends_on:
       - back-end
-  
-  file-uploader-service: 
+
+  file-uploader-service:
     build:
       context: ./file-uploader-service
       target: dev
-    environment: 
+    environment:
       NODE_ENV: development
     ports:
-      -5000:5000
-    volumes: 
+      - 5000:5000
+    volumes:
       - ./file-uploader-service:/app
-    depends-on:
+    depends_on:
       - back-end
 
   database:
