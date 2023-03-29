@@ -21,6 +21,19 @@ services:
     volumes:
       - web-app-build:/app/build
 
+  file-uploader-service: 
+    build:
+      context: ./file-uploader-service
+      target: prod
+    environment: 
+      NODE_ENV: production
+    expose:
+      - 5000
+    volumes: 
+      - ./file-uploader-service:/app
+    depends-on:
+      - back-end
+
   database:
     image: postgres:14.5-alpine
     environment:
@@ -34,7 +47,7 @@ services:
   gateway:
     image: nginx
     ports:
-      - ${GATEMAWY_PORT}:80
+      - ${GATEWAY_PORT}:80
     depends_on:
       - back-end
       - web-app

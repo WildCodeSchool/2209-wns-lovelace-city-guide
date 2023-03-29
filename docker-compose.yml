@@ -25,6 +25,19 @@ services:
       - /app/node_modules
     depends_on:
       - back-end
+  
+  file-uploader-service: 
+    build:
+      context: ./file-uploader-service
+      target: dev
+    environment: 
+      NODE_ENV: development
+    ports:
+      -5000:5000
+    volumes: 
+      - ./file-uploader-service:/app
+    depends-on:
+      - back-end
 
   database:
     image: postgres:14.5-alpine
