@@ -85,7 +85,7 @@ const PreviewPin = () => {
                         objectFit="cover"
                         boxSize="200px"
                         key={image.id}
-                        src={`/${image.fileName}`}
+                        src={`/uploader/${image.fileName}`}
                         alt="pin"
                       />
                     </CardBody>

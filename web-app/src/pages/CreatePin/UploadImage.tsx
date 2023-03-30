@@ -57,13 +57,10 @@ const UploadImage = () => {
     formData.append("file", image.data);
 
     try {
-      const responseUploadImage = await fetch(
-        "/image-upload",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const responseUploadImage = await fetch("/uploader/image-upload", {
+        method: "POST",
+        body: formData,
+      });
       const responseAddImageToPin = await addImageToPin();
       console.log(responseAddImageToPin);
       if (responseUploadImage && responseAddImageToPin) {
