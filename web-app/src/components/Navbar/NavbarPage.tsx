@@ -43,15 +43,16 @@ const SIGN_OUT = gql`
     }
   }
 `;
-type PropType = {
-  data: MyProfileQuery | undefined;
-  isLoggedIn: boolean;
-  onSignOut: () => void;
-};
+// type PropType = {
+//   data: any;
+//   //isLoggedIn: boolean;
+//   onSignOut: any;
+// };
 
-const NavbarPage = ({ data, isLoggedIn, onSignOut }: PropType) => {
+const NavbarPage = ({ data, onSignOut }: any) => {
   const navigate = useNavigate();
   const toast = useToast();
+  console.log(data, 2);
 
   const currentUserId = data?.myProfile.id as string;
   const [signOut] = useMutation<SignOutMutation, SignOutMutationVariables>(

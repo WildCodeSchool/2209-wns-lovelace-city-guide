@@ -1,5 +1,5 @@
 import { gql, useQuery } from "@apollo/client";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Routes, Route, useLocation, Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { MyProfileQuery } from "../gql/graphql";
@@ -34,6 +34,7 @@ import AlreadyLoggedIn from "pages/Protected/AlreadyLoggedIn";
 import AdminRoute from "pages/Protected/AdminRoute";
 import NavbarPage from "components/Navbar/NavbarPage";
 import { divIcon } from "leaflet";
+import { AppContext } from "context/AppContext";
 
 const MY_PROFILE = gql`
   query MyProfile {
@@ -52,6 +53,7 @@ function App() {
   const [userStatus, setUserStatus] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const { pathname } = useLocation();
+  const appContext = useContext(AppContext);
   const { data, refetch, loading } = useQuery<MyProfileQuery>(MY_PROFILE, {
     onCompleted: (data) => {
       if (data.myProfile) {
@@ -72,14 +74,16 @@ function App() {
   useEffect(() => {
     checkIsAdmin();
   });
-  console.log(pathname);
+
+  console.log(appContext?.userProfile, 1);
   return (
     <>
       <MainContainer>
-        {pathname !== "/" && pathname !== "/map" ? (
-          <NavbarPage data={data} isLoggedIn={isLoggedIn} onSignOut={refetch} />
-        ) : (
-          <div></div>
+        {pathname !== "/" && pathname !== "/map" && (
+          <NavbarPage
+            user={appContext?.userProfile}
+            onSignOut={appContext?.refetch}
+          />
         )}
 
         <Routes>
