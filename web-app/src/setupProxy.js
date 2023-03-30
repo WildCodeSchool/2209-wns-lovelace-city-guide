@@ -1,17 +1,17 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-module.exports = function(app) {
+module.exports = function (app) {
     app.use(
         '/api',
         createProxyMiddleware({
-            target: 'http://localhost:4000',
+            target: 'http://back-end:4000',
             changeOrigin: true,
         })
     )
     app.use(
-        '/uploader/image-upload',
+        '/uploader',
         createProxyMiddleware({
-            target: 'http://localhost:5000',
+            target: 'http://file-uploader-service:5000',
             changeOrigin: true,
         })
     )
