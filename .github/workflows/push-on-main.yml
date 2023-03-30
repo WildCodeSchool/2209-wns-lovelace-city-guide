@@ -12,4 +12,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
       - name: build-and-deploy
-        run: ./deploy-origin-main.sh
+        run: |
+          git fetch origin 
+          git reset --hard origin/main 
+          git clean -f -d
+          docker compose -f docker-compose.prod.yml up --build --detach
