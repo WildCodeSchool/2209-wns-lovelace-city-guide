@@ -85,7 +85,7 @@ const PreviewPin = () => {
                         objectFit="cover"
                         boxSize="200px"
                         key={image.id}
-                        src={`http://localhost:5000/${image.fileName}`}
+                        src={`/${image.fileName}`}
                         alt="pin"
                       />
                     </CardBody>
