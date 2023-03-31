@@ -9,11 +9,5 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-      - name: build-and-deploy
-        run: |
-          git fetch origin 
-          git reset --hard origin/main 
-          git clean -f -d
-          docker compose -f docker-compose.prod.yml up --build --detach
+      - name: Call webhook to deploy main branch on staging environment
+        run: echo 'Hello, about to trigger webhook 🐒' && curl ${{ secrets.URL_WEBHOOK_DEPLOY_MAIN_ON_STAGING }}
