@@ -1,8 +1,8 @@
-version: '3.8'
+version: "3.8"
 
 services:
   back-end:
-    build: 
+    build:
       context: ./back-end
       target: prod
     environment:
@@ -15,19 +15,20 @@ services:
       - database
 
   web-app:
-    build: 
+    build:
       context: ./web-app
       target: prod
-    volumes:
-      - web-app-build:/app/build
+    expose:
+      - 3000
+    restart: always
 
-  file-uploader-service: 
+  file-uploader-service:
     build:
       context: ./file-uploader-service
       target: prod
     expose:
       - 5000
-    volumes: 
+    volumes:
       - file-uploader-data:/app/uploads
 
   database:
@@ -49,10 +50,13 @@ services:
       - web-app
     volumes:
       - ./gateway/nginx.conf:/etc/nginx/nginx.conf
-      - web-app-build:/web-app-build
     restart: always
+
+  adminer:
+    image: adminer
+    expose:
+      - 8080
 
 volumes:
   database-content:
-  web-app-build:
   file-uploader-data:
