@@ -3,11 +3,11 @@ name: build and deploy
 on:
   push:
     branches:
-      - main
+      - staging
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Call webhook to deploy main branch on staging environment
-        run: echo 'Hello, about to trigger webhook 🐒' && curl ${{ secrets.URL_WEBHOOK_DEPLOY_MAIN }}
+        run: echo 'Hello, about to trigger webhook 🐒' && curl ${{ secrets.URL_WEBHOOK_DEPLOY_STAGING }}
