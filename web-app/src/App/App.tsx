@@ -36,55 +36,27 @@ import NavbarPage from "components/Navbar/NavbarPage";
 import { divIcon } from "leaflet";
 import { AppContext } from "context/AppContext";
 
-const MY_PROFILE = gql`
-  query MyProfile {
-    myProfile {
-      id
-      firstName
-      lastName
-      emailAddress
-      userStatus
-    }
-  }
-`;
-
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userStatus, setUserStatus] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
+  const { userProfile, loading, refetch, isLoggedIn, isAdmin } =
+    useContext(AppContext);
   const { pathname } = useLocation();
-  const appContext = useContext(AppContext);
-  const { data, refetch, loading } = useQuery<MyProfileQuery>(MY_PROFILE, {
-    onCompleted: (data) => {
-      if (data.myProfile) {
-        setIsLoggedIn(true);
-        setUserStatus(data.myProfile.userStatus);
-      }
-    },
-    onError: () => {
-      setIsLoggedIn(false);
-    },
-  });
-
-  const checkIsAdmin = () => {
-    if (userStatus === "ADMIN") {
-      setIsAdmin(true);
-    }
-  };
-  useEffect(() => {
-    checkIsAdmin();
-  });
-
-  console.log(appContext?.userProfile, 1);
+  console.log(isAdmin, "isAdmin");
+  console.log(userProfile, "user profile");
   return (
     <>
       <MainContainer>
-        {pathname !== "/" && pathname !== "/map" && (
+        {/* {pathname !== "/" && pathname !== "/map" && (
           <NavbarPage
             user={appContext?.userProfile}
+            isLoggedIn={appContext?.isLoggedIn}
             onSignOut={appContext?.refetch}
           />
-        )}
+        )} */}
+        <NavbarPage
+          user={userProfile}
+          isLoggedIn={isLoggedIn}
+          onSignOut={refetch}
+        />
 
         <Routes>
           <Route path={HOME_PATH} element={<Home />} />
@@ -116,11 +88,7 @@ function App() {
           <Route
             path={ADMIN_ALL_PINS_PATH}
             element={
-              <AdminRoute
-                isLoggedIn={isLoggedIn}
-                loading={loading}
-                isAdmin={isAdmin}
-              >
+              <AdminRoute loading={loading} isAdmin={isAdmin}>
                 <AllPinsTable />
               </AdminRoute>
             }
@@ -128,11 +96,7 @@ function App() {
           <Route
             path={ADMIN_DASHBOARD}
             element={
-              <AdminRoute
-                isLoggedIn={isLoggedIn}
-                loading={loading}
-                isAdmin={isAdmin}
-              >
+              <AdminRoute loading={loading} isAdmin={isAdmin}>
                 <Dashboard />
               </AdminRoute>
             }
@@ -156,11 +120,7 @@ function App() {
           <Route
             path={ADMIN_CATEGORIES}
             element={
-              <AdminRoute
-                isLoggedIn={isLoggedIn}
-                loading={loading}
-                isAdmin={isAdmin}
-              >
+              <AdminRoute loading={loading} isAdmin={isAdmin}>
                 <AdminCategories />
               </AdminRoute>
             }

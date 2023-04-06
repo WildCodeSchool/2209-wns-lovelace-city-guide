@@ -52,7 +52,7 @@ const SIGN_OUT = gql`
 const NavbarPage = ({ data, onSignOut }: any) => {
   const navigate = useNavigate();
   const toast = useToast();
-  console.log(data, 2);
+  //console.log(data, "log from navbar");
 
   const currentUserId = data?.myProfile.id as string;
   const [signOut] = useMutation<SignOutMutation, SignOutMutationVariables>(

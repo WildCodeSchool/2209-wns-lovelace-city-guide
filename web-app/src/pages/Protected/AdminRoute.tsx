@@ -3,14 +3,14 @@ import { HOME_PATH } from "pages/paths";
 import { Navigate } from "react-router-dom";
 
 type PropType = {
-  isLoggedIn: boolean;
   children: any;
   loading: any;
-  isAdmin: boolean;
+  isAdmin: boolean | undefined;
 };
 const AdminRoute = (props: PropType) => {
   const toast = useToast();
-  const { isLoggedIn, children, loading, isAdmin } = props;
+  const { children, loading, isAdmin } = props;
+  console.log(isAdmin);
   if (loading) {
     return (
       <Spinner
@@ -22,7 +22,8 @@ const AdminRoute = (props: PropType) => {
       />
     );
   }
-  if (!isLoggedIn && !isAdmin) {
+  if (isAdmin === false) {
+    console.log(isAdmin);
     toast({
       title: "Vous n'avez pas de droit d'accedér cette page",
       status: "info",

@@ -21,25 +21,55 @@ export const MY_PROFILE = gql`
 
 type ValueType = {
   userProfile: MyProfileQuery | null;
-  refetch: (
-    variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<MyProfileQuery | null>>;
+  loading: boolean;
+  refetch:
+    | ((
+        variables?: Partial<OperationVariables> | undefined
+      ) => Promise<ApolloQueryResult<MyProfileQuery>>)
+    | (() => void);
+  isLoggedIn: boolean;
+  isAdmin: boolean;
 };
 
-export const AppContext = createContext<ValueType | null>(null);
+export const AppContext = createContext<ValueType>({
+  userProfile: null,
+  loading: true,
+  refetch: () => {},
+  isLoggedIn: false,
+  isAdmin: false,
+});
 
 export function ContextProvider({ children }: any) {
-  const { data, refetch } = useQuery<MyProfileQuery | null>(MY_PROFILE);
+  const { data, refetch, error, loading } = useQuery<MyProfileQuery | null>(
+    MY_PROFILE
+  );
   const [userProfile, setUserProfile] = useState<MyProfileQuery | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
-    if (data) {
+    if (error || !data) {
+      setUserProfile(null);
+    } else if (data) {
+      const userStatus = data?.myProfile.userStatus;
+      if (userStatus === "ADMIN") {
+        setIsAdmin(true);
+      }
       setUserProfile(data);
+      setIsLoggedIn(true);
     }
-  }, [data]);
+  }, [data, error]);
 
   return (
-    <AppContext.Provider value={{ userProfile, refetch }}>
+    <AppContext.Provider
+      value={{
+        userProfile,
+        loading,
+        refetch,
+        isLoggedIn,
+        isAdmin,
+      }}
+    >
       {children}
     </AppContext.Provider>
   );

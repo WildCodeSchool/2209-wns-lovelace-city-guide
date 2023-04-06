@@ -3,7 +3,7 @@ import { SIGN_IN_PATH } from "pages/paths";
 import { Navigate } from "react-router-dom";
 
 type PropType = {
-  isLoggedIn: boolean;
+  isLoggedIn: boolean | undefined;
   children: any;
   loading: any;
 };

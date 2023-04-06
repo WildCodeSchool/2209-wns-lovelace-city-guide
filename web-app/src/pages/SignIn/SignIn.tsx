@@ -1,4 +1,9 @@
-import { gql, useMutation } from "@apollo/client";
+import {
+  ApolloQueryResult,
+  gql,
+  OperationVariables,
+  useMutation,
+} from "@apollo/client";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Spinner, useToast } from "@chakra-ui/react";
 import {
@@ -15,7 +20,11 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { SignInMutation, SignInMutationVariables } from "../../gql/graphql";
+import {
+  MyProfileQuery,
+  SignInMutation,
+  SignInMutationVariables,
+} from "../../gql/graphql";
 import { getErrorMessage } from "../../utils";
 import { HOME_PATH, SIGN_UP_PATH } from "../paths";
 
@@ -30,7 +39,16 @@ const SIGN_IN = gql`
   }
 `;
 
-const SignIn = ({ onSuccess }: { onSuccess: () => {} }) => {
+type PropsType = {
+  onSuccess:
+    | ((
+        variables?: Partial<OperationVariables> | undefined
+      ) => Promise<ApolloQueryResult<MyProfileQuery>>)
+    | (() => void)
+    | undefined;
+};
+
+const SignIn = ({ onSuccess }: any) => {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
