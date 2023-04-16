@@ -34,6 +34,13 @@ const GET_PINS_ADMIN_PAGE = gql`
       latitude
       longitude
       createdAt
+      images {
+        id
+        fileName
+      }
+      isAccessible
+      isChildFriendly
+      isOutdoor
     }
   }
 `;
@@ -108,6 +115,10 @@ const AllPinsTable = () => {
                             description={pin.description}
                             latitude={pin.latitude}
                             longitude={pin.longitude}
+                            isAccessible={pin.isAccessible}
+                            isChildFriendly={pin.isChildFriendly}
+                            isOutdoor={pin.isOutdoor}
+                            userEmail="lily@test.com"
                           />
                         </Td>
                         <Td>
