@@ -4,12 +4,14 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Field, ID, ObjectType } from "type-graphql";
 import Category from "../Category/Category.entity";
 import Image from "../Image/Image.entity";
+import AppUser from "../AppUser/AppUser.entity";
 
 @Entity()
 @ObjectType()
@@ -23,8 +25,8 @@ export default class Pin {
     longitude: number,
     isAccessible?: boolean,
     isChildFriendly?: boolean,
-    isOutdoor?: boolean
-    //pinner: Pinner,
+    isOutdoor?: boolean,
+    user?: AppUser
   ) {
     this.name = name;
     this.address = address;
@@ -40,6 +42,9 @@ export default class Pin {
     }
     if (isOutdoor) {
       this.isOutdoor = isOutdoor;
+    }
+    if (user) {
+      this.user = user;
     }
   }
 
@@ -91,4 +96,12 @@ export default class Pin {
   @CreateDateColumn()
   @Field(() => String, { nullable: true })
   createdAt: Date;
+
+  @ManyToOne(() => AppUser, (user) => user.pins)
+  @Field(() => AppUser)
+  user: AppUser;
+
+  @ManyToMany(() => AppUser)
+  @Field(() => [AppUser])
+  users: AppUser[];
 }

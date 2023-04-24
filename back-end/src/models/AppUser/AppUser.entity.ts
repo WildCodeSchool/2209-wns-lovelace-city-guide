@@ -1,6 +1,15 @@
 import { IsEmail } from "class-validator";
 import { Field, ID, ObjectType, registerEnumType } from "type-graphql";
-import { Entity, PrimaryGeneratedColumn, Column, Index } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Index,
+  OneToMany,
+  ManyToMany,
+  JoinTable,
+} from "typeorm";
+import Pin from "../Pin/Pin.entity";
 
 export enum UserStatus {
   USER = "user",
@@ -53,4 +62,16 @@ export default class AppUser {
   @Column({ nullable: true })
   @Field((type) => UserStatus)
   userStatus: UserStatus;
+
+  @OneToMany(() => Pin, (pin) => pin.user, { eager: true })
+  @Field(() => [Pin], { nullable: true })
+  pins: Pin[];
+
+  @ManyToMany(() => Pin, (pin) => pin.users, {
+    onDelete: "CASCADE",
+    eager: true,
+  })
+  @Field(() => [Pin])
+  @JoinTable()
+  favPins: Pin[];
 }

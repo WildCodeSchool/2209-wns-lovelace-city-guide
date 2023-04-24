@@ -20,6 +20,10 @@ export default class PinResolver {
       description,
       latitude,
       longitude,
+      isAccessible,
+      isChildFriendly,
+      isOutdoor,
+      userEmail,
     }: CreatePinArgs
   ): Promise<Pin> {
     return PinRepository.createPin(
@@ -28,7 +32,11 @@ export default class PinResolver {
       categories,
       description,
       latitude,
-      longitude
+      longitude,
+      isAccessible,
+      isChildFriendly,
+      isOutdoor,
+      userEmail
     );
   }
 
@@ -43,6 +51,10 @@ export default class PinResolver {
       description,
       latitude,
       longitude,
+      isAccessible,
+      isChildFriendly,
+      isOutdoor,
+      userEmail,
     }: UpdatePinArgs
   ): Promise<Pin> {
     return PinRepository.updatePin(
@@ -52,7 +64,11 @@ export default class PinResolver {
       categories,
       description,
       latitude,
-      longitude
+      longitude,
+      isAccessible,
+      isChildFriendly,
+      isOutdoor,
+      userEmail
     );
   }
 

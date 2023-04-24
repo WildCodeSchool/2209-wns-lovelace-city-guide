@@ -1,3 +1,5 @@
+import AppUser from "../AppUser/AppUser.entity";
+import AppUserRepository from "../AppUser/AppUser.repository";
 import Category from "../Category/Category.entity";
 import CategoryRepository from "../Category/Category.repository";
 import ImageRepository from "../Image/Image.repository";
@@ -18,7 +20,10 @@ export default class PinRepository extends PinDb {
       [restaurantCategory],
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum, erat eget tempus gravida, est nunc congue purus, et accumsan libero augue ut mi. Mauris egestas imperdiet mauris, eget interdum.",
       45.73615111648431,
-      4.837501130044736
+      4.837501130044736,
+      true,
+      false,
+      true
     );
     const secondResto = new Pin(
       "Noodle",
@@ -26,7 +31,10 @@ export default class PinRepository extends PinDb {
       [restaurantCategory],
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum, erat eget tempus gravida, est nunc congue purus, et accumsan libero augue ut mi. Mauris egestas imperdiet mauris, eget interdum.",
       45.72,
-      4.84
+      4.84,
+      true,
+      true,
+      false
     );
 
     await this.repository.save([firstResto, secondResto]);
@@ -42,11 +50,17 @@ export default class PinRepository extends PinDb {
     categoriesNames: string[],
     description: string,
     latitude: number,
-    longitude: number
+    longitude: number,
+    isAccessible: boolean,
+    isChildFriendly: boolean,
+    isOutdoor: boolean,
+    userEmail: string
   ): Promise<Pin> {
     const categories = (await this.getCategories(
       categoriesNames
     )) as Category[];
+    const user = (await this.getCurrentUserByEmail(userEmail)) as AppUser;
+    console.log(user);
     const newPin = this.repository.create({
       name,
       address,
@@ -54,6 +68,10 @@ export default class PinRepository extends PinDb {
       description,
       latitude,
       longitude,
+      isAccessible,
+      isChildFriendly,
+      isOutdoor,
+      user,
     });
     await this.repository.save(newPin);
     return newPin;
@@ -66,7 +84,11 @@ export default class PinRepository extends PinDb {
     categoriesNames: string[],
     description: string,
     latitude: number,
-    longitude: number
+    longitude: number,
+    isAccessible: boolean,
+    isChildFriendly: boolean,
+    isOutdoor: boolean,
+    userEmail: string
   ): Promise<
     {
       id: string;
@@ -76,9 +98,15 @@ export default class PinRepository extends PinDb {
       description: string;
       latitude: number;
       longitude: number;
+      isAccessible: boolean;
+      isChildFriendly: boolean;
+      isOutdoor: boolean;
+      userEmail: string;
     } & Pin
   > {
     const existingPin = await this.repository.findOneBy({ id });
+    const user = (await this.getCurrentUserByEmail(userEmail)) as AppUser;
+    console.log(user);
     const categories = (await this.getCategories(
       categoriesNames
     )) as Category[];
@@ -93,6 +121,10 @@ export default class PinRepository extends PinDb {
       description,
       latitude,
       longitude,
+      isAccessible,
+      isChildFriendly,
+      isOutdoor,
+      userEmail,
     });
   }
 
@@ -122,5 +154,16 @@ export default class PinRepository extends PinDb {
     const image = await ImageRepository.addImage(fileName);
     pin.images = [...pin.images, image];
     return this.repository.save(pin);
+  }
+
+  static async getCurrentUserByEmail(emailAddress: string): Promise<AppUser> {
+    const currentUser = await AppUserRepository.findByEmailAddress(
+      emailAddress
+    );
+
+    if (!currentUser) {
+      throw Error("User not found");
+    }
+    return currentUser;
   }
 }

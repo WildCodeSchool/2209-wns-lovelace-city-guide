@@ -15,8 +15,8 @@ import { GlobalContext } from "../..";
 
 @Resolver(AppUser)
 export default class AppUserResolver {
-  @Query(() => AppUser)
-  users(): Promise<AppUser[]> {
+  @Query(() => [AppUser])
+  getUsers(): Promise<AppUser[]> {
     return AppUserRepository.getUsers();
   }
 
