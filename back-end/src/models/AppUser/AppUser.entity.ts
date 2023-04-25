@@ -63,15 +63,13 @@ export default class AppUser {
   @Field((type) => UserStatus)
   userStatus: UserStatus;
 
-  @OneToMany(() => Pin, (pin) => pin.user, { eager: true })
+  @OneToMany(() => Pin, (pin) => pin.currentUser)
   @Field(() => [Pin], { nullable: true })
   pins: Pin[];
 
-  @ManyToMany(() => Pin, (pin) => pin.users, {
+  @ManyToMany(() => Pin, (favoritePin) => favoritePin.favoriteUsers, {
     onDelete: "CASCADE",
-    eager: true,
   })
   @Field(() => [Pin])
-  @JoinTable()
-  favPins: Pin[];
+  favoritePins: Pin[];
 }

@@ -85,7 +85,7 @@ const CREATE_PIN = gql`
       isAccessible
       isChildFriendly
       isOutdoor
-      user {
+      currentUser {
         emailAddress
       }
     }

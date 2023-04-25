@@ -89,4 +89,12 @@ export default class PinResolver {
   ): Promise<Pin> {
     return PinRepository.addImageToPin(pinId, fileName);
   }
+
+  @Mutation(() => Pin)
+  addPinToUserFavorite(
+    @Arg("pinId") pinId: string,
+    @Arg("userId") userId: string
+  ): Promise<Pin> {
+    return PinRepository.addPinToUserFavorite(pinId, userId);
+  }
 }

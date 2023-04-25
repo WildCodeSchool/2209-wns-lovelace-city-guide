@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -26,7 +27,7 @@ export default class Pin {
     isAccessible?: boolean,
     isChildFriendly?: boolean,
     isOutdoor?: boolean,
-    user?: AppUser
+    currentUser?: AppUser
   ) {
     this.name = name;
     this.address = address;
@@ -43,8 +44,8 @@ export default class Pin {
     if (isOutdoor) {
       this.isOutdoor = isOutdoor;
     }
-    if (user) {
-      this.user = user;
+    if (currentUser) {
+      this.currentUser = currentUser;
     }
   }
 
@@ -97,11 +98,14 @@ export default class Pin {
   @Field(() => String, { nullable: true })
   createdAt: Date;
 
-  @ManyToOne(() => AppUser, (user) => user.pins)
+  @ManyToOne(() => AppUser, (currentUser) => currentUser.pins, { eager: true })
   @Field(() => AppUser)
-  user: AppUser;
+  currentUser: AppUser;
 
-  @ManyToMany(() => AppUser)
+  @ManyToMany(() => AppUser, (favoriteUser) => favoriteUser.favoritePins, {
+    eager: true,
+  })
   @Field(() => [AppUser])
-  users: AppUser[];
+  @JoinTable()
+  favoriteUsers: AppUser[];
 }

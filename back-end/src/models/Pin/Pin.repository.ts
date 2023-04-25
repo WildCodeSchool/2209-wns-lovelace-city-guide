@@ -59,8 +59,10 @@ export default class PinRepository extends PinDb {
     const categories = (await this.getCategories(
       categoriesNames
     )) as Category[];
-    const user = (await this.getCurrentUserByEmail(userEmail)) as AppUser;
-    console.log(user);
+    const currentUser = (await this.getCurrentUserByEmail(
+      userEmail
+    )) as AppUser;
+    console.log(currentUser);
     const newPin = this.repository.create({
       name,
       address,
@@ -71,7 +73,7 @@ export default class PinRepository extends PinDb {
       isAccessible,
       isChildFriendly,
       isOutdoor,
-      user,
+      currentUser,
     });
     await this.repository.save(newPin);
     return newPin;
@@ -165,5 +167,24 @@ export default class PinRepository extends PinDb {
       throw Error("User not found");
     }
     return currentUser;
+  }
+
+  static async addPinToUserFavorite(
+    pinId: string,
+    userId: string
+  ): Promise<Pin> {
+    const pin = await this.repository.findOneBy({ id: pinId });
+    if (!pin) {
+      throw Error("Pin doesn't exist");
+    }
+    const currentUser = (await AppUserRepository.findUserById(
+      userId
+    )) as AppUser;
+    if (!currentUser) {
+      throw Error("User doesn't exist");
+    }
+    pin.favoriteUsers = [...pin.favoriteUsers, currentUser];
+
+    return this.repository.save(pin);
   }
 }
