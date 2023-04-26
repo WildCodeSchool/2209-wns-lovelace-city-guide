@@ -14,7 +14,7 @@ import {
   ModalFooter,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaPen } from "react-icons/fa";
 import Select, { MultiValue } from "react-select";
 import {
@@ -135,7 +135,10 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
   >(UPDATE_PIN);
 
   const { data: user, refetch } = useQuery<MyProfileQuery>(MY_PROFILE);
-  setUserEmail("lily@test.com");
+  useEffect(() => {
+    setUserEmail("lily@test.com");
+  }, [userEmail]);
+
   const renderSelectedCategories = () => {
     const result = pin.categories.map((category) => ({
       id: category.id,

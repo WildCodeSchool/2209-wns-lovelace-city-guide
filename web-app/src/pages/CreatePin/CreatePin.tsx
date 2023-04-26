@@ -103,7 +103,6 @@ const CreatePin = () => {
   const [isChildFriendly, setIsChildFriendly] = useState(false);
   const [isOutdoor, setIsOutdoor] = useState(false);
   const [userEmail, setUserEmail] = useState<string>("");
-  const [checkedItems, setCheckedItems] = useState([false, false]);
 
   const toast = useToast();
 
