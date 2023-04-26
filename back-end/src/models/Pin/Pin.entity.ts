@@ -74,11 +74,11 @@ export default class Pin {
   @Field(() => [Image], { nullable: true })
   images: Image[];
 
-  @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
+  @Column({ type: "decimal", precision: 12, scale: 8, default: 0 })
   @Field()
   latitude: number;
 
-  @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
+  @Column({ type: "decimal", precision: 12, scale: 8, default: 0 })
   @Field()
   longitude: number;
 
