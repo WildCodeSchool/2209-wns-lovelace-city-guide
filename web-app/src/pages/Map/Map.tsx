@@ -101,6 +101,7 @@ type PropType = {
   isOutdoor: boolean;
   isAccessible: boolean;
   isChildFriendly: boolean;
+  isFavorite: boolean;
 };
 
 const Pin = ({
@@ -112,15 +113,14 @@ const Pin = ({
   description,
   isOutdoor,
   isAccessible,
-  isChildFriendly
+  isChildFriendly,
+  isFavorite
 }: PropType) => {
+  
+  const [isFaved, setIsFaved] = useState(isFavorite);
 
-  const { data: userFavoritePins } = useQuery<GetPinsFromUserFavoritesQuery>(GET_FAVORITE_PIN, {
-    variables: { userId },
-  });
   const toast = useToast();
-  const [isFavorite, setIsFavorite] = useState((userFavoritePins !== undefined && userFavoritePins.getPinsFromUserFavorites.find(o => o.id === id)) ? true : false);
-
+  console.log(isFavorite)
   const [favoritePin] = useMutation<
     AddPinToUserFavoriteMutation,
     AddPinToUserFavoriteMutationVariables
@@ -134,9 +134,9 @@ const Pin = ({
 
   const onSubmitFavorite = async (event: React.MouseEvent<HTMLElement>) => {
     const pinId = id;
-    setIsFavorite(!isFavorite)
+    setIsFaved(!isFaved)
 
-      if(userFavoritePins !== undefined && userFavoritePins.getPinsFromUserFavorites.find(o => o.id === pinId)) {
+      if(isFaved) {
         try {
           event.preventDefault();
           await removePin({
@@ -186,7 +186,7 @@ const Pin = ({
   };
 
   return (
-    <Marker position={[latitude, longitude]} icon={userFavoritePins && userFavoritePins.getPinsFromUserFavorites.find(o => o.id === id) ? FavedMarker : PinMarker}>
+    <Marker position={[latitude, longitude]} icon={isFaved ? FavedMarker : PinMarker}>
       <Tooltip>{name}</Tooltip>
       <Popup>
         <header className="row title">
@@ -194,7 +194,7 @@ const Pin = ({
         </header>
         <div className="row">
           <p>{description}</p>
-          <FavButton onClick={onSubmitFavorite} fave={isFavorite ? true : false} > <FaHeart /> </FavButton>
+          <FavButton onClick={onSubmitFavorite} fave={isFaved ? true : false} > <FaHeart /> </FavButton>
         </div>
         <footer>
           <p className="adress">{address}</p>
@@ -295,6 +295,12 @@ const Home = () => {
   // const [newPinLocation, setNewPinLocation] = useState<any | null>(null);
   const [position, setPosition] = useState<any[] | [] | null>(null);
 
+  const { data: userFavoritePins } = useQuery<GetPinsFromUserFavoritesQuery>(
+    GET_FAVORITE_PIN, 
+    {
+    variables: { userId }
+  });
+
   const { data, loading, error, refetch } = useQuery<GetPinsQuery>(GET_PINS, {
     fetchPolicy: "cache-and-network",
   });
@@ -324,6 +330,7 @@ const Home = () => {
             isAccessible={pin.isAccessible}
             isOutdoor={pin.isOutdoor}
             isChildFriendly={pin.isChildFriendly}
+            isFavorite={userFavoritePins !== undefined && userFavoritePins.getPinsFromUserFavorites.find(o => o.id === pin.id) ? true : false}
           />
         ))}
       </>
