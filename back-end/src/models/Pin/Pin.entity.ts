@@ -1,15 +1,18 @@
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Field, ID, ObjectType } from "type-graphql";
 import Category from "../Category/Category.entity";
 import Image from "../Image/Image.entity";
+import AppUser from "../AppUser/AppUser.entity";
 
 @Entity()
 @ObjectType()
@@ -23,8 +26,8 @@ export default class Pin {
     longitude: number,
     isAccessible?: boolean,
     isChildFriendly?: boolean,
-    isOutdoor?: boolean
-    //pinner: Pinner,
+    isOutdoor?: boolean,
+    currentUser?: AppUser
   ) {
     this.name = name;
     this.address = address;
@@ -40,6 +43,9 @@ export default class Pin {
     }
     if (isOutdoor) {
       this.isOutdoor = isOutdoor;
+    }
+    if (currentUser) {
+      this.currentUser = currentUser;
     }
   }
 
@@ -68,11 +74,11 @@ export default class Pin {
   @Field(() => [Image], { nullable: true })
   images: Image[];
 
-  @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
+  @Column({ type: "decimal", precision: 12, scale: 8, default: 0 })
   @Field()
   latitude: number;
 
-  @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
+  @Column({ type: "decimal", precision: 12, scale: 8, default: 0 })
   @Field()
   longitude: number;
 
@@ -91,4 +97,15 @@ export default class Pin {
   @CreateDateColumn()
   @Field(() => String, { nullable: true })
   createdAt: Date;
+
+  @ManyToOne(() => AppUser, (currentUser) => currentUser.pins, { eager: true })
+  @Field(() => AppUser)
+  currentUser: AppUser;
+
+  @ManyToMany(() => AppUser, (favoriteUser) => favoriteUser.favoritePins, {
+    eager: true,
+  })
+  @Field(() => [AppUser])
+  @JoinTable()
+  favoriteUsers: AppUser[];
 }

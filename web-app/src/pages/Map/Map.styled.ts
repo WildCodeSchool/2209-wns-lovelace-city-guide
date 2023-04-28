@@ -57,5 +57,11 @@ export const ControlBoard = styled.div`
   z-index: 1000;
   diplay: flex;
 `
+
+export const Infos = styled.div`
+  display: flex;
+  color: #99EF9D;
+  font-size: 1.3rem;
+`
  
 

@@ -14,11 +14,12 @@ import {
   ModalFooter,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaPen } from "react-icons/fa";
 import Select, { MultiValue } from "react-select";
 import {
   GetCategoriesQuery,
+  MyProfileQuery,
   UpdatePinMutation,
   UpdatePinMutationVariables,
 } from "../../gql/graphql";
@@ -33,22 +34,30 @@ const GET_CATEGORIES = gql`
 `;
 const UPDATE_PIN = gql`
   mutation UpdatePin(
-    $pinId: ID!
+    $updatePinId: ID!
     $name: String!
     $address: String!
     $categories: [String!]!
     $description: String!
     $latitude: Float!
     $longitude: Float!
+    $isAccessible: Boolean!
+    $isChildFriendly: Boolean!
+    $isOutdoor: Boolean!
+    $userEmail: String!
   ) {
     updatePin(
-      id: $pinId
+      id: $updatePinId
       name: $name
       address: $address
       categories: $categories
       description: $description
       latitude: $latitude
       longitude: $longitude
+      isAccessible: $isAccessible
+      isChildFriendly: $isChildFriendly
+      isOutdoor: $isOutdoor
+      userEmail: $userEmail
     ) {
       id
       name
@@ -60,6 +69,10 @@ const UPDATE_PIN = gql`
       description
       latitude
       longitude
+      createdAt
+      isAccessible
+      isChildFriendly
+      isOutdoor
     }
   }
 `;
@@ -76,6 +89,10 @@ type updatePinModalProps = {
   description: string;
   latitude: number;
   longitude: number;
+  isAccessible: boolean;
+  isChildFriendly: boolean;
+  isOutdoor: boolean;
+  userEmail: string;
 };
 
 const UpdatePinModal = (pin: updatePinModalProps) => {
@@ -90,6 +107,10 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
   const [description, setDescription] = useState(pin.description);
   const [latitude, setLatitude] = useState(pin.latitude);
   const [longitude, setLongitude] = useState(pin.longitude);
+  const [isAccessible, setIsAccessible] = useState(false);
+  const [isChildFriendly, setIsChildFriendly] = useState(false);
+  const [isOutdoor, setIsOutdoor] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>("");
 
   const { data, loading, error } = useQuery<GetCategoriesQuery>(
     GET_CATEGORIES,
@@ -97,10 +118,26 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
       fetchPolicy: "cache-and-network",
     }
   );
+  const MY_PROFILE = gql`
+    query MyProfile {
+      myProfile {
+        id
+        firstName
+        lastName
+        emailAddress
+        userStatus
+      }
+    }
+  `;
   const [updatePin] = useMutation<
     UpdatePinMutation,
     UpdatePinMutationVariables
   >(UPDATE_PIN);
+
+  const { data: user, refetch } = useQuery<MyProfileQuery>(MY_PROFILE);
+  useEffect(() => {
+    setUserEmail("lily@test.com");
+  }, [userEmail]);
 
   const renderSelectedCategories = () => {
     const result = pin.categories.map((category) => ({
@@ -138,13 +175,17 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
       event.preventDefault();
       await updatePin({
         variables: {
-          pinId: id,
+          updatePinId: id,
           name,
           address,
           categories,
           description,
           latitude,
           longitude,
+          isAccessible,
+          isChildFriendly,
+          isOutdoor,
+          userEmail,
         },
       });
       toast({

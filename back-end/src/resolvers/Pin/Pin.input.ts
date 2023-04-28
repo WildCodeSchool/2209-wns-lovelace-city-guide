@@ -1,5 +1,12 @@
-import { IsNumber, IsUUID, MinLength } from "class-validator";
+import {
+  IsBoolean,
+  IsNumber,
+  IsUUID,
+  MinLength,
+  isBoolean,
+} from "class-validator";
 import { ArgsType, Field, ID } from "type-graphql";
+import AppUser from "../../models/AppUser/AppUser.entity";
 
 @ArgsType()
 class CreatePinArgs {
@@ -31,6 +38,21 @@ class CreatePinArgs {
   @Field()
   @IsNumber()
   longitude: number;
+
+  @Field()
+  @IsBoolean()
+  isAccessible: boolean;
+
+  @Field()
+  @IsBoolean()
+  isChildFriendly: boolean;
+
+  @Field()
+  @IsBoolean()
+  isOutdoor: boolean;
+
+  @Field()
+  userEmail: string;
 }
 
 @ArgsType()

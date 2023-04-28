@@ -2,19 +2,23 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import {
   Box,
   Button,
+  Checkbox,
+  CheckboxGroup,
   Flex,
   FormControl,
   FormLabel,
   Heading,
   Input,
+  Stack,
   useToast,
 } from "@chakra-ui/react";
 import Select, { MultiValue } from "react-select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CreatePinMutation,
   CreatePinMutationVariables,
   GetCategoriesQuery,
+  MyProfileQuery,
 } from "../../gql/graphql";
 import { getErrorMessage } from "../../utils";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -29,6 +33,18 @@ const GET_CATEGORIES = gql`
   }
 `;
 
+const MY_PROFILE = gql`
+  query MyProfile {
+    myProfile {
+      id
+      firstName
+      lastName
+      emailAddress
+      userStatus
+    }
+  }
+`;
+
 const CREATE_PIN = gql`
   mutation createPin(
     $name: String!
@@ -37,6 +53,10 @@ const CREATE_PIN = gql`
     $description: String!
     $latitude: Float!
     $longitude: Float!
+    $isAccessible: Boolean!
+    $isChildFriendly: Boolean!
+    $isOutdoor: Boolean!
+    $userEmail: String!
   ) {
     createPin(
       name: $name
@@ -45,6 +65,10 @@ const CREATE_PIN = gql`
       description: $description
       latitude: $latitude
       longitude: $longitude
+      isAccessible: $isAccessible
+      isChildFriendly: $isChildFriendly
+      isOutdoor: $isOutdoor
+      userEmail: $userEmail
     ) {
       id
       name
@@ -57,6 +81,12 @@ const CREATE_PIN = gql`
       latitude
       longitude
       createdAt
+      isAccessible
+      isChildFriendly
+      isOutdoor
+      currentUser {
+        emailAddress
+      }
     }
   }
 `;
@@ -68,6 +98,11 @@ const CreatePin = () => {
   const [description, setDescription] = useState("");
   const [latitude, setLatitude] = useState(state.position.lat);
   const [longitude, setLongitude] = useState(state.position.lng);
+  const [isAccessible, setIsAccessible] = useState(false);
+  const [isChildFriendly, setIsChildFriendly] = useState(false);
+  const [isOutdoor, setIsOutdoor] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>("");
+
   const toast = useToast();
 
   const navigate = useNavigate();
@@ -78,6 +113,10 @@ const CreatePin = () => {
       fetchPolicy: "cache-and-network",
     }
   );
+  //const { data: user, refetch } = useQuery<MyProfileQuery>(MY_PROFILE);
+  useEffect(() => {
+    setUserEmail("lily@test.com");
+  }, [userEmail]);
 
   const [createPin] = useMutation<
     CreatePinMutation,
@@ -116,8 +155,24 @@ const CreatePin = () => {
           description,
           latitude,
           longitude,
+          isAccessible,
+          isChildFriendly,
+          isOutdoor,
+          userEmail,
         },
       });
+      console.log(
+        name,
+        address,
+        categories,
+        description,
+        latitude,
+        longitude,
+        isAccessible,
+        isChildFriendly,
+        isOutdoor,
+        userEmail
+      );
       toast({
         title: `Pin ${name} a été créé avec succès.`,
         status: "success",
@@ -130,7 +185,13 @@ const CreatePin = () => {
       setDescription("");
       setLatitude(0);
       setLongitude(0);
+      setIsAccessible(false);
+      setIsChildFriendly(false);
+      setIsOutdoor(false);
+      navigate(HOME_PATH);
+
       navigate(MAP_PATH);
+
     } catch (error) {
       toast({
         title: "Something went wrong",
@@ -226,6 +287,28 @@ const CreatePin = () => {
                 }}
               />
             </FormControl>
+            <CheckboxGroup colorScheme="green" defaultValue={[]}>
+              <Stack spacing={[1, 5]} direction={["column", "row"]}>
+                <Checkbox
+                  isChecked={isAccessible}
+                  onChange={() => setIsAccessible(true)}
+                >
+                  Accessible
+                </Checkbox>
+                <Checkbox
+                  isChecked={isChildFriendly}
+                  onChange={() => setIsChildFriendly(true)}
+                >
+                  Child Friendly
+                </Checkbox>
+                <Checkbox
+                  isChecked={isOutdoor}
+                  onChange={() => setIsOutdoor(true)}
+                >
+                  Outdoor
+                </Checkbox>
+              </Stack>
+            </CheckboxGroup>
             <Button onClick={onSubmit} colorScheme="teal" width="full" mt={4}>
               Envoyer
             </Button>

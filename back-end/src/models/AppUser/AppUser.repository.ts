@@ -55,4 +55,8 @@ export default class AppUserRepository extends AppUserDb {
     await SessionRepository.deleteSession(currentUser);
     return currentUser;
   }
+
+  public static findUserById(userId: string): Promise<AppUser | null> {
+    return this.repository.findOneBy({ id: userId });
+  }
 }
