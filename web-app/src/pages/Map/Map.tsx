@@ -9,6 +9,7 @@ import {
   Header,
   Logo,
   ControlBoard,
+  Infos
 } from "./Map.styled";
 
 import {
@@ -16,20 +17,28 @@ import {
   BtnBlueRounded,
   BtnYellowRounded,
   BtnRedRounded,
+  FavButton
 } from "../../styles/base-styles";
 
-import { useQuery, gql } from "@apollo/client";
-import { GetPinsQuery } from "../../gql/graphql";
+import { useQuery, useMutation, gql } from "@apollo/client";
+import { GetPinsQuery, GetPinsFromUserFavoritesQuery,   AddPinToUserFavoriteMutation,
+  AddPinToUserFavoriteMutationVariables,
+  RemovePinFromUserFavoriteMutation,
+  RemovePinFromUserFavoriteMutationVariables} from "../../gql/graphql";
 import PinMeLogo from "../../media/logo.png";
-import { FaHome, FaHeart } from "react-icons/fa";
+import { FaHome, FaHeart, FaTree } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
+import { MdAccessible, MdChildFriendly } from "react-icons/md";
 
-import { DragMarker, PinMarker } from "components/PinMarkers";
+import { DragMarker, PinMarker, FavedMarker } from "components/PinMarkers";
+import { getErrorMessage } from "utils";
 
 import "./TooltipStyle.css";
 import { Link } from "react-router-dom";
 import { useToast } from "@chakra-ui/react";
 import { HOME_PATH } from "pages/paths";
+
+const userId = "db792161-00a0-4ada-9a52-78715979834f";
 
 const GET_PINS = gql`
   query GetPins {
@@ -52,6 +61,36 @@ const GET_PINS = gql`
   }
 `;
 
+const GET_FAVORITE_PIN = gql`
+query GetPinsFromUserFavorites($userId: String!) {
+  getPinsFromUserFavorites(userId: $userId) {
+    id
+  }
+}`
+
+const ADD_PIN_TO_USER_FAVORITE = gql`
+  mutation addPinToUserFavorite($pinId: String!, $userId: String!) {
+    addPinToUserFavorite(pinId: $pinId, userId: $userId) {
+      id
+      name
+      # currentUser {
+      #   id
+      #   firstName
+      # }
+    }
+  }
+`;
+
+const REMOVE_PIN_FROM_USER_FAVORITE = gql`
+mutation removePinFromUserFavorite($userId: String!, $pinId: String!) {
+  removePinFromUserFavorite(userId: $userId, pinId: $pinId) {
+    id
+    name
+  }
+}`
+
+
+
 type PropType = {
   id: string;
   name: string;
@@ -59,6 +98,9 @@ type PropType = {
   longitude: number;
   address: string;
   description: string;
+  isOutdoor: boolean;
+  isAccessible: boolean;
+  isChildFriendly: boolean;
 };
 
 const Pin = ({
@@ -68,9 +110,83 @@ const Pin = ({
   longitude,
   address,
   description,
+  isOutdoor,
+  isAccessible,
+  isChildFriendly
 }: PropType) => {
+
+  const { data: userFavoritePins } = useQuery<GetPinsFromUserFavoritesQuery>(GET_FAVORITE_PIN, {
+    variables: { userId },
+  });
+  const toast = useToast();
+  const [isFavorite, setIsFavorite] = useState((userFavoritePins !== undefined && userFavoritePins.getPinsFromUserFavorites.find(o => o.id === id)) ? true : false);
+
+  const [favoritePin] = useMutation<
+    AddPinToUserFavoriteMutation,
+    AddPinToUserFavoriteMutationVariables
+  >(ADD_PIN_TO_USER_FAVORITE);
+
+  const [removePin] = useMutation<
+    RemovePinFromUserFavoriteMutation,
+    RemovePinFromUserFavoriteMutationVariables
+  >(REMOVE_PIN_FROM_USER_FAVORITE);
+
+
+  const onSubmitFavorite = async (event: React.MouseEvent<HTMLElement>) => {
+    const pinId = id;
+    setIsFavorite(!isFavorite)
+
+      if(userFavoritePins !== undefined && userFavoritePins.getPinsFromUserFavorites.find(o => o.id === pinId)) {
+        try {
+          event.preventDefault();
+          await removePin({
+            variables: {
+              pinId,
+              userId,
+            },
+          });
+          toast({
+            title: `Pin a été supprimé de la liste de favoris.`,
+            status: "success",
+            duration: 9000,
+            isClosable: true,
+          });
+        } catch (error) {
+          toast({
+            title: "Something went wrong",
+            description: getErrorMessage(error),
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+      } else {
+        try {
+          event.preventDefault();
+          await favoritePin({
+            variables: {
+              pinId,
+              userId,
+            },
+          });
+          toast({
+            title: `Pin a été ajouté dans la liste de favoris.`,
+            status: "success",
+            duration: 9000,
+            isClosable: true,
+          });
+        } catch (error) {
+          toast({
+            title: "Something went wrong",
+            description: getErrorMessage(error),
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+      }
+  };
+
   return (
-    <Marker position={[latitude, longitude]} icon={PinMarker}>
+    <Marker position={[latitude, longitude]} icon={userFavoritePins && userFavoritePins.getPinsFromUserFavorites.find(o => o.id === id) ? FavedMarker : PinMarker}>
       <Tooltip>{name}</Tooltip>
       <Popup>
         <header className="row title">
@@ -78,12 +194,11 @@ const Pin = ({
         </header>
         <div className="row">
           <p>{description}</p>
-          <button className="favBtn">
-            <FaHeart />
-          </button>
+          <FavButton onClick={onSubmitFavorite} fave={isFavorite ? true : false} > <FaHeart /> </FavButton>
         </div>
         <footer>
           <p className="adress">{address}</p>
+          <Infos> {isAccessible && <MdAccessible title="Acessible PMR"/> } {isOutdoor && <FaTree title="En exterieur"/> } {isChildFriendly && <MdChildFriendly title="Famillial"/> }  </Infos>
         </footer>
       </Popup>
     </Marker>
@@ -206,6 +321,9 @@ const Home = () => {
             longitude={pin.longitude}
             address={pin.address}
             description={pin.description}
+            isAccessible={pin.isAccessible}
+            isOutdoor={pin.isOutdoor}
+            isChildFriendly={pin.isChildFriendly}
           />
         ))}
       </>

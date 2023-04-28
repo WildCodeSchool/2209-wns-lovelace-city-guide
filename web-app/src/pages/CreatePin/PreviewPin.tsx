@@ -23,10 +23,17 @@ import NavbarPage from "../../components/Navbar/NavbarPage";
 import {
   AddPinToUserFavoriteMutation,
   AddPinToUserFavoriteMutationVariables,
+  RemovePinFromUserFavoriteMutation,
+  RemovePinFromUserFavoriteMutationVariables,
   GetPinByIdQuery,
+  GetPinsFromUserFavoritesQuery
 } from "../../gql/graphql";
 import { useEffect, useState } from "react";
 import { getErrorMessage } from "utils";
+import {FavButton} from "../../styles/base-styles";
+
+const userId = "db792161-00a0-4ada-9a52-78715979834f";
+
 
 const GET_PIN_BY_ID = gql`
   query GetPinById($pinId: String!) {
@@ -50,6 +57,14 @@ const GET_PIN_BY_ID = gql`
   }
 `;
 
+const GET_FAVORITE_PIN = gql`
+query GetPinsFromUserFavorites($userId: String!) {
+  getPinsFromUserFavorites(userId: $userId) {
+    id
+  }
+}`
+
+
 const ADD_PIN_TO_USER_FAVORITE = gql`
   mutation addPinToUserFavorite($pinId: String!, $userId: String!) {
     addPinToUserFavorite(pinId: $pinId, userId: $userId) {
@@ -63,13 +78,25 @@ const ADD_PIN_TO_USER_FAVORITE = gql`
   }
 `;
 
+const REMOVE_PIN_FROM_USER_FAVORITE = gql`
+mutation removePinFromUserFavorite($userId: String!, $pinId: String!) {
+  removePinFromUserFavorite(userId: $userId, pinId: $pinId) {
+    id
+    name
+  }
+}`
+
 interface idParams {
   pinId?: any;
 }
 const PreviewPin = () => {
+  const { data: userFavoritePins } = useQuery<GetPinsFromUserFavoritesQuery>(GET_FAVORITE_PIN, {
+    variables: { userId },
+  });
+
   const { pinId } = useParams() as idParams;
   const toast = useToast();
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [isFavorite, setIsFavorite] = useState((userFavoritePins !== undefined && userFavoritePins.getPinsFromUserFavorites.find(o => o.id === pinId)) ? true : false);
 
   const { data, loading, error } = useQuery<GetPinByIdQuery>(GET_PIN_BY_ID, {
     variables: { pinId },
@@ -80,40 +107,75 @@ const PreviewPin = () => {
     AddPinToUserFavoriteMutationVariables
   >(ADD_PIN_TO_USER_FAVORITE);
 
-  const userId = "4284430c-a88c-4b8e-a19f-89fbee66db4b";
+  const [removePin] = useMutation<
+    RemovePinFromUserFavoriteMutation,
+    RemovePinFromUserFavoriteMutationVariables
+  >(REMOVE_PIN_FROM_USER_FAVORITE);
+
+
+
 
   useEffect(() => {
     console.log(isFavorite);
+    console.log(userFavoritePins !== undefined && userFavoritePins.getPinsFromUserFavorites)
   });
 
   const onSubmitFavorite = async (event: React.MouseEvent<HTMLElement>) => {
-    try {
-      event.preventDefault();
-      await favoritePin({
-        variables: {
-          pinId,
-          userId,
-        },
-      });
-      //setIsFavorite(true);
-      console.log(isFavorite);
-      toast({
-        title: `Pin a été ajouté dans la liste de favoris.`,
-        status: "success",
-        duration: 9000,
-        isClosable: true,
-      });
-    } catch (error) {
-      toast({
-        title: "Something went wrong",
-        description: getErrorMessage(error),
-        duration: 9000,
-        isClosable: true,
-      });
-    }
+    setIsFavorite(!isFavorite)
+
+      if(userFavoritePins !== undefined && userFavoritePins.getPinsFromUserFavorites.find(o => o.id === pinId)) {
+        try {
+          event.preventDefault();
+          await removePin({
+            variables: {
+              pinId,
+              userId,
+            },
+          });
+          toast({
+            title: `Pin a été supprimé de la liste de favoris.`,
+            status: "success",
+            duration: 9000,
+            isClosable: true,
+          });
+        } catch (error) {
+          toast({
+            title: "Something went wrong",
+            description: getErrorMessage(error),
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+      } else {
+        try {
+          event.preventDefault();
+          await favoritePin({
+            variables: {
+              pinId,
+              userId,
+            },
+          });
+          toast({
+            title: `Pin a été ajouté dans la liste de favoris.`,
+            status: "success",
+            duration: 9000,
+            isClosable: true,
+          });
+        } catch (error) {
+          toast({
+            title: "Something went wrong",
+            description: getErrorMessage(error),
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+      }
+
   };
 
   const renderPin = () => {
+
+
     if (loading) {
       return <Loader />;
     }
@@ -137,9 +199,8 @@ const PreviewPin = () => {
             boxShadow="lg"
           >
             <Flex justifyContent="flex-end">
-              <Button onClick={onSubmitFavorite} bgColor="#ff8787" color="#fff">
-                <FaHeart onChange={() => setIsFavorite(true)} />
-              </Button>
+              <FavButton onClick={onSubmitFavorite} fave={isFavorite ? true : false} > <FaHeart /> </FavButton>
+
             </Flex>
             <Box textAlign="center">
               <Heading>{data.getPinById.name}</Heading>

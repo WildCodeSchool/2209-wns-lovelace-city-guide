@@ -26,7 +26,9 @@ const documents = {
     "\n  query getPinsAdminPage {\n    pins {\n      id\n      name\n      address\n      categories {\n        categoryName\n        id\n      }\n      description\n      latitude\n      longitude\n      createdAt\n      images {\n        id\n        fileName\n      }\n      isAccessible\n      isChildFriendly\n      isOutdoor\n    }\n  }\n": types.GetPinsAdminPageDocument,
     "\n  mutation createPin(\n    $name: String!\n    $address: String!\n    $categories: [String!]!\n    $description: String!\n    $latitude: Float!\n    $longitude: Float!\n    $isAccessible: Boolean!\n    $isChildFriendly: Boolean!\n    $isOutdoor: Boolean!\n    $userEmail: String!\n  ) {\n    createPin(\n      name: $name\n      address: $address\n      categories: $categories\n      description: $description\n      latitude: $latitude\n      longitude: $longitude\n      isAccessible: $isAccessible\n      isChildFriendly: $isChildFriendly\n      isOutdoor: $isOutdoor\n      userEmail: $userEmail\n    ) {\n      id\n      name\n      address\n      categories {\n        id\n        categoryName\n      }\n      description\n      latitude\n      longitude\n      createdAt\n      isAccessible\n      isChildFriendly\n      isOutdoor\n      currentUser {\n        emailAddress\n      }\n    }\n  }\n": types.CreatePinDocument,
     "\n  query GetPinById($pinId: String!) {\n    getPinById(id: $pinId) {\n      id\n      name\n      address\n      categories {\n        id\n        categoryName\n      }\n      description\n      images {\n        id\n        fileName\n      }\n      latitude\n      longitude\n      createdAt\n    }\n  }\n": types.GetPinByIdDocument,
+    "\nquery GetPinsFromUserFavorites($userId: String!) {\n  getPinsFromUserFavorites(userId: $userId) {\n    id\n  }\n}": types.GetPinsFromUserFavoritesDocument,
     "\n  mutation addPinToUserFavorite($pinId: String!, $userId: String!) {\n    addPinToUserFavorite(pinId: $pinId, userId: $userId) {\n      id\n      name\n      # currentUser {\n      #   id\n      #   firstName\n      # }\n    }\n  }\n": types.AddPinToUserFavoriteDocument,
+    "\nmutation removePinFromUserFavorite($userId: String!, $pinId: String!) {\n  removePinFromUserFavorite(userId: $userId, pinId: $pinId) {\n    id\n    name\n  }\n}": types.RemovePinFromUserFavoriteDocument,
     "\n  mutation addImageToPin($fileName: String!, $pinId: String!) {\n    addImageToPin(fileName: $fileName, pinId: $pinId) {\n      id\n      name\n      address\n      categories {\n        id\n        categoryName\n      }\n      description\n      images {\n        id\n        fileName\n      }\n      latitude\n      longitude\n      createdAt\n    }\n  }\n": types.AddImageToPinDocument,
     "\n  query GetPins {\n    pins {\n      id\n      name\n      address\n      categories {\n        id\n        categoryName\n      }\n      description\n      latitude\n      longitude\n      isOutdoor\n      isAccessible\n      isChildFriendly\n      createdAt\n    }\n  }\n": types.GetPinsDocument,
     "\n  mutation SignIn($emailAddress: String!, $password: String!) {\n    signIn(emailAddress: $emailAddress, password: $password) {\n      id\n      emailAddress\n      firstName\n      lastName\n    }\n  }\n": types.SignInDocument,
@@ -88,7 +90,15 @@ export function graphql(source: "\n  query GetPinById($pinId: String!) {\n    ge
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function graphql(source: "\nquery GetPinsFromUserFavorites($userId: String!) {\n  getPinsFromUserFavorites(userId: $userId) {\n    id\n  }\n}"): (typeof documents)["\nquery GetPinsFromUserFavorites($userId: String!) {\n  getPinsFromUserFavorites(userId: $userId) {\n    id\n  }\n}"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function graphql(source: "\n  mutation addPinToUserFavorite($pinId: String!, $userId: String!) {\n    addPinToUserFavorite(pinId: $pinId, userId: $userId) {\n      id\n      name\n      # currentUser {\n      #   id\n      #   firstName\n      # }\n    }\n  }\n"): (typeof documents)["\n  mutation addPinToUserFavorite($pinId: String!, $userId: String!) {\n    addPinToUserFavorite(pinId: $pinId, userId: $userId) {\n      id\n      name\n      # currentUser {\n      #   id\n      #   firstName\n      # }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\nmutation removePinFromUserFavorite($userId: String!, $pinId: String!) {\n  removePinFromUserFavorite(userId: $userId, pinId: $pinId) {\n    id\n    name\n  }\n}"): (typeof documents)["\nmutation removePinFromUserFavorite($userId: String!, $pinId: String!) {\n  removePinFromUserFavorite(userId: $userId, pinId: $pinId) {\n    id\n    name\n  }\n}"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

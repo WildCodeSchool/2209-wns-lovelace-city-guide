@@ -187,4 +187,32 @@ export default class PinRepository extends PinDb {
 
     return this.repository.save(pin);
   }
+
+  static async getPinsFromUserFavorites(
+    userId: string
+  ): Promise<Pin[]> {
+    const favoritePins = await this.findPinsByUserId(userId);
+    console.log(favoritePins)
+    return favoritePins
+  }
+
+  static async deletePinFromUserFavorites(
+    pinId: string,
+    userId: string
+  ): Promise<Pin> {
+    const pin = await this.repository.findOneBy({ id: pinId });
+    if (!pin) {
+      throw Error("Pin doesn't exist");
+    }
+    console.log(pin)
+    const currentUser = (await AppUserRepository.findUserById(
+      userId
+    )) as AppUser;
+    if (!currentUser) {
+      throw Error("User doesn't exist");
+    }
+    pin.favoriteUsers = pin.favoriteUsers.filter(user => user.id != userId)
+    return await this.repository.save(pin)
+  }
+  
 }

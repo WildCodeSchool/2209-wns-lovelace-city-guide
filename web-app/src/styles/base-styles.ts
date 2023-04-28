@@ -59,6 +59,24 @@ margin: 10px ;
 box-shadow: -3px -3px 0 #912B2B;
 `;
 
+export const FavButton = styled.button<{fave?:boolean}>`
+  margin: 5px;
+  text-align: center;
+  padding: 8px;
+  color: ${props => props.fave ? "#FF8787" : "#222231"} ;
+  font-size: 1.3rem;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 3px 3px 0 #888;
+  transition: 0.1s;
+  &:hover, :focus {
+    opacity: 0.9;
+    transform: translate(3px, 3px);
+    box-shadow: none;
+  }
+`;
+
+
 export const DashboardButton = styled(BlueButton)`
   padding: 1rem;
   font-size: 3rem;

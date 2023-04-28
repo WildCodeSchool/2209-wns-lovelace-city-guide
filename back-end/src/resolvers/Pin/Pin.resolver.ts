@@ -97,4 +97,20 @@ export default class PinResolver {
   ): Promise<Pin> {
     return PinRepository.addPinToUserFavorite(pinId, userId);
   }
+
+  @Query(() => [Pin])
+  getPinsFromUserFavorites(
+    @Arg("userId") userId: string
+  ): Promise<Pin[]> {
+    return PinRepository.getPinsFromUserFavorites(userId);
+  }
+
+  @Mutation(() => Pin)
+  removePinFromUserFavorite(
+    @Arg("pinId") pinId: string,
+    @Arg("userId") userId: string
+    ): Promise<Pin> {
+    return PinRepository.deletePinFromUserFavorites(pinId, userId);
+  }
+  
 }
