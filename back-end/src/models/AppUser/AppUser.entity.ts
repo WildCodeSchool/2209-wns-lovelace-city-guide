@@ -3,9 +3,9 @@ import { Field, ID, ObjectType, registerEnumType } from "type-graphql";
 import { Entity, PrimaryGeneratedColumn, Column, Index } from "typeorm";
 
 export enum UserStatus {
-  USER = "user",
-  ADMIN = "admin",
-  BANNED_USER = "bannedUser",
+  USER = "USER",
+  ADMIN = "ADMIN",
+  BANNED_USER = "BANNED_USER",
 }
 
 registerEnumType(UserStatus, {

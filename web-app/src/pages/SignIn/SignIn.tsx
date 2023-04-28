@@ -1,9 +1,4 @@
-import {
-  ApolloQueryResult,
-  gql,
-  OperationVariables,
-  useMutation,
-} from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Spinner, useToast } from "@chakra-ui/react";
 import {
@@ -18,15 +13,12 @@ import {
   InputRightElement,
   Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  MyProfileQuery,
-  SignInMutation,
-  SignInMutationVariables,
-} from "../../gql/graphql";
+import { SignInMutation, SignInMutationVariables } from "../../gql/graphql";
 import { getErrorMessage } from "../../utils";
 import { HOME_PATH, SIGN_UP_PATH } from "../paths";
+import { AppContext } from "context/AppContext";
 
 const SIGN_IN = gql`
   mutation SignIn($emailAddress: String!, $password: String!) {
@@ -39,16 +31,8 @@ const SIGN_IN = gql`
   }
 `;
 
-type PropsType = {
-  onSuccess:
-    | ((
-        variables?: Partial<OperationVariables> | undefined
-      ) => Promise<ApolloQueryResult<MyProfileQuery>>)
-    | (() => void)
-    | undefined;
-};
-
-const SignIn = ({ onSuccess }: any) => {
+const SignIn = () => {
+  const appContext = useContext(AppContext);
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
@@ -57,7 +41,12 @@ const SignIn = ({ onSuccess }: any) => {
   const [signIn, { loading }] = useMutation<
     SignInMutation,
     SignInMutationVariables
-  >(SIGN_IN);
+  >(SIGN_IN, {
+    onCompleted: async () => {
+      console.log("singin success");
+      await onSignInSuccess();
+    },
+  });
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -66,19 +55,25 @@ const SignIn = ({ onSuccess }: any) => {
       await signIn({
         variables: { emailAddress, password },
       });
+    } catch (error) {
       toast({
-        title: "Vous vous êtes connecté avec succès.",
-        status: "success",
+        title: "Error",
+        status: "error",
+        description: getErrorMessage(error),
         duration: 5000,
         isClosable: true,
       });
-      onSuccess();
+    }
+  };
+
+  const onSignInSuccess = async () => {
+    try {
+      await appContext?.refetch();
+    } finally {
       navigate(HOME_PATH);
-    } catch (error) {
       toast({
-        title: "Erreur",
-        status: "error",
-        description: getErrorMessage(error),
+        title: "Vous vous êtes connecté avec succès.",
+        status: "success",
         duration: 5000,
         isClosable: true,
       });

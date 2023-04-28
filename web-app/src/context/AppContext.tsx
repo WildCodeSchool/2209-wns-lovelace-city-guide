@@ -28,24 +28,24 @@ type ValueType = {
       ) => Promise<ApolloQueryResult<MyProfileQuery>>)
     | (() => void);
   isLoggedIn: boolean;
-  isAdmin: boolean;
+  isAdmin: boolean | undefined;
 };
 
-export const AppContext = createContext<ValueType>({
-  userProfile: null,
-  loading: true,
-  refetch: () => {},
-  isLoggedIn: false,
-  isAdmin: false,
-});
+export const AppContext = createContext<ValueType | null>(null);
 
 export function ContextProvider({ children }: any) {
   const { data, refetch, error, loading } = useQuery<MyProfileQuery | null>(
-    MY_PROFILE
+    MY_PROFILE,
+    {
+      onError: () => {
+        setIsAdmin(false);
+        setIsLoggedIn(false);
+      },
+    }
   );
   const [userProfile, setUserProfile] = useState<MyProfileQuery | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState<boolean | undefined>(undefined);
 
   useEffect(() => {
     if (error || !data) {
@@ -54,11 +54,13 @@ export function ContextProvider({ children }: any) {
       const userStatus = data?.myProfile.userStatus;
       if (userStatus === "ADMIN") {
         setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
       }
       setUserProfile(data);
       setIsLoggedIn(true);
     }
-  }, [data, error]);
+  }, [data, error, isAdmin, isLoggedIn, userProfile]);
 
   return (
     <AppContext.Provider

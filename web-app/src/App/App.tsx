@@ -1,8 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
-import React, { useContext, useEffect, useState } from "react";
-import { Routes, Route, useLocation, Outlet } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import { MyProfileQuery } from "../gql/graphql";
+import { Routes, Route, useLocation } from "react-router-dom";
 import AllPinsTable from "../pages/Admin/AllPinsTable";
 import Dashboard from "../pages/Admin/Dashboard";
 
@@ -33,30 +29,13 @@ import ProtectedRoute from "pages/Protected/ProtectedRoute";
 import AlreadyLoggedIn from "pages/Protected/AlreadyLoggedIn";
 import AdminRoute from "pages/Protected/AdminRoute";
 import NavbarPage from "components/Navbar/NavbarPage";
-import { divIcon } from "leaflet";
-import { AppContext } from "context/AppContext";
 
 function App() {
-  const { userProfile, loading, refetch, isLoggedIn, isAdmin } =
-    useContext(AppContext);
   const { pathname } = useLocation();
-  console.log(isAdmin, "isAdmin");
-  console.log(userProfile, "user profile");
   return (
     <>
       <MainContainer>
-        {/* {pathname !== "/" && pathname !== "/map" && (
-          <NavbarPage
-            user={appContext?.userProfile}
-            isLoggedIn={appContext?.isLoggedIn}
-            onSignOut={appContext?.refetch}
-          />
-        )} */}
-        <NavbarPage
-          user={userProfile}
-          isLoggedIn={isLoggedIn}
-          onSignOut={refetch}
-        />
+        {pathname !== "/" && pathname !== "/map" && <NavbarPage />}
 
         <Routes>
           <Route path={HOME_PATH} element={<Home />} />
@@ -64,7 +43,7 @@ function App() {
           <Route
             path={SIGN_UP_PATH}
             element={
-              <AlreadyLoggedIn isLoggedIn={isLoggedIn}>
+              <AlreadyLoggedIn>
                 <SignUp />
               </AlreadyLoggedIn>
             }
@@ -72,15 +51,15 @@ function App() {
           <Route
             path={SIGN_IN_PATH}
             element={
-              <AlreadyLoggedIn isLoggedIn={isLoggedIn}>
-                <SignIn onSuccess={refetch} />
+              <AlreadyLoggedIn>
+                <SignIn />
               </AlreadyLoggedIn>
             }
           />
           <Route
             path={CREATE_PIN_PATH}
             element={
-              <ProtectedRoute isLoggedIn={isLoggedIn} loading={loading}>
+              <ProtectedRoute>
                 <CreatePin />
               </ProtectedRoute>
             }
@@ -88,7 +67,7 @@ function App() {
           <Route
             path={ADMIN_ALL_PINS_PATH}
             element={
-              <AdminRoute loading={loading} isAdmin={isAdmin}>
+              <AdminRoute>
                 <AllPinsTable />
               </AdminRoute>
             }
@@ -96,7 +75,7 @@ function App() {
           <Route
             path={ADMIN_DASHBOARD}
             element={
-              <AdminRoute loading={loading} isAdmin={isAdmin}>
+              <AdminRoute>
                 <Dashboard />
               </AdminRoute>
             }
@@ -104,7 +83,7 @@ function App() {
           <Route
             path={UPLOAD_IMAGE}
             element={
-              <ProtectedRoute isLoggedIn={isLoggedIn} loading={loading}>
+              <ProtectedRoute>
                 <UploadImage />
               </ProtectedRoute>
             }
@@ -112,7 +91,7 @@ function App() {
           <Route
             path={PREVIEW_PIN}
             element={
-              <ProtectedRoute isLoggedIn={isLoggedIn} loading={loading}>
+              <ProtectedRoute>
                 <PreviewPin />
               </ProtectedRoute>
             }
@@ -120,7 +99,7 @@ function App() {
           <Route
             path={ADMIN_CATEGORIES}
             element={
-              <AdminRoute loading={loading} isAdmin={isAdmin}>
+              <AdminRoute>
                 <AdminCategories />
               </AdminRoute>
             }
@@ -132,7 +111,6 @@ function App() {
           <p>&copy; 2023 Wild Code School</p>
         </Container>
       </Footer>
-      <ToastContainer />
     </>
   );
 }

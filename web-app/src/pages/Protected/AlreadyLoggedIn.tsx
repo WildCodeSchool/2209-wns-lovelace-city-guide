@@ -1,16 +1,13 @@
 import { useToast } from "@chakra-ui/react";
+import { AppContext } from "context/AppContext";
 import { HOME_PATH } from "pages/paths";
+import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 
-type PropType = {
-  isLoggedIn: boolean | undefined;
-  children: any;
-};
-
-const AlreadyLoggedIn = (props: PropType) => {
+const AlreadyLoggedIn = ({ children }: any) => {
   const toast = useToast();
-  const { isLoggedIn, children } = props;
-  if (isLoggedIn) {
+  const appContext = useContext(AppContext);
+  if (appContext?.isLoggedIn) {
     toast({
       title: "Vous vous êtes déjà connecté.",
       status: "info",

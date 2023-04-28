@@ -1,27 +1,37 @@
-import { Spinner, useToast } from "@chakra-ui/react";
+import { Box, Flex, Spinner, useToast } from "@chakra-ui/react";
+import { AppContext } from "context/AppContext";
 import { SIGN_IN_PATH } from "pages/paths";
+import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 
-type PropType = {
-  isLoggedIn: boolean | undefined;
-  children: any;
-  loading: any;
-};
-const ProtectedRoute = (props: PropType) => {
+const ProtectedRoute = ({ children }: any) => {
   const toast = useToast();
-  const { isLoggedIn, children, loading } = props;
-  if (loading) {
+  const appContext = useContext(AppContext);
+  if (appContext?.loading) {
     return (
-      <Spinner
-        thickness="4px"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="#FF8787"
-        size="xl"
-      />
+      <>
+        <Flex width="full" align="center" justifyContent="center">
+          <Box
+            bg="#fff"
+            p={8}
+            width="1000px"
+            borderWidth={1}
+            borderRadius={8}
+            boxShadow="lg"
+          >
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="#FF8787"
+              size="xl"
+            />
+          </Box>
+        </Flex>
+      </>
     );
   }
-  if (!isLoggedIn) {
+  if (!appContext?.isLoggedIn) {
     toast({
       title: "Se connecter pour accéder cette page.",
       status: "info",

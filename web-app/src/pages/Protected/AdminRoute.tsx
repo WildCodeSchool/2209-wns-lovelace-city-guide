@@ -1,29 +1,38 @@
-import { Spinner, useToast } from "@chakra-ui/react";
+import { Box, Flex, Spinner, useToast } from "@chakra-ui/react";
+import { AppContext } from "context/AppContext";
 import { HOME_PATH } from "pages/paths";
+import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 
-type PropType = {
-  children: any;
-  loading: any;
-  isAdmin: boolean | undefined;
-};
-const AdminRoute = (props: PropType) => {
+const AdminRoute = ({ children }: any) => {
   const toast = useToast();
-  const { children, loading, isAdmin } = props;
-  console.log(isAdmin);
-  if (loading) {
+  const appContext = useContext(AppContext);
+  const isAdmin = appContext?.isAdmin;
+  if (appContext?.loading) {
     return (
-      <Spinner
-        thickness="4px"
-        speed="0.65s"
-        emptyColor="gray.200"
-        color="#FF8787"
-        size="xl"
-      />
+      <>
+        <Flex width="full" align="center" justifyContent="center">
+          <Box
+            bg="#fff"
+            p={8}
+            width="1000px"
+            borderWidth={1}
+            borderRadius={8}
+            boxShadow="lg"
+          >
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="#FF8787"
+              size="xl"
+            />
+          </Box>
+        </Flex>
+      </>
     );
   }
   if (isAdmin === false) {
-    console.log(isAdmin);
     toast({
       title: "Vous n'avez pas de droit d'accedér cette page",
       status: "info",
@@ -32,6 +41,7 @@ const AdminRoute = (props: PropType) => {
     });
     return <Navigate to={HOME_PATH} replace />;
   }
+
   return children;
 };
 
