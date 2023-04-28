@@ -10,13 +10,12 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Spinner,
+  Text,
 } from "@chakra-ui/react";
 import { useToast } from "@chakra-ui/react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import Loader from "../../components/Loader";
-import NavbarPage from "../../components/Navbar/NavbarPage";
+import { Link, useNavigate } from "react-router-dom";
 import { SignUpMutation, SignUpMutationVariables } from "../../gql/graphql";
 import { getErrorMessage } from "../../utils";
 import { SIGN_IN_PATH } from "../paths";
@@ -65,16 +64,17 @@ const SignUp = () => {
         title:
           "Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter.",
         status: "success",
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
 
       navigate(SIGN_IN_PATH);
     } catch (error) {
       toast({
-        title: "Something went wrong",
+        title: "Erreur",
+        status: "error",
         description: getErrorMessage(error),
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
     }
@@ -82,11 +82,11 @@ const SignUp = () => {
 
   return (
     <>
-      <NavbarPage />
       <Flex width="full" align="center" justifyContent="center">
         <Box
+          bg="#fff"
           p={8}
-          maxWidth="500px"
+          width="450px"
           borderWidth={1}
           borderRadius={8}
           boxShadow="lg"
@@ -163,9 +163,29 @@ const SignUp = () => {
                 </InputGroup>
               </FormControl>
               <Button colorScheme="teal" width="full" mt={4} type="submit">
-                {loading ? <Loader /> : "Valider"}
+                {loading ? (
+                  <Spinner
+                    thickness="4px"
+                    speed="0.65s"
+                    emptyColor="gray.200"
+                    color="#FF8787"
+                    size="xl"
+                  />
+                ) : (
+                  "Valider"
+                )}
               </Button>
             </form>
+          </Box>
+          <Box>
+            <Text pr="5px">
+              Vous avez déjà un compte?
+              <Link to={SIGN_IN_PATH}>
+                <span style={{ marginLeft: "5px", color: "#319795" }}>
+                  Se connecter
+                </span>
+              </Link>
+            </Text>
           </Box>
         </Box>
       </Flex>

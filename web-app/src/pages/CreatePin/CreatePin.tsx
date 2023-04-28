@@ -17,9 +17,8 @@ import {
   GetCategoriesQuery,
 } from "../../gql/graphql";
 import { getErrorMessage } from "../../utils";
-import NavbarPage from "../../components/Navbar/NavbarPage";
 import { useLocation, useNavigate } from "react-router-dom";
-import { HOME_PATH } from "pages/paths";
+import { HOME_PATH, MAP_PATH } from "pages/paths";
 
 const GET_CATEGORIES = gql`
   query getCategories {
@@ -131,7 +130,7 @@ const CreatePin = () => {
       setDescription("");
       setLatitude(0);
       setLongitude(0);
-      navigate(HOME_PATH);
+      navigate(MAP_PATH);
     } catch (error) {
       toast({
         title: "Something went wrong",
@@ -144,7 +143,6 @@ const CreatePin = () => {
 
   return (
     <>
-      <NavbarPage />
       <Flex width="full" align="center" justifyContent="center">
         <Box
           bg="#fff"

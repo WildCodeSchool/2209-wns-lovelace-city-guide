@@ -16,7 +16,6 @@ import {
 import ConfirmDeleteCategory from "components/Dialog/ConfirmDeleteCategory";
 import CreateCategory from "components/Modal/CreateCategory";
 import UpdateCategory from "components/Modal/UpdateCategory";
-import NavbarPage from "components/Navbar/NavbarPage";
 import { GetCategoriesQuery } from "gql/graphql";
 
 const GET_CATEGORIES = gql`
@@ -39,7 +38,6 @@ const AdminCategories = () => {
     if (loading) {
       return (
         <>
-          <NavbarPage />
           <Flex width="full" align="center" justifyContent="center">
             <Box
               bg="#fff"
@@ -74,7 +72,6 @@ const AdminCategories = () => {
     }
     return (
       <>
-        <NavbarPage />
         <Flex width="full" align="center" justifyContent="center">
           <Box
             bg="#fff"

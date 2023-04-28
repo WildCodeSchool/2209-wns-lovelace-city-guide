@@ -2,7 +2,6 @@ import { gql, useMutation } from "@apollo/client";
 import { Box, Button, Flex, Heading, Input } from "@chakra-ui/react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import NavbarPage from "../../components/Navbar/NavbarPage";
 import { PREVIEW_PIN } from "../paths";
 import {
   AddImageToPinMutation,
@@ -82,7 +81,6 @@ const UploadImage = () => {
   };
   return (
     <>
-      <NavbarPage />
       <Flex width="full" align="center" justifyContent="center">
         <Box
           bg="#fff"
