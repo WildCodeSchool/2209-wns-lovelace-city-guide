@@ -188,7 +188,6 @@ const PreviewPin = () => {
     const images = data?.getPinById?.images;
     return (
       <>
-        <NavbarPage />
         <Flex width="full" align="center" justifyContent="center">
           <Box
             bg="#fff"

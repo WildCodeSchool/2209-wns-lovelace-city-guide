@@ -12,9 +12,9 @@ import {
 import Pin from "../Pin/Pin.entity";
 
 export enum UserStatus {
-  USER = "user",
-  ADMIN = "admin",
-  BANNED_USER = "bannedUser",
+  USER = "USER",
+  ADMIN = "ADMIN",
+  BANNED_USER = "BANNED_USER",
 }
 
 registerEnumType(UserStatus, {

@@ -1,6 +1,6 @@
 import { gql, useMutation } from "@apollo/client";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { useToast } from "@chakra-ui/react";
+import { Spinner, useToast } from "@chakra-ui/react";
 import {
   Box,
   Flex,
@@ -11,15 +11,14 @@ import {
   Button,
   InputGroup,
   InputRightElement,
+  Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-import Loader from "../../components/Loader";
-import NavbarPage from "../../components/Navbar/NavbarPage";
+import { useContext, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { SignInMutation, SignInMutationVariables } from "../../gql/graphql";
 import { getErrorMessage } from "../../utils";
-import { HOME_PATH } from "../paths";
+import { HOME_PATH, SIGN_UP_PATH } from "../paths";
+import { AppContext } from "context/AppContext";
 
 const SIGN_IN = gql`
   mutation SignIn($emailAddress: String!, $password: String!) {
@@ -32,7 +31,8 @@ const SIGN_IN = gql`
   }
 `;
 
-const SignIn = ({ onSuccess }: { onSuccess: () => {} }) => {
+const SignIn = () => {
+  const appContext = useContext(AppContext);
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
@@ -41,7 +41,12 @@ const SignIn = ({ onSuccess }: { onSuccess: () => {} }) => {
   const [signIn, { loading }] = useMutation<
     SignInMutation,
     SignInMutationVariables
-  >(SIGN_IN);
+  >(SIGN_IN, {
+    onCompleted: async () => {
+      console.log("singin success");
+      await onSignInSuccess();
+    },
+  });
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -50,19 +55,26 @@ const SignIn = ({ onSuccess }: { onSuccess: () => {} }) => {
       await signIn({
         variables: { emailAddress, password },
       });
+    } catch (error) {
+      toast({
+        title: "Error",
+        status: "error",
+        description: getErrorMessage(error),
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const onSignInSuccess = async () => {
+    try {
+      await appContext?.refetch();
+    } finally {
+      navigate(HOME_PATH);
       toast({
         title: "Vous vous êtes connecté avec succès.",
         status: "success",
-        duration: 9000,
-        isClosable: true,
-      });
-      onSuccess();
-      navigate(HOME_PATH);
-    } catch (error) {
-      toast({
-        title: "Something went wrong",
-        description: getErrorMessage(error),
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
     }
@@ -70,11 +82,11 @@ const SignIn = ({ onSuccess }: { onSuccess: () => {} }) => {
 
   return (
     <>
-      <NavbarPage />
       <Flex width="full" align="center" justifyContent="center">
         <Box
+          bg="#fff"
           p={8}
-          maxWidth="500px"
+          width="450px"
           borderWidth={1}
           borderRadius={8}
           boxShadow="lg"
@@ -132,9 +144,29 @@ const SignIn = ({ onSuccess }: { onSuccess: () => {} }) => {
                 type="submit"
                 disabled={loading}
               >
-                {loading ? <Loader /> : "Valider"}
+                {loading ? (
+                  <Spinner
+                    thickness="4px"
+                    speed="0.65s"
+                    emptyColor="gray.200"
+                    color="#FF8787"
+                    size="xl"
+                  />
+                ) : (
+                  "Valider"
+                )}
               </Button>
             </form>
+          </Box>
+          <Box>
+            <Text pr="5px">
+              Vous n'avez pas de compte?
+              <Link to={SIGN_UP_PATH}>
+                <span style={{ marginLeft: "5px", color: "#319795" }}>
+                  S'inscrire
+                </span>
+              </Link>
+            </Text>
           </Box>
         </Box>
       </Flex>
