@@ -18,7 +18,6 @@ import {
   CreatePinMutation,
   CreatePinMutationVariables,
   GetCategoriesQuery,
-  MyProfileQuery,
 } from "../../gql/graphql";
 import { getErrorMessage } from "../../utils";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -29,18 +28,6 @@ const GET_CATEGORIES = gql`
     categories {
       id
       categoryName
-    }
-  }
-`;
-
-const MY_PROFILE = gql`
-  query MyProfile {
-    myProfile {
-      id
-      firstName
-      lastName
-      emailAddress
-      userStatus
     }
   }
 `;
@@ -113,7 +100,6 @@ const CreatePin = () => {
       fetchPolicy: "cache-and-network",
     }
   );
-  //const { data: user, refetch } = useQuery<MyProfileQuery>(MY_PROFILE);
   useEffect(() => {
     setUserEmail("lily@test.com");
   }, [userEmail]);
@@ -142,6 +128,18 @@ const CreatePin = () => {
   ) => {
     const selected = selectedOptions.map((option) => option.value);
     setCategories(selected);
+  };
+
+  const handleCheckIsAccessible = () => {
+    setIsAccessible(!isAccessible);
+  };
+
+  const handleCheckIsChildFriendly = () => {
+    setIsChildFriendly(!isChildFriendly);
+  };
+
+  const handleCheckIsOutDoor = () => {
+    setIsOutdoor(!isOutdoor);
   };
 
   const onSubmit = async (event: React.MouseEvent<HTMLElement>) => {
@@ -176,7 +174,7 @@ const CreatePin = () => {
       toast({
         title: `Pin ${name} a été créé avec succès.`,
         status: "success",
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
       setName("");
@@ -191,12 +189,11 @@ const CreatePin = () => {
       navigate(HOME_PATH);
 
       navigate(MAP_PATH);
-
     } catch (error) {
       toast({
         title: "Something went wrong",
         description: getErrorMessage(error),
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
     }
@@ -291,20 +288,17 @@ const CreatePin = () => {
               <Stack spacing={[1, 5]} direction={["column", "row"]}>
                 <Checkbox
                   isChecked={isAccessible}
-                  onChange={() => setIsAccessible(true)}
+                  onChange={handleCheckIsAccessible}
                 >
                   Accessible
                 </Checkbox>
                 <Checkbox
                   isChecked={isChildFriendly}
-                  onChange={() => setIsChildFriendly(true)}
+                  onChange={handleCheckIsChildFriendly}
                 >
                   Child Friendly
                 </Checkbox>
-                <Checkbox
-                  isChecked={isOutdoor}
-                  onChange={() => setIsOutdoor(true)}
-                >
+                <Checkbox isChecked={isOutdoor} onChange={handleCheckIsOutDoor}>
                   Outdoor
                 </Checkbox>
               </Stack>
