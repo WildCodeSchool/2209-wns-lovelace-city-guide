@@ -1,7 +1,17 @@
-import { Arg, Args, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Args,
+  Authorized,
+  Ctx,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import PinRepository from "../../models/Pin/Pin.repository";
 import Pin from "../../models/Pin/Pin.entity";
 import { CreatePinArgs, UpdatePinArgs } from "./Pin.input";
+import { GlobalContext } from "../..";
+import AppUser from "../../models/AppUser/AppUser.entity";
 
 @Resolver(Pin)
 export default class PinResolver {
@@ -10,6 +20,7 @@ export default class PinResolver {
     return PinRepository.getPins();
   }
 
+  @Authorized()
   @Mutation(() => Pin)
   createPin(
     @Args()
@@ -40,6 +51,7 @@ export default class PinResolver {
     );
   }
 
+  @Authorized()
   @Mutation(() => Pin)
   updatePin(
     @Args()
@@ -72,6 +84,7 @@ export default class PinResolver {
     );
   }
 
+  @Authorized()
   @Mutation(() => Pin)
   deletePin(@Arg("id") id: string): Promise<Pin> {
     return PinRepository.deletePin(id);
@@ -82,6 +95,7 @@ export default class PinResolver {
     return PinRepository.findPinById(id);
   }
 
+  @Authorized()
   @Mutation(() => Pin)
   addImageToPin(
     @Arg("pinId") pinId: string,
@@ -90,27 +104,33 @@ export default class PinResolver {
     return PinRepository.addImageToPin(pinId, fileName);
   }
 
+  @Authorized()
   @Mutation(() => Pin)
   addPinToUserFavorite(
     @Arg("pinId") pinId: string,
-    @Arg("userId") userId: string
+    @Ctx() context: GlobalContext
   ): Promise<Pin> {
-    return PinRepository.addPinToUserFavorite(pinId, userId);
+    return PinRepository.addPinToUserFavorite(
+      pinId,
+      (context.user as AppUser).id
+    );
   }
 
+  @Authorized()
   @Query(() => [Pin])
-  getPinsFromUserFavorites(
-    @Arg("userId") userId: string
-  ): Promise<Pin[]> {
-    return PinRepository.getPinsFromUserFavorites(userId);
+  getPinsFromUserFavorites(@Ctx() context: GlobalContext): Promise<Pin[]> {
+    return PinRepository.getPinsFromUserFavorites((context.user as AppUser).id);
   }
 
+  @Authorized()
   @Mutation(() => Pin)
   removePinFromUserFavorite(
     @Arg("pinId") pinId: string,
-    @Arg("userId") userId: string
-    ): Promise<Pin> {
-    return PinRepository.deletePinFromUserFavorites(pinId, userId);
+    @Ctx() context: GlobalContext
+  ): Promise<Pin> {
+    return PinRepository.deletePinFromUserFavorites(
+      pinId,
+      (context.user as AppUser).id
+    );
   }
-  
 }
