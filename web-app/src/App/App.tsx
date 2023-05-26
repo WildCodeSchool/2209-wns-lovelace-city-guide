@@ -8,6 +8,7 @@ import UploadImage from "../pages/CreatePin/UploadImage";
 
 import Home from "../pages/Home/Home";
 import Map from "../pages/Map/Map";
+import BaseFooter from "components/Footer/Footer";
 
 import {
   ADMIN_ALL_PINS_PATH,
@@ -23,7 +24,7 @@ import {
 } from "../pages/paths";
 import SignIn from "../pages/SignIn/SignIn";
 import SignUp from "../pages/SignUp/SignUp";
-import { Container, Footer, MainContainer } from "./App.styled";
+import {MainContainer } from "./App.styled";
 import AdminCategories from "../pages/Admin/AdminCategories";
 import ProtectedRoute from "pages/Protected/ProtectedRoute";
 import AlreadyLoggedIn from "pages/Protected/AlreadyLoggedIn";
@@ -106,11 +107,9 @@ function App() {
           />
         </Routes>
       </MainContainer>
-      <Footer>
-        <Container>
-          <p>&copy; 2023 Wild Code School</p>
-        </Container>
-      </Footer>
+      {pathname !== "/" && pathname !== "/map" && 
+        <BaseFooter/>
+      }
     </>
   );
 }

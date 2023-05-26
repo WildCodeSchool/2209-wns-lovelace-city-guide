@@ -5,6 +5,7 @@ export const MenuColumn = styled.div`
   flex-direction: column;
   max-width: 248px;
   margin: auto;
+  margin-top: 10vh;
 `
 
 export const MenuRow = styled.div`

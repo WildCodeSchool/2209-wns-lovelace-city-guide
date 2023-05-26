@@ -10,11 +10,7 @@ export const Container = styled.div`
 
 export const MainContainer = styled.main`
   padding: 0;
-  background-color: #222231;
-`;
-
-export const Footer = styled.footer`
-  border-top: 2px solid ${MAIN_THEME_COLOR};
+  height: 100vh;
 `;
 
 export const PageTitle = styled.h1`
