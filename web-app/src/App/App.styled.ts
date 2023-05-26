@@ -10,7 +10,6 @@ export const Container = styled.div`
 
 export const MainContainer = styled.main`
   padding: 0;
-  height: 100vh;
 `;
 
 export const PageTitle = styled.h1`

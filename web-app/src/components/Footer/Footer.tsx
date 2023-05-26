@@ -9,7 +9,6 @@ const splashphrases = [
     "Encore quelques mètres 💪",
 ]
 
-
 const BaseFooter = () => {
     return (
         <Footer>
