@@ -50,9 +50,6 @@ class CreatePinArgs {
   @Field()
   @IsBoolean()
   isOutdoor: boolean;
-
-  @Field()
-  userEmail: string;
 }
 
 @ArgsType()

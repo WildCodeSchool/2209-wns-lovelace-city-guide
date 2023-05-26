@@ -13,7 +13,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import Select, { MultiValue } from "react-select";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   CreatePinMutation,
   CreatePinMutationVariables,
@@ -43,7 +43,6 @@ const CREATE_PIN = gql`
     $isAccessible: Boolean!
     $isChildFriendly: Boolean!
     $isOutdoor: Boolean!
-    $userEmail: String!
   ) {
     createPin(
       name: $name
@@ -55,7 +54,6 @@ const CREATE_PIN = gql`
       isAccessible: $isAccessible
       isChildFriendly: $isChildFriendly
       isOutdoor: $isOutdoor
-      userEmail: $userEmail
     ) {
       id
       name
@@ -71,9 +69,6 @@ const CREATE_PIN = gql`
       isAccessible
       isChildFriendly
       isOutdoor
-      currentUser {
-        emailAddress
-      }
     }
   }
 `;
@@ -88,21 +83,14 @@ const CreatePin = () => {
   const [isAccessible, setIsAccessible] = useState(false);
   const [isChildFriendly, setIsChildFriendly] = useState(false);
   const [isOutdoor, setIsOutdoor] = useState(false);
-  const [userEmail, setUserEmail] = useState<string>("");
 
   const toast = useToast();
 
   const navigate = useNavigate();
 
-  const { data, loading, error } = useQuery<GetCategoriesQuery>(
-    GET_CATEGORIES,
-    {
-      fetchPolicy: "cache-and-network",
-    }
-  );
-  useEffect(() => {
-    setUserEmail("lily@test.com");
-  }, [userEmail]);
+  const { data } = useQuery<GetCategoriesQuery>(GET_CATEGORIES, {
+    fetchPolicy: "cache-and-network",
+  });
 
   const [createPin] = useMutation<
     CreatePinMutation,
@@ -156,7 +144,6 @@ const CreatePin = () => {
           isAccessible,
           isChildFriendly,
           isOutdoor,
-          userEmail,
         },
       });
       console.log(
@@ -168,8 +155,7 @@ const CreatePin = () => {
         longitude,
         isAccessible,
         isChildFriendly,
-        isOutdoor,
-        userEmail
+        isOutdoor
       );
       toast({
         title: `Pin ${name} a été créé avec succès.`,
@@ -186,8 +172,6 @@ const CreatePin = () => {
       setIsAccessible(false);
       setIsChildFriendly(false);
       setIsOutdoor(false);
-      navigate(HOME_PATH);
-
       navigate(MAP_PATH);
     } catch (error) {
       toast({

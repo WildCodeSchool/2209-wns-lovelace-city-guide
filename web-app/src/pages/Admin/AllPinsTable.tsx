@@ -11,11 +11,11 @@ import {
   Th,
   Thead,
   Tr,
+  Spinner,
 } from "@chakra-ui/react";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import ConfirmationDeleteDialog from "../../components/Dialog/ConfirmationDeleteDialog";
-import Loader from "../../components/Loader";
 import UpdatePinModal from "../../components/Modal/UpdatePinModal";
 import { GetPinsAdminPageQuery } from "../../gql/graphql";
 
@@ -54,7 +54,33 @@ const AllPinsTable = () => {
 
   const renderPins = () => {
     if (loading) {
-      return <Loader />;
+      return (
+        <>
+          <Flex width="full" align="center" justifyContent="center">
+            <Box
+              bg="#fff"
+              p={8}
+              width="1000px"
+              borderWidth={1}
+              borderRadius={8}
+              boxShadow="lg"
+            >
+              <Box textAlign="center">
+                <Heading>La list de catégories</Heading>
+              </Box>
+              <Box display="flex" alignItems="center" justifyContent="center">
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  color="teal.500"
+                  size="xl"
+                />
+              </Box>
+            </Box>
+          </Flex>
+        </>
+      );
     }
     if (error) {
       return error.message;
@@ -116,7 +142,6 @@ const AllPinsTable = () => {
                             isAccessible={pin.isAccessible}
                             isChildFriendly={pin.isChildFriendly}
                             isOutdoor={pin.isOutdoor}
-                            userEmail="lily@test.com"
                           />
                         </Td>
                         <Td>

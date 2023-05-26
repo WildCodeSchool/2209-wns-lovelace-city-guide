@@ -17,12 +17,11 @@ import {
   CheckboxGroup,
   Stack,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FaPen } from "react-icons/fa";
 import Select, { MultiValue } from "react-select";
 import {
   GetCategoriesQuery,
-  MyProfileQuery,
   UpdatePinMutation,
   UpdatePinMutationVariables,
 } from "../../gql/graphql";
@@ -47,7 +46,6 @@ const UPDATE_PIN = gql`
     $isAccessible: Boolean!
     $isChildFriendly: Boolean!
     $isOutdoor: Boolean!
-    $userEmail: String!
   ) {
     updatePin(
       id: $updatePinId
@@ -60,7 +58,6 @@ const UPDATE_PIN = gql`
       isAccessible: $isAccessible
       isChildFriendly: $isChildFriendly
       isOutdoor: $isOutdoor
-      userEmail: $userEmail
     ) {
       id
       name
@@ -95,7 +92,6 @@ type updatePinModalProps = {
   isAccessible: boolean;
   isChildFriendly: boolean;
   isOutdoor: boolean;
-  userEmail: string;
 };
 
 const UpdatePinModal = (pin: updatePinModalProps) => {
@@ -113,34 +109,15 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
   const [isAccessible, setIsAccessible] = useState(pin.isAccessible);
   const [isChildFriendly, setIsChildFriendly] = useState(pin.isChildFriendly);
   const [isOutdoor, setIsOutdoor] = useState(pin.isOutdoor);
-  const [userEmail, setUserEmail] = useState<string>("");
 
-  const { data, loading, error } = useQuery<GetCategoriesQuery>(
-    GET_CATEGORIES,
-    {
-      fetchPolicy: "cache-and-network",
-    }
-  );
-  const MY_PROFILE = gql`
-    query MyProfile {
-      myProfile {
-        id
-        firstName
-        lastName
-        emailAddress
-        userStatus
-      }
-    }
-  `;
+  const { data } = useQuery<GetCategoriesQuery>(GET_CATEGORIES, {
+    fetchPolicy: "cache-and-network",
+  });
+
   const [updatePin] = useMutation<
     UpdatePinMutation,
     UpdatePinMutationVariables
   >(UPDATE_PIN);
-
-  const { data: user, refetch } = useQuery<MyProfileQuery>(MY_PROFILE);
-  useEffect(() => {
-    setUserEmail("lily@test.com");
-  }, [userEmail]);
 
   const renderSelectedCategories = () => {
     const result = pin.categories.map((category) => ({
@@ -200,7 +177,6 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
           isAccessible,
           isChildFriendly,
           isOutdoor,
-          userEmail,
         },
       });
       toast({
