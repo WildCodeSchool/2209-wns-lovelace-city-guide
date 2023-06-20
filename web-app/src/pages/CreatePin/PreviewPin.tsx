@@ -11,10 +11,10 @@ import {
   Stack,
   Text,
   useToast,
+  Spinner,
 } from "@chakra-ui/react";
 import { FaHeart } from "react-icons/fa";
 import { Link, useParams } from "react-router-dom";
-import Loader from "../../components/Loader";
 import {
   AddPinToUserFavoriteMutation,
   AddPinToUserFavoriteMutationVariables,
@@ -23,7 +23,7 @@ import {
   GetPinByIdQuery,
   GetPinsFromUserFavoritesQuery,
 } from "../../gql/graphql";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getErrorMessage } from "utils";
 import { FavButton } from "../../styles/base-styles";
 
@@ -105,14 +105,6 @@ const PreviewPin = () => {
     RemovePinFromUserFavoriteMutationVariables
   >(REMOVE_PIN_FROM_USER_FAVORITE);
 
-  useEffect(() => {
-    console.log(isFavorite);
-    console.log(
-      userFavoritePins !== undefined &&
-        userFavoritePins.getPinsFromUserFavorites
-    );
-  });
-
   const onSubmitFavorite = async (event: React.MouseEvent<HTMLElement>) => {
     setIsFavorite(!isFavorite);
 
@@ -168,7 +160,33 @@ const PreviewPin = () => {
 
   const renderPin = () => {
     if (loading) {
-      return <Loader />;
+      return (
+        <>
+          <Flex width="full" align="center" justifyContent="center">
+            <Box
+              bg="#fff"
+              p={8}
+              width="1000px"
+              borderWidth={1}
+              borderRadius={8}
+              boxShadow="lg"
+            >
+              <Box textAlign="center">
+                <Heading>La list de catégories</Heading>
+              </Box>
+              <Box display="flex" alignItems="center" justifyContent="center">
+                <Spinner
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  color="teal.500"
+                  size="xl"
+                />
+              </Box>
+            </Box>
+          </Flex>
+        </>
+      );
     }
     if (error) {
       return error.message;

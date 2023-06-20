@@ -251,7 +251,6 @@ export type UpdatePinMutationVariables = Exact<{
   isAccessible: Scalars["Boolean"];
   isChildFriendly: Scalars["Boolean"];
   isOutdoor: Scalars["Boolean"];
-  userEmail: Scalars["String"];
 }>;
 
 export type UpdatePinMutation = {
@@ -335,7 +334,6 @@ export type CreatePinMutationVariables = Exact<{
   isAccessible: Scalars["Boolean"];
   isChildFriendly: Scalars["Boolean"];
   isOutdoor: Scalars["Boolean"];
-  userEmail: Scalars["String"];
 }>;
 
 export type CreatePinMutation = {
@@ -357,7 +355,6 @@ export type CreatePinMutation = {
       id: string;
       categoryName: string;
     }>;
-    currentUser: { __typename?: "AppUser"; emailAddress: string };
   };
 };
 

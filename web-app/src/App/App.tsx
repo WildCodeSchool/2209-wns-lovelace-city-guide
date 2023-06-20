@@ -24,7 +24,7 @@ import {
 } from "../pages/paths";
 import SignIn from "../pages/SignIn/SignIn";
 import SignUp from "../pages/SignUp/SignUp";
-import {MainContainer } from "./App.styled";
+import { MainContainer } from "./App.styled";
 import AdminCategories from "../pages/Admin/AdminCategories";
 import ProtectedRoute from "pages/Protected/ProtectedRoute";
 import AlreadyLoggedIn from "pages/Protected/AlreadyLoggedIn";
@@ -107,9 +107,7 @@ function App() {
           />
         </Routes>
       </MainContainer>
-      {pathname !== "/" && pathname !== "/map" && 
-        <BaseFooter/>
-      }
+      {pathname !== "/" && pathname !== "/map" && <BaseFooter />}
     </>
   );
 }

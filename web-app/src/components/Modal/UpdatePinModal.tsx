@@ -13,13 +13,15 @@ import {
   Input,
   ModalFooter,
   useToast,
+  Checkbox,
+  CheckboxGroup,
+  Stack,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FaPen } from "react-icons/fa";
 import Select, { MultiValue } from "react-select";
 import {
   GetCategoriesQuery,
-  MyProfileQuery,
   UpdatePinMutation,
   UpdatePinMutationVariables,
 } from "../../gql/graphql";
@@ -44,7 +46,6 @@ const UPDATE_PIN = gql`
     $isAccessible: Boolean!
     $isChildFriendly: Boolean!
     $isOutdoor: Boolean!
-    $userEmail: String!
   ) {
     updatePin(
       id: $updatePinId
@@ -57,7 +58,6 @@ const UPDATE_PIN = gql`
       isAccessible: $isAccessible
       isChildFriendly: $isChildFriendly
       isOutdoor: $isOutdoor
-      userEmail: $userEmail
     ) {
       id
       name
@@ -92,7 +92,6 @@ type updatePinModalProps = {
   isAccessible: boolean;
   isChildFriendly: boolean;
   isOutdoor: boolean;
-  userEmail: string;
 };
 
 const UpdatePinModal = (pin: updatePinModalProps) => {
@@ -107,37 +106,18 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
   const [description, setDescription] = useState(pin.description);
   const [latitude, setLatitude] = useState(pin.latitude);
   const [longitude, setLongitude] = useState(pin.longitude);
-  const [isAccessible, setIsAccessible] = useState(false);
-  const [isChildFriendly, setIsChildFriendly] = useState(false);
-  const [isOutdoor, setIsOutdoor] = useState(false);
-  const [userEmail, setUserEmail] = useState<string>("");
+  const [isAccessible, setIsAccessible] = useState(pin.isAccessible);
+  const [isChildFriendly, setIsChildFriendly] = useState(pin.isChildFriendly);
+  const [isOutdoor, setIsOutdoor] = useState(pin.isOutdoor);
 
-  const { data, loading, error } = useQuery<GetCategoriesQuery>(
-    GET_CATEGORIES,
-    {
-      fetchPolicy: "cache-and-network",
-    }
-  );
-  const MY_PROFILE = gql`
-    query MyProfile {
-      myProfile {
-        id
-        firstName
-        lastName
-        emailAddress
-        userStatus
-      }
-    }
-  `;
+  const { data } = useQuery<GetCategoriesQuery>(GET_CATEGORIES, {
+    fetchPolicy: "cache-and-network",
+  });
+
   const [updatePin] = useMutation<
     UpdatePinMutation,
     UpdatePinMutationVariables
   >(UPDATE_PIN);
-
-  const { data: user, refetch } = useQuery<MyProfileQuery>(MY_PROFILE);
-  useEffect(() => {
-    setUserEmail("lily@test.com");
-  }, [userEmail]);
 
   const renderSelectedCategories = () => {
     const result = pin.categories.map((category) => ({
@@ -170,6 +150,18 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
     setCategories(selected);
   };
 
+  const handleCheckIsAccessible = () => {
+    setIsAccessible(!isAccessible);
+  };
+
+  const handleCheckIsChildFriendly = () => {
+    setIsChildFriendly(!isChildFriendly);
+  };
+
+  const handleCheckIsOutDoor = () => {
+    setIsOutdoor(!isOutdoor);
+  };
+
   const onSubmit = async (event: React.MouseEvent<HTMLElement>) => {
     try {
       event.preventDefault();
@@ -185,13 +177,12 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
           isAccessible,
           isChildFriendly,
           isOutdoor,
-          userEmail,
         },
       });
       toast({
         title: `Pin ${name} a été modifié avec succès.`,
         status: "success",
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
       onClose();
@@ -200,7 +191,7 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
         title: "Erreur",
         status: "error",
         description: getErrorMessage(error),
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
     }
@@ -288,6 +279,25 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
                 }}
               />
             </FormControl>
+            <CheckboxGroup colorScheme="green" defaultValue={[]}>
+              <Stack spacing={[1, 5]} direction={["column", "row"]}>
+                <Checkbox
+                  isChecked={isAccessible}
+                  onChange={handleCheckIsAccessible}
+                >
+                  Accessible
+                </Checkbox>
+                <Checkbox
+                  isChecked={isChildFriendly}
+                  onChange={handleCheckIsChildFriendly}
+                >
+                  Child Friendly
+                </Checkbox>
+                <Checkbox isChecked={isOutdoor} onChange={handleCheckIsOutDoor}>
+                  Outdoor
+                </Checkbox>
+              </Stack>
+            </CheckboxGroup>
           </ModalBody>
 
           <ModalFooter>

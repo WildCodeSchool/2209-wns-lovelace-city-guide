@@ -4,7 +4,6 @@ import { MAIN_THEME_COLOR } from "styles/style-constants";
 export const Footer = styled.footer`
   display: flex;
   flex-direction: column;
-  
   margin-top: 2rem;
   padding: 1rem;
   background-color: white;
@@ -13,15 +12,14 @@ export const Footer = styled.footer`
 
 export const Logo = styled.img`
   max-width: 12rem;
-`
+`;
 
 export const Column = styled.div`
   display: flex;
-  flex-direction: column; 
-  justify-content: center; 
-`
+  flex-direction: column;
+  justify-content: center;
+`;
 
 export const Splashphrase = styled.b`
   color: ${MAIN_THEME_COLOR};
-  
-`
+`;

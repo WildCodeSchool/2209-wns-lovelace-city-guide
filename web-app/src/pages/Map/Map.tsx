@@ -116,7 +116,7 @@ const Pin = ({
   const [isFaved, setIsFaved] = useState(isFavorite);
 
   const toast = useToast();
-  console.log(isFavorite);
+
   const [favoritePin] = useMutation<
     AddPinToUserFavoriteMutation,
     AddPinToUserFavoriteMutationVariables

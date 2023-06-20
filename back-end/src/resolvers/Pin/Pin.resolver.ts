@@ -34,8 +34,8 @@ export default class PinResolver {
       isAccessible,
       isChildFriendly,
       isOutdoor,
-      userEmail,
-    }: CreatePinArgs
+    }: CreatePinArgs,
+    @Ctx() context: GlobalContext
   ): Promise<Pin> {
     return PinRepository.createPin(
       name,
@@ -47,7 +47,7 @@ export default class PinResolver {
       isAccessible,
       isChildFriendly,
       isOutdoor,
-      userEmail
+      (context.user as AppUser).emailAddress
     );
   }
 
@@ -66,8 +66,8 @@ export default class PinResolver {
       isAccessible,
       isChildFriendly,
       isOutdoor,
-      userEmail,
-    }: UpdatePinArgs
+    }: UpdatePinArgs,
+    @Ctx() context: GlobalContext
   ): Promise<Pin> {
     return PinRepository.updatePin(
       id,
@@ -80,7 +80,7 @@ export default class PinResolver {
       isAccessible,
       isChildFriendly,
       isOutdoor,
-      userEmail
+      (context.user as AppUser).emailAddress
     );
   }
 
