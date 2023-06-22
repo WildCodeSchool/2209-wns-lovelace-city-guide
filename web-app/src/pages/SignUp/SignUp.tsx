@@ -137,7 +137,7 @@ const SignUp = () => {
                   name="emailAddress"
                   value={emailAddress}
                   onChange={(event) => {
-                    setEmailAddress(event.target.value);
+                    setEmailAddress(event.target.value.toLowerCase());
                   }}
                 />
               </FormControl>
