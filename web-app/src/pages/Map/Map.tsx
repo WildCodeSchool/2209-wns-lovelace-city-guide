@@ -1,5 +1,8 @@
-import { useEffect, useState, useMemo, useRef } from "react";
-import { Marker, Popup, TileLayer, useMap, Tooltip } from "react-leaflet";
+import { useState } from "react";
+import { TileLayer } from "react-leaflet";
+
+import { AppContext } from "context/AppContext";
+import { useContext } from "react";
 
 import {
   LeafletContainer,
@@ -11,6 +14,9 @@ import {
   Infos,
 } from "./Map.styled";
 
+import Pin from "./Pin"
+import Location from "./Location"
+
 import {
   RedButton,
   BtnBlueRounded,
@@ -19,26 +25,16 @@ import {
   FavButton,
 } from "../../styles/base-styles";
 
-import { useQuery, useMutation, gql } from "@apollo/client";
+import { useQuery, gql } from "@apollo/client";
 import {
   GetPinsQuery,
   GetPinsFromUserFavoritesQuery,
-  AddPinToUserFavoriteMutation,
-  AddPinToUserFavoriteMutationVariables,
-  RemovePinFromUserFavoriteMutation,
-  RemovePinFromUserFavoriteMutationVariables,
 } from "../../gql/graphql";
 import PinMeLogo from "../../media/logo.png";
 import { FaHome, FaHeart, FaTree } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
-import { MdAccessible, MdChildFriendly } from "react-icons/md";
-
-import { DragMarker, PinMarker, FavedMarker } from "components/PinMarkers";
-import { getErrorMessage } from "utils";
-
 import "./TooltipStyle.css";
 import { Link } from "react-router-dom";
-import { useToast } from "@chakra-ui/react";
 import { HOME_PATH } from "pages/paths";
 
 const GET_PINS = gql`
@@ -62,6 +58,8 @@ const GET_PINS = gql`
   }
 `;
 
+
+
 const GET_FAVORITE_PIN = gql`
   query GetPinsFromUserFavorites {
     getPinsFromUserFavorites {
@@ -70,161 +68,7 @@ const GET_FAVORITE_PIN = gql`
   }
 `;
 
-const ADD_PIN_TO_USER_FAVORITE = gql`
-  mutation addPinToUserFavorite($pinId: String!) {
-    addPinToUserFavorite(pinId: $pinId) {
-      id
-      name
-    }
-  }
-`;
 
-const REMOVE_PIN_FROM_USER_FAVORITE = gql`
-  mutation removePinFromUserFavorite($pinId: String!) {
-    removePinFromUserFavorite(pinId: $pinId) {
-      id
-      name
-    }
-  }
-`;
-
-type PropType = {
-  id: string;
-  name: string;
-  latitude: number;
-  longitude: number;
-  address: string;
-  description: string;
-  isOutdoor: boolean;
-  isAccessible: boolean;
-  isChildFriendly: boolean;
-  isFavorite: boolean;
-};
-
-const Pin = ({
-  id,
-  name,
-  latitude,
-  longitude,
-  address,
-  description,
-  isOutdoor,
-  isAccessible,
-  isChildFriendly,
-  isFavorite,
-}: PropType) => {
-  const [isFaved, setIsFaved] = useState(isFavorite);
-
-  const toast = useToast();
-
-  const [favoritePin] = useMutation<
-    AddPinToUserFavoriteMutation,
-    AddPinToUserFavoriteMutationVariables
-  >(ADD_PIN_TO_USER_FAVORITE);
-
-  const [removePin] = useMutation<
-    RemovePinFromUserFavoriteMutation,
-    RemovePinFromUserFavoriteMutationVariables
-  >(REMOVE_PIN_FROM_USER_FAVORITE);
-
-  const onSubmitFavorite = async (event: React.MouseEvent<HTMLElement>) => {
-    const pinId = id;
-    setIsFaved(!isFaved);
-
-    if (isFaved) {
-      try {
-        event.preventDefault();
-        await removePin({
-          variables: {
-            pinId,
-          },
-        });
-        toast({
-          title: `Pin a été supprimé de la liste de favoris.`,
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
-      } catch (error) {
-        toast({
-          title: "Something went wrong",
-          description: getErrorMessage(error),
-          duration: 5000,
-          isClosable: true,
-        });
-      }
-    } else {
-      try {
-        event.preventDefault();
-        await favoritePin({
-          variables: {
-            pinId,
-          },
-        });
-        toast({
-          title: `Pin a été ajouté dans la liste de favoris.`,
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
-      } catch (error) {
-        toast({
-          title: "Something went wrong",
-          description: getErrorMessage(error),
-          duration: 5000,
-          isClosable: true,
-        });
-      }
-    }
-  };
-
-  return (
-    <Marker
-      position={[latitude, longitude]}
-      icon={isFaved ? FavedMarker : PinMarker}
-    >
-      <Tooltip>{name}</Tooltip>
-      <Popup>
-        <header className="row title">
-          <span>{name}</span>
-        </header>
-        <div className="row">
-          <p>{description}</p>
-          <FavButton onClick={onSubmitFavorite} fave={isFaved ? true : false}>
-            {" "}
-            <FaHeart />{" "}
-          </FavButton>
-        </div>
-        <footer>
-          <p className="adress">{address}</p>
-          <Infos>
-            {" "}
-            {isAccessible && <MdAccessible title="Acessible PMR" />}{" "}
-            {isOutdoor && <FaTree title="En exterieur" />}{" "}
-            {isChildFriendly && <MdChildFriendly title="Famillial" />}{" "}
-          </Infos>
-        </footer>
-      </Popup>
-    </Marker>
-  );
-};
-
-// const PopUp = (name, description, adress) => {
-//   return (
-//     <div>
-//       <header className='row title'>
-//         <span>{name}</span>
-//       </header>
-//       <div className='row'>
-//         <p>{description}</p>
-//         <button className='favBtn'><FaHeart/></button>
-//       </div>
-//       <footer>
-//         <p className='adress'>{address}</p>
-//       </footer>
-//     </div>
-//   )
-// }
 type NewPinPropType = {
   newPin: boolean;
   setNewPin: (argument: boolean) => void;
@@ -253,48 +97,10 @@ function CreateNewPin({ newPin, setNewPin, position }: NewPinPropType) {
   }
 }
 
-type LocationPropType = { position: any; setPosition: (argument: any) => void };
 
-const Location = ({ position, setPosition }: LocationPropType) => {
-  const map = useMap();
-  const markerRef = useRef<any>(null);
 
-  const eventHandlers = useMemo(
-    () => ({
-      dragend(e: any) {
-        const marker = markerRef.current;
-        if (marker != null) {
-          setPosition(marker.getLatLng());
-        }
-        //  console.log(e.target.getLatLng())
-      },
-    }),
-    []
-  );
-
-  useEffect(() => {
-    map.locate({
-      setView: true,
-    });
-    map.on("locationfound", (event) => {
-      !position && setPosition(event.latlng);
-    });
-  }, [map]);
-
-  return position ? (
-    <>
-      <Marker
-        icon={DragMarker}
-        draggable={true}
-        eventHandlers={eventHandlers}
-        position={position}
-        ref={markerRef}
-      />
-    </>
-  ) : null;
-};
-
-const Home = () => {
+const Map = () => {
+  const appContext = useContext(AppContext);
   const [newPin, setNewPin] = useState(false);
   // const [newPinLocation, setNewPinLocation] = useState<any | null>(null);
   const [position, setPosition] = useState<any[] | [] | null>(null);
@@ -365,16 +171,24 @@ const Home = () => {
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           {renderMainContent()}
         </LeafletContainer>
-        <ControlBoard>
-          <CreateNewPin
-            newPin={newPin}
-            setNewPin={setNewPin}
-            position={position}
-          />
-        </ControlBoard>
+          <ControlBoard>
+        {appContext?.isLoggedIn ? 
+            <CreateNewPin
+              newPin={newPin}
+              setNewPin={setNewPin}
+              position={position}
+            />
+            : 
+            <Link to="/sign-in">
+              <BtnBlueRounded>
+                Connexion
+              </BtnBlueRounded>
+            </Link>
+          }
+          </ControlBoard>
       </Container>
     </>
   );
 };
 
-export default Home;
+export default Map;
