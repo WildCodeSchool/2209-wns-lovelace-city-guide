@@ -90,6 +90,8 @@ export type MutationCreatePinArgs = {
   longitude: Scalars["Float"];
   name: Scalars["String"];
   userEmail: Scalars["String"];
+  city: Scalars["String"];
+  zipcode: Scalars["String"];
 };
 
 export type MutationDeleteCategoryArgs = {
@@ -127,6 +129,8 @@ export type MutationUpdateCategoryArgs = {
 
 export type MutationUpdatePinArgs = {
   address: Scalars["String"];
+  city: Scalars["String"];
+  zipcode: Scalars["String"];
   categories: Array<Scalars["String"]>;
   description: Scalars["String"];
   id: Scalars["ID"];
@@ -244,6 +248,8 @@ export type UpdatePinMutationVariables = Exact<{
   updatePinId: Scalars["ID"];
   name: Scalars["String"];
   address: Scalars["String"];
+  city: Scalars["String"];
+  zipcode: Scalars["String"];
   categories: Array<Scalars["String"]> | Scalars["String"];
   description: Scalars["String"];
   latitude: Scalars["Float"];
@@ -260,6 +266,8 @@ export type UpdatePinMutation = {
     id: string;
     name: string;
     address: string;
+    city: string;
+    zipcode: string;
     description: string;
     latitude: number;
     longitude: number;
@@ -304,6 +312,8 @@ export type GetPinsAdminPageQuery = {
     id: string;
     name: string;
     address: string;
+    city: string;
+    zipcode: string;
     description: string;
     latitude: number;
     longitude: number;
@@ -327,6 +337,8 @@ export type GetPinsAdminPageQuery = {
 export type CreatePinMutationVariables = Exact<{
   name: Scalars["String"];
   address: Scalars["String"];
+  city: Scalars["String"];
+  zipcode: Scalars["String"];
   categories: Array<Scalars["String"]> | Scalars["String"];
   description: Scalars["String"];
   latitude: Scalars["Float"];
@@ -343,6 +355,8 @@ export type CreatePinMutation = {
     id: string;
     name: string;
     address: string;
+    city: string;
+    zipcode: string;
     description: string;
     latitude: number;
     longitude: number;

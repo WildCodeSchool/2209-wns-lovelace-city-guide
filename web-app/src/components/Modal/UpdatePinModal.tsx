@@ -39,6 +39,8 @@ const UPDATE_PIN = gql`
     $updatePinId: ID!
     $name: String!
     $address: String!
+    $city: String!
+    $zipcode: String!
     $categories: [String!]!
     $description: String!
     $latitude: Float!
@@ -51,6 +53,8 @@ const UPDATE_PIN = gql`
       id: $updatePinId
       name: $name
       address: $address
+      city: $city
+      zipcode: $zipcode
       categories: $categories
       description: $description
       latitude: $latitude
@@ -73,6 +77,8 @@ const UPDATE_PIN = gql`
       isAccessible
       isChildFriendly
       isOutdoor
+      city
+      zipcode
     }
   }
 `;
@@ -81,6 +87,8 @@ type updatePinModalProps = {
   id: string;
   name: string;
   address: string;
+  city: string;
+  zipcode: string;
   categories: {
     __typename?: "Category" | undefined;
     categoryName: string;
@@ -100,6 +108,8 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
   const [id, setId] = useState(pin.id);
   const [name, setName] = useState(pin.name);
   const [address, setAddress] = useState(pin.address);
+  const [city, setCity] = useState(pin.city);
+  const [zipcode, setZipcode] = useState(pin.zipcode);
   const [categories, setCategories] = useState(
     pin.categories.map((category) => category.categoryName)
   );
@@ -170,6 +180,8 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
           updatePinId: id,
           name,
           address,
+          city,
+          zipcode,
           categories,
           description,
           latitude,
@@ -231,6 +243,30 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
                 value={address}
                 onChange={(event) => {
                   setAddress(event.target.value);
+                }}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Ville</FormLabel>
+              <Input
+                type="text"
+                id="city"
+                name="city"
+                value={city}
+                onChange={(event) => {
+                  setCity(event.target.value);
+                }}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Code postal</FormLabel>
+              <Input
+                type="text"
+                id="zipcode"
+                name="zipcode"
+                value={zipcode}
+                onChange={(event) => {
+                  setZipcode(event.target.value);
                 }}
               />
             </FormControl>

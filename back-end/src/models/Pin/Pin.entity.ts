@@ -20,6 +20,8 @@ export default class Pin {
   constructor(
     name: string,
     address: string,
+    city: string,
+    zipcode: string,
     categories: Category[],
     description: string,
     latitude: number,
@@ -31,6 +33,8 @@ export default class Pin {
   ) {
     this.name = name;
     this.address = address;
+    this.city = city;
+    this.zipcode = zipcode;
     this.categories = categories;
     this.description = description;
     this.latitude = latitude;
@@ -60,6 +64,14 @@ export default class Pin {
   @Column()
   @Field()
   address: string;
+
+  @Column()
+  @Field()
+  city: string;
+
+  @Column()
+  @Field()
+  zipcode: string;
 
   @ManyToMany(() => Category, { eager: true })
   @Field(() => [Category])
