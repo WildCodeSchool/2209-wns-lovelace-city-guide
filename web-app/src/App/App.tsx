@@ -23,7 +23,7 @@ import {
   MAP_PATH,
   ADMIN_CATEGORIES,
   PROFILE_PATH,
-  ADMIN_ALL_USERS_PATH
+  ADMIN_ALL_USERS_PATH,
 } from "../pages/paths";
 import SignIn from "../pages/SignIn/SignIn";
 import SignUp from "../pages/SignUp/SignUp";
