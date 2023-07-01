@@ -40,6 +40,8 @@ const GET_PINS_ADMIN_PAGE = gql`
       isAccessible
       isChildFriendly
       isOutdoor
+      city
+      zipcode
     }
   }
 `;
@@ -108,6 +110,7 @@ const AllPinsTable = () => {
                   <Tr>
                     <Th>Nom</Th>
                     <Th>Adresse</Th>
+                    <Th>Ville</Th>
                     <Th>Catégories</Th>
                     <Th colSpan={3}>Actions</Th>
                   </Tr>
@@ -118,6 +121,7 @@ const AllPinsTable = () => {
                       <Tr key={pin.id}>
                         <Td>{pin.name}</Td>
                         <Td>{pin.address}</Td>
+                        <Td>{pin.city}</Td>
                         <Td>
                           {pin.categories.map(
                             (category) => category.categoryName
@@ -135,6 +139,8 @@ const AllPinsTable = () => {
                             id={pin.id}
                             name={pin.name}
                             address={pin.address}
+                            city={pin.city}
+                            zipcode={pin.zipcode}
                             categories={pin.categories}
                             description={pin.description}
                             latitude={pin.latitude}
