@@ -17,6 +17,8 @@ export default class PinRepository extends PinDb {
     const firstResto = new Pin(
       "Pokebowl",
       "42 rue Michel Felizat",
+      "Lyon",
+      "69007",
       [restaurantCategory],
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum, erat eget tempus gravida, est nunc congue purus, et accumsan libero augue ut mi. Mauris egestas imperdiet mauris, eget interdum.",
       45.73615111648431,
@@ -28,6 +30,8 @@ export default class PinRepository extends PinDb {
     const secondResto = new Pin(
       "Noodle",
       "33 rue Michel Felizat",
+      "Lyon",
+      "69001",
       [restaurantCategory],
       "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum, erat eget tempus gravida, est nunc congue purus, et accumsan libero augue ut mi. Mauris egestas imperdiet mauris, eget interdum.",
       45.72,
@@ -47,6 +51,8 @@ export default class PinRepository extends PinDb {
   static async createPin(
     name: string,
     address: string,
+    city: string,
+    zipcode: string,
     categoriesNames: string[],
     description: string,
     latitude: number,
@@ -66,6 +72,8 @@ export default class PinRepository extends PinDb {
     const newPin = this.repository.create({
       name,
       address,
+      city,
+      zipcode,
       categories,
       description,
       latitude,
@@ -83,6 +91,8 @@ export default class PinRepository extends PinDb {
     id: string,
     name: string,
     address: string,
+    city: string,
+    zipcode: string,
     categoriesNames: string[],
     description: string,
     latitude: number,
@@ -96,6 +106,8 @@ export default class PinRepository extends PinDb {
       id: string;
       name: string;
       address: string;
+      city: string;
+      zipcode: string;
       categories: Category[];
       description: string;
       latitude: number;
@@ -119,6 +131,8 @@ export default class PinRepository extends PinDb {
       id,
       name,
       address,
+      city,
+      zipcode,
       categories,
       description,
       latitude,
@@ -188,12 +202,10 @@ export default class PinRepository extends PinDb {
     return this.repository.save(pin);
   }
 
-  static async getPinsFromUserFavorites(
-    userId: string
-  ): Promise<Pin[]> {
+  static async getPinsFromUserFavorites(userId: string): Promise<Pin[]> {
     const favoritePins = await this.findPinsByUserId(userId);
-    console.log(favoritePins)
-    return favoritePins
+    console.log(favoritePins);
+    return favoritePins;
   }
 
   static async deletePinFromUserFavorites(
@@ -204,15 +216,14 @@ export default class PinRepository extends PinDb {
     if (!pin) {
       throw Error("Pin doesn't exist");
     }
-    console.log(pin)
+    console.log(pin);
     const currentUser = (await AppUserRepository.findUserById(
       userId
     )) as AppUser;
     if (!currentUser) {
       throw Error("User doesn't exist");
     }
-    pin.favoriteUsers = pin.favoriteUsers.filter(user => user.id != userId)
-    return await this.repository.save(pin)
+    pin.favoriteUsers = pin.favoriteUsers.filter((user) => user.id != userId);
+    return await this.repository.save(pin);
   }
-  
 }

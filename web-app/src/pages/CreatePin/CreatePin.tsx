@@ -21,7 +21,7 @@ import {
 } from "../../gql/graphql";
 import { getErrorMessage } from "../../utils";
 import { useLocation, useNavigate } from "react-router-dom";
-import { HOME_PATH, MAP_PATH } from "pages/paths";
+import { MAP_PATH } from "pages/paths";
 
 const GET_CATEGORIES = gql`
   query getCategories {
@@ -36,6 +36,8 @@ const CREATE_PIN = gql`
   mutation createPin(
     $name: String!
     $address: String!
+    $city: String!
+    $zipcode: String!
     $categories: [String!]!
     $description: String!
     $latitude: Float!
@@ -47,6 +49,8 @@ const CREATE_PIN = gql`
     createPin(
       name: $name
       address: $address
+      city: $city
+      zipcode: $zipcode
       categories: $categories
       description: $description
       latitude: $latitude
@@ -69,6 +73,8 @@ const CREATE_PIN = gql`
       isAccessible
       isChildFriendly
       isOutdoor
+      city
+      zipcode
     }
   }
 `;
@@ -76,6 +82,8 @@ const CreatePin = () => {
   let { state } = useLocation();
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [zipcode, setZipcode] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
   const [description, setDescription] = useState("");
   const [latitude, setLatitude] = useState(state.position.lat);
@@ -137,6 +145,8 @@ const CreatePin = () => {
         variables: {
           name,
           address,
+          city,
+          zipcode,
           categories,
           description,
           latitude,
@@ -149,6 +159,8 @@ const CreatePin = () => {
       console.log(
         name,
         address,
+        city,
+        zipcode,
         categories,
         description,
         latitude,
@@ -165,6 +177,8 @@ const CreatePin = () => {
       });
       setName("");
       setAddress("");
+      setCity("");
+      setZipcode("");
       setCategories([]);
       setDescription("");
       setLatitude(0);
@@ -221,6 +235,30 @@ const CreatePin = () => {
                 value={address}
                 onChange={(event) => {
                   setAddress(event.target.value);
+                }}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Ville</FormLabel>
+              <Input
+                type="text"
+                id="city"
+                name="city"
+                value={city}
+                onChange={(event) => {
+                  setCity(event.target.value);
+                }}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Code postal</FormLabel>
+              <Input
+                type="text"
+                id="zipcode"
+                name="zipcode"
+                value={zipcode}
+                onChange={(event) => {
+                  setZipcode(event.target.value);
                 }}
               />
             </FormControl>
