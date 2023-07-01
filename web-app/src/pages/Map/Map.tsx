@@ -11,7 +11,6 @@ import {
   Header,
   Logo,
   ControlBoard,
-  Infos,
 } from "./Map.styled";
 
 import Pin from "./Pin"
@@ -58,8 +57,6 @@ const GET_PINS = gql`
   }
 `;
 
-
-
 const GET_FAVORITE_PIN = gql`
   query GetPinsFromUserFavorites {
     getPinsFromUserFavorites {
@@ -67,7 +64,6 @@ const GET_FAVORITE_PIN = gql`
     }
   }
 `;
-
 
 type NewPinPropType = {
   newPin: boolean;
