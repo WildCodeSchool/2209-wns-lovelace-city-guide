@@ -43,7 +43,7 @@ describe("AppUserRepository integration", () => {
         const emailAddress = "maya@test.com";
 
         describe("when password invalid", () => {
-          it("throws invalid creddentials error", async () => {
+          it("throws invalid credentials error", async () => {
             await AppUserRepository.createUser(
               "Maya",
               "Test",
@@ -70,7 +70,7 @@ describe("AppUserRepository integration", () => {
             expect(session[0].user.emailAddress).toEqual(emailAddress);
           });
 
-          it("returnn user and session", async () => {
+          it("return user and session", async () => {
             await AppUserRepository.createUser(
               "Maya",
               "Test",
