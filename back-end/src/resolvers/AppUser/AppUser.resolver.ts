@@ -55,4 +55,19 @@ export default class AppUserResolver {
   async signOut(@Arg("id") id: string): Promise<AppUser> {
     return AppUserRepository.signOut(id);
   }
+
+  @Mutation(() => AppUser)
+  async assignAdmin(@Arg("id") id: string): Promise<AppUser> {
+    return AppUserRepository.assignAdmin(id);
+  }
+
+  @Mutation(() => AppUser)
+  async deleteUser(@Arg("id") id: string): Promise<AppUser> {
+    return AppUserRepository.deleteUser(id);
+  }
+
+  @Mutation(() => AppUser)
+  async removeAdmin(@Arg("id") id: string): Promise<AppUser> {
+    return AppUserRepository.removeAdmin(id);
+  }
 }

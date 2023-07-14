@@ -52,7 +52,7 @@ export function ContextProvider({ children }: any) {
       setUserProfile(null);
     } else if (data) {
       const userStatus = data?.myProfile.userStatus;
-      if (userStatus === "ADMIN") {
+      if (userStatus === "ADMIN" || userStatus === "SUPER_ADMIN") {
         setIsAdmin(true);
       } else {
         setIsAdmin(false);
