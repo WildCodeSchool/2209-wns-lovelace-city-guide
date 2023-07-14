@@ -59,4 +59,32 @@ export default class AppUserRepository extends AppUserDb {
   public static findUserById(userId: string): Promise<AppUser | null> {
     return this.repository.findOneBy({ id: userId });
   }
+
+  static async assignAdmin(id: string): Promise<AppUser> {
+    const user = await this.repository.findOneBy({ id });
+    if (!user) {
+      throw Error("L'utilisateur introuvable");
+    }
+    user.userStatus = UserStatus.ADMIN;
+    return this.repository.save(user);
+  }
+
+  static async deleteUser(id: string): Promise<AppUser> {
+    const existingUser = await this.findUserById(id);
+    if (!existingUser) {
+      throw Error("L'utilisateur avec un identifiant demandé introuvable");
+    }
+    await this.repository.remove(existingUser);
+    existingUser.id = id;
+    return existingUser;
+  }
+
+  static async removeAdmin(id: string): Promise<AppUser> {
+    const user = await this.repository.findOneBy({ id });
+    if (!user) {
+      throw Error("L'utilisateur introuvable");
+    }
+    user.userStatus = UserStatus.USER;
+    return this.repository.save(user);
+  }
 }

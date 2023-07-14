@@ -22,7 +22,8 @@ import {
   UPLOAD_IMAGE,
   MAP_PATH,
   ADMIN_CATEGORIES,
-  PROFILE_PATH
+  PROFILE_PATH,
+  ADMIN_ALL_USERS_PATH
 } from "../pages/paths";
 import SignIn from "../pages/SignIn/SignIn";
 import SignUp from "../pages/SignUp/SignUp";
@@ -32,6 +33,7 @@ import ProtectedRoute from "pages/Protected/ProtectedRoute";
 import AlreadyLoggedIn from "pages/Protected/AlreadyLoggedIn";
 import AdminRoute from "pages/Protected/AdminRoute";
 import NavbarPage from "components/Navbar/NavbarPage";
+import AllUsersTable from "pages/Admin/AllUsersTable";
 
 function App() {
   const { pathname } = useLocation();
@@ -80,6 +82,14 @@ function App() {
             element={
               <AdminRoute>
                 <AllPinsTable />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path={ADMIN_ALL_USERS_PATH}
+            element={
+              <AdminRoute>
+                <AllUsersTable />
               </AdminRoute>
             }
           />

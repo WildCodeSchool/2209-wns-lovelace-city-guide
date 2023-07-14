@@ -1,71 +1,76 @@
 import {
   ApolloQueryResult,
-  gql,
   OperationVariables,
+  gql,
   useMutation,
 } from "@apollo/client";
 import {
-  Button,
   AlertDialog,
-  AlertDialogOverlay,
-  AlertDialogContent,
-  AlertDialogHeader,
   AlertDialogBody,
+  AlertDialogContent,
   AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  Button,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import {
-  DeleteCategoryMutation,
-  DeleteCategoryMutationVariables,
-  GetCategoriesQuery,
+  AssignAdminMutation,
+  AssignAdminMutationVariables,
+  GetUsersQuery,
 } from "gql/graphql";
 import React from "react";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaPlusCircle } from "react-icons/fa";
 import { getErrorMessage } from "utils";
 
-const DELETE_CATEGORY = gql`
-  mutation DeleteCategory($categoryId: String!) {
-    deleteCategory(id: $categoryId) {
-      id
-      categoryName
+const ASSIGN_ADMIN = gql`
+  mutation AssignAdmin($id: String!) {
+    assignAdmin(id: $id) {
+      firstName
+      lastName
+      emailAddress
+      userStatus
     }
   }
 `;
 
-type confirmDeleteCategoryProps = {
-  categoryId: string;
-  categoryName: string;
+type assignAdminProps = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  status: string;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<GetCategoriesQuery>>;
+  ) => Promise<ApolloQueryResult<GetUsersQuery>>;
 };
-const ConfirmDeleteCategory = ({
-  categoryId,
-  categoryName,
+
+const ConfirmAssignAdmin = ({
+  id,
+  firstName,
+  lastName,
+  status,
   refetch,
-}: confirmDeleteCategoryProps) => {
-  const [deleteCategory] = useMutation<
-    DeleteCategoryMutation,
-    DeleteCategoryMutationVariables
-  >(DELETE_CATEGORY);
+}: assignAdminProps) => {
+  const [assignAdmin] = useMutation<
+    AssignAdminMutation,
+    AssignAdminMutationVariables
+  >(ASSIGN_ADMIN);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef(null);
   const toast = useToast();
 
-  const onDelete = async () => {
+  const onAssignAdmin = async () => {
     try {
-      await deleteCategory({
-        variables: { categoryId },
-      });
+      await assignAdmin({ variables: { id } });
       await refetch();
       toast({
-        title: `Catégorie : ${categoryName} a été supprimé avec succès.`,
+        title: `Pinner : ${firstName} ${lastName} a été ajouté en tant qu'admin avec succès.`,
         status: "success",
         duration: 5000,
         isClosable: true,
       });
-      onClose();
     } catch (error) {
       toast({
         title: "Erreur",
@@ -79,8 +84,9 @@ const ConfirmDeleteCategory = ({
 
   return (
     <>
-      <Button colorScheme="red" onClick={onOpen}>
-        <FaTrashAlt />
+      <Button colorScheme="teal" onClick={onOpen}>
+        <FaPlusCircle />
+        <span>Ajouter Admin</span>
       </Button>
 
       <AlertDialog
@@ -91,19 +97,19 @@ const ConfirmDeleteCategory = ({
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Supprimer cette catégorie?
+              Ajouter un nouveau admin?
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              {`Etes-vous sûr de vouloir supprimer catégorie : ${categoryName}?`}
+              {`Etes-vous sûr de vouloir ajouter ${firstName} ${lastName} en tant qu'admin?`}
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
-                Annuler
+              <Button colorScheme="red" ref={cancelRef} onClick={onClose}>
+                Non
               </Button>
-              <Button onClick={onDelete} colorScheme="red" ml={3}>
-                Supprimer
+              <Button onClick={onAssignAdmin} colorScheme="teal" ml={3}>
+                Oui
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -113,4 +119,4 @@ const ConfirmDeleteCategory = ({
   );
 };
 
-export default ConfirmDeleteCategory;
+export default ConfirmAssignAdmin;

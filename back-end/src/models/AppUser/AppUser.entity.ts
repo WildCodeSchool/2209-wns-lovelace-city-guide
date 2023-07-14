@@ -15,6 +15,7 @@ export enum UserStatus {
   USER = "USER",
   ADMIN = "ADMIN",
   BANNED_USER = "BANNED_USER",
+  SUPER_ADMIN = "SUPER_ADMIN",
 }
 
 registerEnumType(UserStatus, {
