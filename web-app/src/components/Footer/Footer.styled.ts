@@ -8,6 +8,9 @@ export const Footer = styled.footer`
   padding: 1rem;
   background-color: white;
   width: 100%;
+  position: absolute;
+  bottom: 0;
+  height: 5.5rem;
 `;
 
 export const Logo = styled.img`
