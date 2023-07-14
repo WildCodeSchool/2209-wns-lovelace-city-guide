@@ -1,7 +1,7 @@
 import {
   ApolloQueryResult,
-  gql,
   OperationVariables,
+  gql,
   useMutation,
 } from "@apollo/client";
 import {
@@ -16,56 +16,61 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import {
-  DeleteCategoryMutation,
-  DeleteCategoryMutationVariables,
-  GetCategoriesQuery,
+  GetUsersQuery,
+  RemoveAdminMutation,
+  RemoveAdminMutationVariables,
 } from "gql/graphql";
 import React from "react";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaMinusCircle } from "react-icons/fa";
 import { getErrorMessage } from "utils";
 
-const DELETE_CATEGORY = gql`
-  mutation DeleteCategory($categoryId: String!) {
-    deleteCategory(id: $categoryId) {
+const REMOVE_ADMIN = gql`
+  mutation removeAdmin($id: String!) {
+    removeAdmin(id: $id) {
       id
-      categoryName
+      firstName
+      lastName
+      userStatus
+      emailAddress
     }
   }
 `;
 
-type confirmDeleteCategoryProps = {
-  categoryId: string;
-  categoryName: string;
+type removeAdminProps = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  status: string;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<GetCategoriesQuery>>;
+  ) => Promise<ApolloQueryResult<GetUsersQuery>>;
 };
-const ConfirmDeleteCategory = ({
-  categoryId,
-  categoryName,
+
+const ConfirmRemoveAdmin = ({
+  id,
+  firstName,
+  lastName,
+  status,
   refetch,
-}: confirmDeleteCategoryProps) => {
-  const [deleteCategory] = useMutation<
-    DeleteCategoryMutation,
-    DeleteCategoryMutationVariables
-  >(DELETE_CATEGORY);
+}: removeAdminProps) => {
+  const [removeAdmin] = useMutation<
+    RemoveAdminMutation,
+    RemoveAdminMutationVariables
+  >(REMOVE_ADMIN);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef(null);
   const toast = useToast();
 
-  const onDelete = async () => {
+  const onRemoveAdmin = async () => {
     try {
-      await deleteCategory({
-        variables: { categoryId },
-      });
+      await removeAdmin({ variables: { id } });
       await refetch();
       toast({
-        title: `Catégorie : ${categoryName} a été supprimé avec succès.`,
+        title: `Pinner : ${firstName} ${lastName} a été retiré en tant qu'admin avec succès.`,
         status: "success",
         duration: 5000,
         isClosable: true,
       });
-      onClose();
     } catch (error) {
       toast({
         title: "Erreur",
@@ -76,11 +81,11 @@ const ConfirmDeleteCategory = ({
       });
     }
   };
-
   return (
     <>
-      <Button colorScheme="red" onClick={onOpen}>
-        <FaTrashAlt />
+      <Button bgColor="#ff8787" color="#fff" onClick={onOpen}>
+        <FaMinusCircle />
+        <span>Retirer Admin</span>
       </Button>
 
       <AlertDialog
@@ -91,19 +96,19 @@ const ConfirmDeleteCategory = ({
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Supprimer cette catégorie?
+              Retirer cet admin?
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              {`Etes-vous sûr de vouloir supprimer catégorie : ${categoryName}?`}
+              {`Etes-vous sûr de vouloir retirer ${firstName} ${lastName} en tant qu'admin?`}
             </AlertDialogBody>
 
             <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onClose}>
-                Annuler
+              <Button colorScheme="red" ref={cancelRef} onClick={onClose}>
+                Non
               </Button>
-              <Button onClick={onDelete} colorScheme="red" ml={3}>
-                Supprimer
+              <Button onClick={onRemoveAdmin} colorScheme="teal" ml={3}>
+                Oui
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -113,4 +118,4 @@ const ConfirmDeleteCategory = ({
   );
 };
 
-export default ConfirmDeleteCategory;
+export default ConfirmRemoveAdmin;
