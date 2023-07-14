@@ -205,6 +205,7 @@ export type QueryGetPinByIdArgs = {
 export enum UserStatus {
   Admin = 'ADMIN',
   BannedUser = 'BANNED_USER',
+  SuperAdmin = 'SUPER_ADMIN',
   User = 'USER'
 }
 
