@@ -8,6 +8,8 @@ export const Container = styled.div`
 
 export const MainContainer = styled.main`
   padding: 0;
+  min-height: 100vh;
+  position: relative;
 `;
 
 export const PageTitle = styled.h1`
