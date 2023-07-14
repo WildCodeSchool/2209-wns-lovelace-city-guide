@@ -1,10 +1,11 @@
 import {
   ApolloQueryResult,
-  gql,
   OperationVariables,
+  gql,
   useMutation,
 } from "@apollo/client";
 import {
+  useDisclosure,
   Button,
   AlertDialog,
   AlertDialogOverlay,
@@ -12,55 +13,56 @@ import {
   AlertDialogHeader,
   AlertDialogBody,
   AlertDialogFooter,
-  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import {
-  DeleteCategoryMutation,
-  DeleteCategoryMutationVariables,
-  GetCategoriesQuery,
+  DeletePinMutation,
+  DeletePinMutationVariables,
+  GetUsersQuery,
 } from "gql/graphql";
 import React from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { getErrorMessage } from "utils";
 
-const DELETE_CATEGORY = gql`
-  mutation DeleteCategory($categoryId: String!) {
-    deleteCategory(id: $categoryId) {
+const DELETE_USER = gql`
+  mutation Deletepin($id: String!) {
+    deleteUser(id: $id) {
       id
-      categoryName
+      firstName
+      lastName
+      emailAddress
+      userStatus
     }
   }
 `;
-
-type confirmDeleteCategoryProps = {
-  categoryId: string;
-  categoryName: string;
+type confirmDeleteUserProps = {
+  id: string;
+  firstName: string;
+  lastName: string;
   refetch: (
     variables?: Partial<OperationVariables> | undefined
-  ) => Promise<ApolloQueryResult<GetCategoriesQuery>>;
+  ) => Promise<ApolloQueryResult<GetUsersQuery>>;
 };
-const ConfirmDeleteCategory = ({
-  categoryId,
-  categoryName,
+const ConfirmDeleteUser = ({
+  id,
+  firstName,
+  lastName,
   refetch,
-}: confirmDeleteCategoryProps) => {
-  const [deleteCategory] = useMutation<
-    DeleteCategoryMutation,
-    DeleteCategoryMutationVariables
-  >(DELETE_CATEGORY);
+}: confirmDeleteUserProps) => {
+  const [deleteUser] = useMutation<
+    DeletePinMutation,
+    DeletePinMutationVariables
+  >(DELETE_USER);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef(null);
   const toast = useToast();
 
   const onDelete = async () => {
     try {
-      await deleteCategory({
-        variables: { categoryId },
-      });
+      await deleteUser({ variables: { id } });
       await refetch();
       toast({
-        title: `Catégorie : ${categoryName} a été supprimé avec succès.`,
+        title: `Pinner : ${firstName} ${lastName} a été supprimé avec succès.`,
         status: "success",
         duration: 5000,
         isClosable: true,
@@ -76,7 +78,6 @@ const ConfirmDeleteCategory = ({
       });
     }
   };
-
   return (
     <>
       <Button colorScheme="red" onClick={onOpen}>
@@ -91,11 +92,11 @@ const ConfirmDeleteCategory = ({
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Supprimer cette catégorie?
+              Supprimer ce Pinner?
             </AlertDialogHeader>
 
             <AlertDialogBody>
-              {`Etes-vous sûr de vouloir supprimer catégorie : ${categoryName}?`}
+              {`Etes-vous sûr de vouloir supprimer Pinner: ${firstName} ${lastName} ?`}
             </AlertDialogBody>
 
             <AlertDialogFooter>
@@ -113,4 +114,4 @@ const ConfirmDeleteCategory = ({
   );
 };
 
-export default ConfirmDeleteCategory;
+export default ConfirmDeleteUser;

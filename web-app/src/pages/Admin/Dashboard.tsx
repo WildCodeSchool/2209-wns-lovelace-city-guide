@@ -1,5 +1,10 @@
 import { Box, Flex, Heading } from "@chakra-ui/react";
-import { ADMIN_ALL_PINS_PATH, MAP_PATH, ADMIN_CATEGORIES } from "../paths";
+import {
+  ADMIN_ALL_PINS_PATH,
+  MAP_PATH,
+  ADMIN_CATEGORIES,
+  ADMIN_ALL_USERS_PATH,
+} from "../paths";
 import { DashboardButton } from "../../styles/base-styles";
 import { Grid, Content } from "./Dashboard.styled";
 import {
@@ -46,7 +51,7 @@ const Dashboard = () => {
                 <FaClipboardList /> <p>Gestion des Catégories</p>{" "}
               </Content>{" "}
             </DashboardButton>
-            <DashboardButton to="">
+            <DashboardButton to={ADMIN_ALL_USERS_PATH}>
               {" "}
               <Content>
                 {" "}
