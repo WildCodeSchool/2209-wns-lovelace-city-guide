@@ -116,8 +116,8 @@ function App() {
             }
           />
         </Routes>
+        {pathname !== "/" && pathname !== "/map" && <BaseFooter />}
       </MainContainer>
-      {pathname !== "/" && pathname !== "/map" && <BaseFooter />}
     </>
   );
 }

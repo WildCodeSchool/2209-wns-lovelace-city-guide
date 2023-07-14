@@ -1,12 +1,13 @@
 import { gql, useMutation } from "@apollo/client";
-import { Box, Button, Flex, Heading, Input } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading} from "@chakra-ui/react";
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { PREVIEW_PIN } from "../paths";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   AddImageToPinMutation,
   AddImageToPinMutationVariables,
 } from "../../gql/graphql";
+import { ContainerTable } from "pages/Admin/ContainerTable.style";
+import { FaAngleDoubleLeft } from "react-icons/fa";
 
 const ADD_IMAGE_TO_PIN = gql`
   mutation addImageToPin($fileName: String!, $pinId: String!) {
@@ -81,32 +82,46 @@ const UploadImage = () => {
   };
   return (
     <>
-      <Flex width="full" align="center" justifyContent="center">
-        <Box
-          bg="#fff"
-          p={8}
-          maxWidth="500px"
-          borderWidth={1}
-          borderRadius={8}
-          boxShadow="lg"
-        >
-          <Box textAlign="center">
-            <Heading>Ajoute une image</Heading>
+      <ContainerTable>
+        <Flex width="full" align="center" justifyContent="center">
+          <Box
+            bg="#fff"
+            p={8}
+            maxWidth="500px"
+            borderWidth={1}
+            borderRadius={8}
+            boxShadow="lg"
+          >
+            <Box display="flex" alignItems="center" justifyContent="flex-start">
+              <Link to={`/preview-pin/${pinId}`}>
+                <Button bgColor="#ff8787" color="#fff">
+                  <FaAngleDoubleLeft />
+                </Button>
+              </Link>
+            </Box>
+            <Box textAlign="center">
+              <Heading>Ajoute une image</Heading>
+            </Box>
+            <Box my={4} textAlign="left">
+              {image.preview && (
+                <img
+                  alt="preview"
+                  src={image.preview}
+                  width="100"
+                  height="100"
+                />
+              )}
+              <form onSubmit={handleSubmit}>
+                <input type="file" name="file" onChange={handleFileChange} />
+                <Button colorScheme="teal" type="submit">
+                  Envoyer
+                </Button>
+              </form>
+              {status && <h4>{status}</h4>}
+            </Box>
           </Box>
-          <Box my={4} textAlign="left">
-            {image.preview && (
-              <img alt="preview" src={image.preview} width="100" height="100" />
-            )}
-            <form onSubmit={handleSubmit}>
-              <input type="file" name="file" onChange={handleFileChange} />
-              <Button colorScheme="teal" type="submit">
-                Submit
-              </Button>
-            </form>
-            {status && <h4>{status}</h4>}
-          </Box>
-        </Box>
-      </Flex>
+        </Flex>
+      </ContainerTable>
     </>
   );
 };

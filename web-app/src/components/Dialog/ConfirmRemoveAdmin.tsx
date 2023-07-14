@@ -14,6 +14,7 @@ import {
   AlertDialogFooter,
   useDisclosure,
   useToast,
+  Text,
 } from "@chakra-ui/react";
 import {
   GetUsersQuery,
@@ -85,7 +86,7 @@ const ConfirmRemoveAdmin = ({
     <>
       <Button bgColor="#ff8787" color="#fff" onClick={onOpen}>
         <FaMinusCircle />
-        <span>Retirer Admin</span>
+        <Text pl="5px">Retirer Admin</Text>
       </Button>
 
       <AlertDialog
