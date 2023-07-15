@@ -14,6 +14,7 @@ import {
   Button,
   useDisclosure,
   useToast,
+  Text,
 } from "@chakra-ui/react";
 import {
   AssignAdminMutation,
@@ -86,7 +87,7 @@ const ConfirmAssignAdmin = ({
     <>
       <Button colorScheme="teal" onClick={onOpen}>
         <FaPlusCircle />
-        <span>Ajouter Admin</span>
+        <Text pl="5px">Ajouter Admin</Text>
       </Button>
 
       <AlertDialog
