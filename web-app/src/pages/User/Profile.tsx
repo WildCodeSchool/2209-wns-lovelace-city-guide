@@ -10,6 +10,7 @@ import { getErrorMessage } from "utils";
 import { RedButton } from "styles/base-styles";
 import { MenuRow } from "pages/Home/Home.styled";
 import { ContainerTable } from "pages/Admin/ContainerTable.style";
+import { MAP_PATH } from "pages/paths";
 
 const SIGN_OUT = gql`
   mutation SignOut($currentUserId: String!) {
@@ -154,7 +155,7 @@ const Profile = () => {
             </Box>
             <Box mt={5}>
               <RedButton to={`#`} icon> Mes Pins </RedButton>
-              <RedButton to={`#`} icon> Mes Favoris </RedButton>
+              <RedButton to={MAP_PATH} state={{category: 'Favoris'}} icon> Mes Favoris </RedButton>
             </Box>
             <Box textAlign="center">
               <Heading as='h2'size='md' mt='8'>Mettre les informations à jour</Heading>
