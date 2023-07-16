@@ -9,7 +9,7 @@ import {
 } from "type-graphql";
 import AppUser from "../../models/AppUser/AppUser.entity";
 import AppUserRepository from "../../models/AppUser/AppUser.repository";
-import { SignInArgs, SignUpArgs } from "./AppUser.input";
+import { SignInArgs, SignUpArgs, UpdateUserArgs } from "./AppUser.input";
 import { setSessionIdInCookie } from "../../http-utils";
 import { GlobalContext } from "../..";
 
@@ -44,6 +44,21 @@ export default class AppUserResolver {
     setSessionIdInCookie(context, session.id);
     return user;
   }
+
+  @Mutation(() => AppUser)
+  updateUser(
+    @Args() { id, firstName, lastName, emailAddress 
+    }: UpdateUserArgs,
+    @Ctx() context: GlobalContext
+    ): Promise<AppUser> {
+      return AppUserRepository.updateUser(
+        id,
+        firstName,
+        lastName,
+        emailAddress,
+      )
+    }
+
 
   @Authorized()
   @Query(() => AppUser)

@@ -9,6 +9,7 @@ import UploadImage from "../pages/CreatePin/UploadImage";
 import Home from "../pages/Home/Home";
 import Map from "../pages/Map/Map";
 import BaseFooter from "components/Footer/Footer";
+import Profile from "pages/User/Profile";
 
 import {
   ADMIN_ALL_PINS_PATH,
@@ -21,6 +22,7 @@ import {
   UPLOAD_IMAGE,
   MAP_PATH,
   ADMIN_CATEGORIES,
+  PROFILE_PATH,
   ADMIN_ALL_USERS_PATH,
 } from "../pages/paths";
 import SignIn from "../pages/SignIn/SignIn";
@@ -57,6 +59,14 @@ function App() {
               <AlreadyLoggedIn>
                 <SignIn />
               </AlreadyLoggedIn>
+            }
+          />
+          <Route
+            path={PROFILE_PATH}
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
             }
           />
           <Route

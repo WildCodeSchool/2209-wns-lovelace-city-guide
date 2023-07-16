@@ -26,6 +26,29 @@ export default class AppUserRepository extends AppUserDb {
     return this.saveUser(user);
   }
 
+  static async updateUser(
+    id: string,
+    firstName: string,
+    lastName: string,
+    emailAddress: string
+  ): Promise<{
+    id: string, 
+    firstName: string,
+    lastName: string,
+    emailAddress: string
+  } & AppUser > {
+    const existingUser = await this.findUserById(id);
+    if (!existingUser) {
+      throw Error("L'utilisateur avec un identifiant demandé introuvable");
+    }
+    return this.repository.save({
+      id,
+      firstName,
+      lastName,
+      emailAddress
+    });
+  }
+
   static async signIn(
     emailAddress: string,
     password: string
