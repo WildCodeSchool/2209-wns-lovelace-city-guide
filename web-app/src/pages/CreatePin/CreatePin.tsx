@@ -11,9 +11,11 @@ import {
   Input,
   Stack,
   useToast,
+  Grid,
+  GridItem
 } from "@chakra-ui/react";
 import Select, { MultiValue } from "react-select";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CreatePinMutation,
   CreatePinMutationVariables,
@@ -139,6 +141,17 @@ const CreatePin = () => {
     setIsOutdoor(!isOutdoor);
   };
 
+  useEffect(() => {
+    fetch(`https://api-adresse.data.gouv.fr/reverse/?lon=${state.position.lng}&lat=${state.position.lat}`)
+      .then((response) => response.json())
+      .then((json) => {
+        setAddress(json.features[0].properties.name);
+        setCity(json.features[0].properties.city);
+        setZipcode(json.features[0].properties.postcode);
+
+      });
+  })
+
   const onSubmit = async (event: React.MouseEvent<HTMLElement>) => {
     try {
       event.preventDefault();
@@ -227,7 +240,45 @@ const CreatePin = () => {
                   }}
                 />
               </FormControl>
-
+              <FormControl mt={4}>
+                <FormLabel>Catégorie</FormLabel>
+                <Select
+                  options={optionsCategoies}
+                  isMulti
+                  onChange={handleSelect}
+                />
+              </FormControl>
+              <FormControl mt={4}>
+                <FormLabel>Description</FormLabel>
+                <Input
+                  type="textarea"
+                  id="description"
+                  name="description"
+                  value={description}
+                  onChange={(event) => {
+                    setDescription(event.target.value);
+                  }}
+                />
+              </FormControl>
+              <CheckboxGroup colorScheme="green" defaultValue={[]}>
+                <Stack spacing={[1, 5]} mt={4} direction={["column", "row"]}>
+                  <Checkbox
+                    isChecked={isAccessible}
+                    onChange={handleCheckIsAccessible}
+                  >
+                    Accessible
+                  </Checkbox>
+                  <Checkbox
+                    isChecked={isChildFriendly}
+                    onChange={handleCheckIsChildFriendly}
+                  >
+                    Child Friendly
+                  </Checkbox>
+                  <Checkbox isChecked={isOutdoor} onChange={handleCheckIsOutDoor}>
+                    Outdoor
+                  </Checkbox>
+                </Stack>
+              </CheckboxGroup>
               <FormControl mt={4}>
                 <FormLabel>Adresse</FormLabel>
                 <Input
@@ -264,72 +315,38 @@ const CreatePin = () => {
                   }}
                 />
               </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>Catégorie</FormLabel>
-                <Select
-                  options={optionsCategoies}
-                  isMulti
-                  onChange={handleSelect}
-                />
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>Description</FormLabel>
-                <Input
-                  type="textarea"
-                  id="description"
-                  name="description"
-                  value={description}
-                  onChange={(event) => {
-                    setDescription(event.target.value);
-                  }}
-                />
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>Latitude</FormLabel>
-                <Input
-                  type="number"
-                  id="latitude"
-                  name="latitude"
-                  value={state.position.lat}
-                  onChange={(event) => {
-                    setLatitude(parseFloat(event.target.value));
-                  }}
-                />
-              </FormControl>
-              <FormControl mt={4}>
-                <FormLabel>Longitude</FormLabel>
-                <Input
-                  type="number"
-                  id="longitude"
-                  name="longitude"
-                  value={state.position.lng}
-                  onChange={(event) => {
-                    setLongitude(parseFloat(event.target.value));
-                  }}
-                />
-              </FormControl>
-              <CheckboxGroup colorScheme="green" defaultValue={[]}>
-                <Stack spacing={[1, 5]} direction={["column", "row"]}>
-                  <Checkbox
-                    isChecked={isAccessible}
-                    onChange={handleCheckIsAccessible}
-                  >
-                    Accessible
-                  </Checkbox>
-                  <Checkbox
-                    isChecked={isChildFriendly}
-                    onChange={handleCheckIsChildFriendly}
-                  >
-                    Child Friendly
-                  </Checkbox>
-                  <Checkbox
-                    isChecked={isOutdoor}
-                    onChange={handleCheckIsOutDoor}
-                  >
-                    Outdoor
-                  </Checkbox>
-                </Stack>
-              </CheckboxGroup>
+              <Grid templateColumns='repeat(2, 1fr)' gap={6}>
+                <GridItem w='100%'>
+                  <FormControl mt={4}>
+                    <FormLabel>Latitude</FormLabel>
+                    <Input
+                      type="number"
+                      id="latitude"
+                      name="latitude"
+                      value={state.position.lat}
+                      onChange={(event) => {
+                        setLatitude(parseFloat(event.target.value));
+                      }}
+                      disabled
+                    />
+                  </FormControl>              
+                </GridItem> 
+                <GridItem w='100%' >
+                  <FormControl mt={4}>
+                    <FormLabel>Longitude</FormLabel>
+                    <Input
+                      type="number"
+                      id="longitude"
+                      name="longitude"
+                      value={state.position.lng}
+                      onChange={(event) => {
+                        setLongitude(parseFloat(event.target.value));
+                      }}
+                      disabled
+                    />
+                  </FormControl>                
+                </GridItem> 
+              </Grid>
               <Button onClick={onSubmit} colorScheme="teal" width="full" mt={4}>
                 Envoyer
               </Button>
