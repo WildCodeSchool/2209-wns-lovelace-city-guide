@@ -2,7 +2,8 @@ import { useEffect, useState, useMemo, useRef } from 'react';
 
 import {
   SIGN_IN_PATH,
-  MAP_PATH
+  MAP_PATH,
+  PROFILE_PATH
 } from "../paths";
 
 import {
@@ -37,7 +38,7 @@ const Home = () => {
       <MenuRow> 
         <RedButton to={`#`} icon> <FaHeart/> </RedButton>
         <RedButton to={`#`} icon> <FaRandom/> </RedButton> 
-        <RedButton to={SIGN_IN_PATH} icon> <FaUser/> </RedButton> 
+        <RedButton to={PROFILE_PATH} icon> <FaUser/> </RedButton> 
       </MenuRow>
     </MenuColumn>
   );
