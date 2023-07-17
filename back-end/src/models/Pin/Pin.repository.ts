@@ -288,6 +288,20 @@ export default class PinRepository extends PinDb {
     return result;
   }
 
+  static async getPinsByCategoryId(categoryId: string): Promise<Pin[]> {
+    const existingCategory = await CategoryRepository.findCategoryById(
+      categoryId
+    );
+    if (!existingCategory) {
+      throw Error("La catégorie avec un identifiant demandé introuvable");
+    }
+    const pins = await this.repository.find({
+      relations: ["categories"],
+      where: { categories: { id: categoryId } },
+    });
+    return pins;
+  }
+
   static async addImageToPin(pinId: string, fileName: string): Promise<Pin> {
     const pin = await this.repository.findOneBy({ id: pinId });
     if (!pin) {

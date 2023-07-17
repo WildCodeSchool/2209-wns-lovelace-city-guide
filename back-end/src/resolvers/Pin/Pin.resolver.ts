@@ -12,6 +12,7 @@ import Pin from "../../models/Pin/Pin.entity";
 import { CreatePinArgs, UpdatePinArgs } from "./Pin.input";
 import { GlobalContext } from "../..";
 import AppUser from "../../models/AppUser/AppUser.entity";
+import Category from "../../models/Category/Category.entity";
 
 @Resolver(Pin)
 export default class PinResolver {
@@ -101,6 +102,11 @@ export default class PinResolver {
   @Query(() => Pin)
   getPinById(@Arg("id") id: string): Promise<Pin | null> {
     return PinRepository.findPinById(id);
+  }
+
+  @Query(() => [Pin])
+  getPinsByCategoryId(@Arg("categoryId") categoryId: string): Promise<Pin[]> {
+    return PinRepository.getPinsByCategoryId(categoryId);
   }
 
   @Authorized()

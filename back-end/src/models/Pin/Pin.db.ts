@@ -25,6 +25,18 @@ export default class PinDb {
     } });
   }
 
+  public static findPinsByCategory(category: string) {
+    return this.repository.find({
+      relations: {
+        categories: true,
+      },
+      where: {
+        categories: {
+          categoryName: category
+        }
+    } });
+  }
+
   static async clearRepository(): Promise<void> {
     await this.repository.delete({});
   }

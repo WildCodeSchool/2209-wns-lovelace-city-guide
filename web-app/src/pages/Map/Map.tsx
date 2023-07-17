@@ -21,41 +21,41 @@ import {
   BtnBlueRounded,
   BtnYellowRounded,
   BtnRedRounded,
-  FavButton,
 } from "../../styles/base-styles";
 
 import { useQuery, gql } from "@apollo/client";
 import {
-  GetPinsQuery,
   GetPinsFromUserFavoritesQuery,
+  GetPinsByCategoryIdQuery,
 } from "../../gql/graphql";
 import PinMeLogo from "../../media/logo.png";
-import { FaHome, FaHeart, FaTree } from "react-icons/fa";
+import { FaHome } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
 import "./TooltipStyle.css";
 import { Link } from "react-router-dom";
 import { HOME_PATH } from "pages/paths";
 
-const GET_PINS = gql`
-  query GetPins {
-    pins {
+const GET_PINS_BY_CATEGORY_ID = gql`
+query GetPinsByCategoryId($categoryId: String!) {
+  getPinsByCategoryId(categoryId: $categoryId) {
+    id
+    name
+    address
+    categories {
       id
-      name
-      address
-      categories {
-        id
-        categoryName
-      }
-      description
-      latitude
-      longitude
-      isOutdoor
-      isAccessible
-      isChildFriendly
-      createdAt
+      categoryName
     }
+    description
+    latitude
+    longitude
+    isOutdoor
+    isAccessible
+    isChildFriendly
+    createdAt
   }
+}
 `;
+
 
 const GET_FAVORITE_PIN = gql`
   query GetPinsFromUserFavorites {
@@ -70,6 +70,7 @@ type NewPinPropType = {
   setNewPin: (argument: boolean) => void;
   position: any[] | [] | null;
 };
+
 function CreateNewPin({ newPin, setNewPin, position }: NewPinPropType) {
   if (!newPin) {
     return (
@@ -94,13 +95,11 @@ function CreateNewPin({ newPin, setNewPin, position }: NewPinPropType) {
 }
 
 
-
 const Map = () => {
   let { state } = useLocation();
   const appContext = useContext(AppContext);
   const [newPin, setNewPin] = useState(false);
   const [position, setPosition] = useState<any[] | [] | null>(null);
-
 
 
   const { data: userFavoritePins } = useQuery<GetPinsFromUserFavoritesQuery>(
@@ -110,11 +109,11 @@ const Map = () => {
     }
   );
 
-  const { data, loading, error } = useQuery<GetPinsQuery>(GET_PINS, {
-    fetchPolicy: "cache-and-network",
+  const { data, loading, error } = useQuery<GetPinsByCategoryIdQuery>(GET_PINS_BY_CATEGORY_ID, {
+    variables: { categoryId: state.category },
   });
 
-
+  console.log(data?.getPinsByCategoryId)
 
   const renderMainContent = () => {
     if (loading) {
@@ -123,10 +122,10 @@ const Map = () => {
     if (error) {
       return error.message;
     }
-    if (!data?.pins?.length) {
+    if (!data?.getPinsByCategoryId?.length) {
       return "Aucun pin à afficher.";
     }
-    const pins = data.pins.map((pin) => (
+    const pins = data.getPinsByCategoryId.map((pin) => (
         <Pin
           key={pin.id}
           id={pin.id}
@@ -150,26 +149,12 @@ const Map = () => {
         />
       )
     )
-    if (state) {
-      switch (state.category) {
-        case 'Alimentaire':
-          return pins.filter(pin => pin.props.categories === 'Restaurant' || pin.props.categories === 'Bar');
-        case 'Découverte':
-          return pins.filter(pin => pin.props.categories === 'Art urbain' || pin.props.categories === 'Médiathèque/Librairie' || pin.props.categories === 'Musée');
-        case 'Promenade':
-          return pins.filter(pin => pin.props.categories === 'Art urbain' || pin.props.categories === 'Parc');
-        case 'Insolite':
-          return pins.filter(pin => pin.props.categories === 'Art urbain' || pin.props.categories === 'Jeux');        
-        case 'Favoris':
-          return pins.filter(pin => pin.props.isFavorite === true); 
-        case null:       
-        default:
-          return pins;
-      } 
+    if (state && state.category === 'Favoris') {
+      return pins.filter(pin => pin.props.isFavorite === true);
     } else {
       return pins;
     }
-  };
+  }
   
   return (
     <>
