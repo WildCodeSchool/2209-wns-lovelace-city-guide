@@ -1,5 +1,4 @@
 import {
-  BeforeInsert,
   Column,
   CreateDateColumn,
   Entity,
@@ -13,6 +12,7 @@ import { Field, ID, ObjectType } from "type-graphql";
 import Category from "../Category/Category.entity";
 import Image from "../Image/Image.entity";
 import AppUser from "../AppUser/AppUser.entity";
+import Comment from "../Comment/Comment.entity";
 
 @Entity()
 @ObjectType()
@@ -120,4 +120,10 @@ export default class Pin {
   @Field(() => [AppUser])
   @JoinTable()
   favoriteUsers: AppUser[];
+
+  @OneToMany(() => Comment, (comment) => comment.pin, {
+    eager: true,
+  })
+  @Field(() => [Comment], { nullable: true })
+  comments: Comment[];
 }
