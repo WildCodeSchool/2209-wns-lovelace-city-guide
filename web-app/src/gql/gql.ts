@@ -13,6 +13,8 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel-plugin for production.
  */
 const documents = {
+    "\n  mutation AddComment($rating: Float!, $content: String!) {\n    addComment(rating: $rating, content: $content) {\n      content\n      rating\n      createdAt\n      user {\n        firstName\n        lastName\n      }\n    }\n  }\n": types.AddCommentDocument,
+    "\n  mutation AddCommentToPin(\n    $userEmail: String!\n    $rating: Float!\n    $content: String!\n    $pinId: String!\n  ) {\n    addCommentToPin(\n      userEmail: $userEmail\n      rating: $rating\n      content: $content\n      pinId: $pinId\n    ) {\n      id\n      name\n      comments {\n        content\n        rating\n        user {\n          emailAddress\n          firstName\n          lastName\n          id\n        }\n      }\n    }\n  }\n": types.AddCommentToPinDocument,
     "\n  mutation AssignAdmin($id: String!) {\n    assignAdmin(id: $id) {\n      firstName\n      lastName\n      emailAddress\n      userStatus\n    }\n  }\n": types.AssignAdminDocument,
     "\n  mutation DeleteCategory($categoryId: String!) {\n    deleteCategory(id: $categoryId) {\n      id\n      categoryName\n    }\n  }\n": types.DeleteCategoryDocument,
     "\n  mutation Deletepin($id: String!) {\n    deleteUser(id: $id) {\n      id\n      firstName\n      lastName\n      emailAddress\n      userStatus\n    }\n  }\n": types.DeletepinDocument,
@@ -39,6 +41,14 @@ const documents = {
     "\n  mutation UpdateUser(\n    $updateUserId: ID!\n    $firstName: String!\n    $lastName: String!\n    $emailAddress: String!\n  ) {\n    updateUser(\n      id: $updateUserId\n      firstName: $firstName\n      lastName: $lastName\n      emailAddress: $emailAddress\n    ) {\n      id\n      firstName\n      lastName\n      emailAddress\n    }\n  }\n": types.UpdateUserDocument,
 };
 
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation AddComment($rating: Float!, $content: String!) {\n    addComment(rating: $rating, content: $content) {\n      content\n      rating\n      createdAt\n      user {\n        firstName\n        lastName\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation AddComment($rating: Float!, $content: String!) {\n    addComment(rating: $rating, content: $content) {\n      content\n      rating\n      createdAt\n      user {\n        firstName\n        lastName\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  mutation AddCommentToPin(\n    $userEmail: String!\n    $rating: Float!\n    $content: String!\n    $pinId: String!\n  ) {\n    addCommentToPin(\n      userEmail: $userEmail\n      rating: $rating\n      content: $content\n      pinId: $pinId\n    ) {\n      id\n      name\n      comments {\n        content\n        rating\n        user {\n          emailAddress\n          firstName\n          lastName\n          id\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation AddCommentToPin(\n    $userEmail: String!\n    $rating: Float!\n    $content: String!\n    $pinId: String!\n  ) {\n    addCommentToPin(\n      userEmail: $userEmail\n      rating: $rating\n      content: $content\n      pinId: $pinId\n    ) {\n      id\n      name\n      comments {\n        content\n        rating\n        user {\n          emailAddress\n          firstName\n          lastName\n          id\n        }\n      }\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

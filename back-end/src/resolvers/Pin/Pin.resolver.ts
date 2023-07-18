@@ -141,4 +141,15 @@ export default class PinResolver {
       (context.user as AppUser).id
     );
   }
+
+  @Authorized()
+  @Mutation(() => Pin)
+  addCommentToPin(
+    @Arg("pinId") pinId: string,
+    @Arg("content") content: string,
+    @Arg("rating") rating: number,
+    @Arg("userEmail") userEmail: string
+  ): Promise<Pin> {
+    return PinRepository.addCommentToPin(pinId, content, rating, userEmail);
+  }
 }

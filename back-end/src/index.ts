@@ -15,6 +15,8 @@ import CategoryRepository from "./models/Category/Category.repository";
 import CategoryResolver from "./resolvers/Category/Category.resolver";
 import ImageRepository from "./models/Image/Image.repository";
 import ImageResolver from "./resolvers/Image/Image.resolver";
+import CommentRepository from "./models/Comment/Comment.repository";
+import CommentResolver from "./resolvers/Comment/Comment.resolver";
 
 export type GlobalContext = ExpressContext & {
   user: AppUser | null;
@@ -28,6 +30,7 @@ const startServer = async () => {
         PinResolver,
         CategoryResolver,
         ImageResolver,
+        CommentResolver,
       ],
       authChecker: async ({ context }) => {
         return Boolean(context.user);
@@ -60,9 +63,10 @@ const startServer = async () => {
   await CategoryRepository.initializeRepository();
   await ImageRepository.initializeRepository();
   await PinRepository.initializeRepository();
+  await CommentRepository.initializeRepository();
 
   await CategoryRepository.initializeCategories();
-  await ImageRepository.initializeImages();
+
   await PinRepository.intializePins();
 
   console.log(`🚀  Server ready at ${url}`);
