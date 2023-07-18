@@ -1,3 +1,4 @@
+/// <reference types="@types/jest" />;
 import AppUserRepository from "./AppUser.repository";
 import SessionRepository from "./Session.repository";
 import CategoryRepository from "../Category/Category.repository";

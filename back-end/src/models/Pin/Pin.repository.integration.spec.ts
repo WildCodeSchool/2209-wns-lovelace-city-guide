@@ -1,12 +1,16 @@
+/// <reference types="@types/jest" />;
+import { Repository } from "typeorm";
 import {
   closeConnection,
   getDatabase,
+  getRepository,
   initializeDatabaseRepositories,
 } from "../../database/utils";
 import AppUser, { UserStatus } from "../AppUser/AppUser.entity";
 import AppUserRepository from "../AppUser/AppUser.repository";
 import Category from "../Category/Category.entity";
 import CategoryRepository from "../Category/Category.repository";
+import PinDb from "./Pin.db";
 import Pin from "./Pin.entity";
 import PinRepository from "./Pin.repository";
 
@@ -20,6 +24,7 @@ describe("PinRepository integration", () => {
   });
 
   beforeEach(async () => {
+    // eslint-disable-next-line no-restricted-syntax
     const database = await getDatabase();
     for (const entity of database.entityMetadatas) {
       const repository = database.getRepository(entity.name);
@@ -29,94 +34,61 @@ describe("PinRepository integration", () => {
     }
   });
 
-  describe("createPin", () => {
-    it("should create a new Pin", async () => {
-      // Mocking the dependencies
-      const mockCurrentUser = new AppUser(
-        "Maya",
-        "Test",
-        "test@example.com",
-        "hashed-password",
-        UserStatus.USER
+  describe("getPinsFromUserFavorites", () => {
+    it("should return only pins that belong to the user", async () => {
+      const userOne = await AppUserRepository.createUser(
+        "Tritcha",
+        "Boisson",
+        "tritcha@example.com",
+        "hashed-password"
       );
 
-      const mockCategories = [
-        "Category 1",
-        "Category 2",
-      ] as unknown as Category[];
+      const restoCategory = await CategoryRepository.createCategory(
+        "Restaurant"
+      );
+      const parcCategory = await CategoryRepository.createCategory("Parc");
+      const categories = await CategoryRepository.getCategories();
+      const categoryNames = categories.map((category) => category.categoryName);
 
-      const mockPin = new Pin(
-        "Test new Pin",
+      const pinA = await PinRepository.createPin(
+        "Test Pin A",
         "123 Test street",
         "Test city",
         "12345",
-        mockCategories,
+        categoryNames,
         "test description",
         12.344345,
-        55.495842
+        55.495842,
+        true,
+        false,
+        true,
+        userOne.emailAddress
       );
 
-      const mockGetCategories = jest.spyOn(PinRepository, "getCategories");
-      const mockGetCurrentUserByEmail = jest.spyOn(
-        PinRepository,
-        "getCurrentUserByEmail"
-      );
-      const mockSave = jest.spyOn(PinRepository, "createPin");
-
-      // Mocking the dependencies' implementation
-      //   mockGetCurrentUserByEmail.mockResolvedValue(mockCurrentUser);
-      //   mockGetCategories.mockResolvedValue(mockCategories);
-      mockSave.mockResolvedValue(mockPin);
-
-      // Test parameters
-      const name = "Test Pin";
-      const address = "123 Main St";
-      const city = "Test City";
-      const zipcode = "12345";
-      const categories = ["Category 1", "Category 2"];
-      const description = "Test description";
-      const latitude = 123.456;
-      const longitude = 789.012;
-      const isAccessible = true;
-      const isChildFriendly = true;
-      const isOutdoor = true;
-      const userEmail = "test@example.com";
-
-      // Call the method under test
-      const result = await PinRepository.createPin(
-        name,
-        address,
-        city,
-        zipcode,
-        categories,
-        description,
-        latitude,
-        longitude,
-        isAccessible,
-        isChildFriendly,
-        isOutdoor,
-        userEmail
+      const pinB = await PinRepository.createPin(
+        "Test Pin B",
+        "123 Test street",
+        "Test city",
+        "12345",
+        categoryNames,
+        "test description",
+        12.344345,
+        55.495842,
+        true,
+        false,
+        true,
+        userOne.emailAddress
       );
 
-      // Assertions
-      expect(result).toEqual(mockPin);
-      //   expect(mockGetCurrentUserByEmail).toHaveBeenCalledWith(userEmail);
-      //   expect(mockGetCategories).toHaveBeenCalledWith(categories);
-
-      expect(mockSave).toHaveBeenCalledWith(
-        name,
-        address,
-        city,
-        zipcode,
-        mockCategories,
-        description,
-        latitude,
-        longitude,
-        isAccessible,
-        isChildFriendly,
-        isOutdoor,
-        mockCurrentUser.emailAddress
+      const favorite = await PinRepository.addPinToUserFavorite(
+        pinA.id,
+        userOne.id
       );
+
+      const userOnePinList = await PinRepository.findPinsByUserId(userOne.id);
+
+      const result = await PinRepository.getPinsFromUserFavorites(userOne.id);
+      expect(result).toEqual(userOnePinList);
     });
   });
 });
