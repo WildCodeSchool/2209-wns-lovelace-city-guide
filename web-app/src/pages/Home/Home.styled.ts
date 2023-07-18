@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 export const MenuColumn = styled.div`
+  font-family: 'Fredoka';
   display: flex;
   flex-direction: column;
   max-width: 248px;
