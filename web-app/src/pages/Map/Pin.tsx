@@ -15,17 +15,14 @@ import {
   RemovePinFromUserFavoriteMutationVariables,
 } from "../../gql/graphql";
 import PinMeLogo from "../../media/logo.png";
-import { FaHome, FaHeart, FaTree } from "react-icons/fa";
-import { IoClose } from "react-icons/io5";
+import { FaHeart, FaTree } from "react-icons/fa";
 import { MdAccessible, MdChildFriendly } from "react-icons/md";
 
 import { DragMarker, PinMarker, FavedMarker } from "components/PinMarkers";
 import { getErrorMessage } from "utils";
 
 import "./TooltipStyle.css";
-import { Link } from "react-router-dom";
 import { useToast } from "@chakra-ui/react";
-import { HOME_PATH } from "pages/paths";
 
 const ADD_PIN_TO_USER_FAVORITE = gql`
   mutation addPinToUserFavorite($pinId: String!) {
@@ -48,6 +45,7 @@ const REMOVE_PIN_FROM_USER_FAVORITE = gql`
 type PropType = {
   id: string;
   name: string;
+  categories: string;
   latitude: number;
   longitude: number;
   address: string;
@@ -61,6 +59,7 @@ type PropType = {
 const Pin = ({
   id,
   name,
+  categories,
   latitude,
   longitude,
   address,
@@ -146,7 +145,11 @@ const Pin = ({
           <span>{name}</span>
         </header>
         <div className="row">
-          <p>{description}</p>
+          
+          <p> 
+            <span>{categories}</span> 
+            <br/>
+            {description}</p>
           <FavButton onClick={onSubmitFavorite} fave={isFaved ? true : false}>
             {" "}
             <FaHeart />{" "}

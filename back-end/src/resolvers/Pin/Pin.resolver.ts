@@ -12,6 +12,7 @@ import Pin from "../../models/Pin/Pin.entity";
 import { CreatePinArgs, UpdatePinArgs } from "./Pin.input";
 import { GlobalContext } from "../..";
 import AppUser from "../../models/AppUser/AppUser.entity";
+import Category from "../../models/Category/Category.entity";
 
 @Resolver(Pin)
 export default class PinResolver {
@@ -101,6 +102,21 @@ export default class PinResolver {
   @Query(() => Pin)
   getPinById(@Arg("id") id: string): Promise<Pin | null> {
     return PinRepository.findPinById(id);
+  }
+ 
+  @Query(() => [Pin])
+  getPinsByCategoryId(
+    @Ctx() context: GlobalContext,
+    @Arg("categoryId",{ nullable: true }) categoryId?: string,
+    @Arg("fav",{ nullable: true }) fav?: boolean
+  ): Promise<Pin[]> {
+    if (fav) {
+      return PinRepository.getPinsFromUserFavorites((context.user as AppUser).id);
+    } else if (categoryId) {
+      return PinRepository.getPinsByCategoryId(categoryId);
+    } else {
+      return PinRepository.getPins();
+    }
   }
 
   @Authorized()
