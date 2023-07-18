@@ -2,18 +2,6 @@ import ImageDb from "./Image.db";
 import Image from "./Image.entity";
 
 export default class ImageRepository extends ImageDb {
-  static async initializeImages(): Promise<void> {
-    await this.clearRepository();
-
-    await this.repository.save({
-      fileName: "test.png",
-    });
-
-    await this.repository.save({
-      fileName: "user.jpg",
-    });
-  }
-
   static async getImages(): Promise<Image[]> {
     return this.repository.find();
   }

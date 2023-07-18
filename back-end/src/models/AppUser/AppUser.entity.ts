@@ -10,6 +10,7 @@ import {
   JoinTable,
 } from "typeorm";
 import Pin from "../Pin/Pin.entity";
+import Comment from "../Comment/Comment.entity";
 
 export enum UserStatus {
   USER = "USER",
@@ -73,4 +74,8 @@ export default class AppUser {
   })
   @Field(() => [Pin])
   favoritePins: Pin[];
+
+  @OneToMany(() => Comment, (comment) => comment.user, { eager: true })
+  @Field(() => [Comment], { nullable: true })
+  comments: Comment[];
 }

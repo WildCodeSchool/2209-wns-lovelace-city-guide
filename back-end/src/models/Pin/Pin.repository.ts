@@ -2,6 +2,7 @@ import AppUser from "../AppUser/AppUser.entity";
 import AppUserRepository from "../AppUser/AppUser.repository";
 import Category from "../Category/Category.entity";
 import CategoryRepository from "../Category/Category.repository";
+import CommentRepository from "../Comment/Comment.repository";
 import ImageRepository from "../Image/Image.repository";
 import PinDb from "./Pin.db";
 import Pin from "./Pin.entity";
@@ -65,10 +66,9 @@ export default class PinRepository extends PinDb {
     const categories = (await this.getCategories(
       categoriesNames
     )) as Category[];
-    const currentUser = (await this.getCurrentUserByEmail(
+    const currentUser = (await AppUserRepository.findByEmailAddress(
       userEmail
     )) as AppUser;
-    console.log(currentUser);
     const newPin = this.repository.create({
       name,
       address,
@@ -119,8 +119,6 @@ export default class PinRepository extends PinDb {
     } & Pin
   > {
     const existingPin = await this.repository.findOneBy({ id });
-    const user = (await this.getCurrentUserByEmail(userEmail)) as AppUser;
-    console.log(user);
     const categories = (await this.getCategories(
       categoriesNames
     )) as Category[];
@@ -145,7 +143,7 @@ export default class PinRepository extends PinDb {
   }
 
   static async deletePin(id: string): Promise<Pin> {
-    const existingPin = await this.findPinById(id);
+    const existingPin = await this.repository.findOneBy({id});
     if (!existingPin) {
       throw Error("Le Pin avec un identifiant demandé introuvable");
     }
@@ -172,17 +170,6 @@ export default class PinRepository extends PinDb {
     return this.repository.save(pin);
   }
 
-  static async getCurrentUserByEmail(emailAddress: string): Promise<AppUser> {
-    const currentUser = await AppUserRepository.findByEmailAddress(
-      emailAddress
-    );
-
-    if (!currentUser) {
-      throw Error("User not found");
-    }
-    return currentUser;
-  }
-
   static async addPinToUserFavorite(
     pinId: string,
     userId: string
@@ -204,7 +191,6 @@ export default class PinRepository extends PinDb {
 
   static async getPinsFromUserFavorites(userId: string): Promise<Pin[]> {
     const favoritePins = await this.findPinsByUserId(userId);
-    console.log(favoritePins);
     return favoritePins;
   }
 
@@ -216,7 +202,6 @@ export default class PinRepository extends PinDb {
     if (!pin) {
       throw Error("Pin doesn't exist");
     }
-    console.log(pin);
     const currentUser = (await AppUserRepository.findUserById(
       userId
     )) as AppUser;
@@ -225,5 +210,26 @@ export default class PinRepository extends PinDb {
     }
     pin.favoriteUsers = pin.favoriteUsers.filter((user) => user.id != userId);
     return await this.repository.save(pin);
+  }
+
+  static async addCommentToPin(
+    pinId: string,
+    content: string,
+    rating: number,
+    userEmail: string
+  ): Promise<Pin> {
+    const pin = await this.repository.findOneBy({ id: pinId });
+    if (!pin) {
+      throw Error("Pin doesn't exist");
+    }
+
+    const comment = await CommentRepository.addComment(
+      content,
+      rating,
+      userEmail
+    );
+
+    pin.comments = [...pin.comments, comment];
+    return this.repository.save(pin);
   }
 }

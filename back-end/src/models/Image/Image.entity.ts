@@ -13,10 +13,6 @@ export default class Image {
   @Field()
   fileName: string;
 
-  // @Column() //Change to relation later
-  // @Field()
-  // commentId: string;
-
   @ManyToOne(() => Pin, (pin) => pin.images)
   @Field(() => Pin)
   pin: Pin;
