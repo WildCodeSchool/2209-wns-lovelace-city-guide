@@ -15,34 +15,162 @@ export default class PinRepository extends PinDb {
       "Restaurant"
     )) as Category;
 
+    const parcCategory = (await CategoryRepository.getCategoryByName(
+      "Parc"
+    )) as Category;
+
+    const bookstoreCategory = (await CategoryRepository.getCategoryByName(
+      "Médiathèque/Librairie"
+    )) as Category;
+
+    const gameCategory = (await CategoryRepository.getCategoryByName(
+      "Jeux"
+    )) as Category;
+
+    const artCategory = (await CategoryRepository.getCategoryByName(
+      "Art urbain"
+    )) as Category;
+
     const firstResto = new Pin(
-      "Pokebowl",
-      "42 rue Michel Felizat",
+      "Pokawa",
+      "10 Cr Vitton",
       "Lyon",
-      "69007",
+      "69006",
       [restaurantCategory],
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum, erat eget tempus gravida, est nunc congue purus, et accumsan libero augue ut mi. Mauris egestas imperdiet mauris, eget interdum.",
-      45.73615111648431,
-      4.837501130044736,
+      "Employés très agréable malgré le monde. Petit oublie de sauce vite réglé en la demandant en caisse. Ambiance agréable et calme qui ferait presque oublié l'agitation de la gare.",
+      45.76946594185109, 
+      4.851246371884311,
       true,
       false,
       true
     );
     const secondResto = new Pin(
-      "Noodle",
-      "33 rue Michel Felizat",
+      "Hakata Ramen",
+      "8 Rue du Garet",
       "Lyon",
       "69001",
       [restaurantCategory],
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec rutrum, erat eget tempus gravida, est nunc congue purus, et accumsan libero augue ut mi. Mauris egestas imperdiet mauris, eget interdum.",
-      45.72,
-      4.84,
+      "Les plats sont extrêmement bien présentés… et le personnel est sympa et souriant, c’est agréable d’être assis sur la terrasse avec d’aussi jolis plat.",
+      45.76712774186643, 
+      4.836753413418391,
       true,
       true,
       false
     );
 
-    await this.repository.save([firstResto, secondResto]);
+    const firstLibrairie = new Pin(
+      "Traits d'union",
+      "61 Rue des Girondin",
+      "Lyon",
+      "69007",
+      [bookstoreCategory],
+      "Une librairie de quartier qui a tout d'une grande ! Accueil au top, choix important et pertinent, coin lecture, animations... quel bonheur de trouver tout cela à deux pas de chez soi.",
+      45.738231574814684, 
+      4.835126610441614,
+      true,
+      false,
+      false
+    );
+
+    const secondLibrairie = new Pin(
+      "Le Bal des Ardents",
+      "17 Rue Neuve", 
+      "69001", 
+      "Lyon",
+      [bookstoreCategory],
+      "Une arche de livres encadre la porte de ce libraire qui offre une sélection généraliste et des événements.",
+      45.76541870299749, 
+      4.835453839344742,
+      true,
+      false,
+      false
+    );
+
+    const firstPark = new Pin(
+      "Parc Blandan",
+      "37 Rue du Repos", 
+      "69007" ,
+      "Lyon",
+      [parcCategory],
+      "Vaste parc urbain sur le site d'une ancienne caserne militaire, avec grande aire de jeux et skatepark.",
+      45.74512579104118, 
+      4.854204039864596,
+      true,
+      true,
+      true
+    );
+
+    const secondPark = new Pin(
+      "Jardin Botanique de Lyon",
+      "Boulevard des Belges", 
+      "69006" ,
+      "Lyon",
+      [parcCategory],
+      "Ce jardin botanique de 1857 est doté de serres abritant 15 000 espèces de plantes.",
+      45.77351653391576, 
+      4.854681187749071,
+      true,
+      true,
+      true
+    );
+
+    const thirdPark = new Pin(
+      "Place Bellecour",
+      "Pl. Bellecour", 
+      "69002", 
+      "Lyon",
+      [parcCategory],
+      "Lieu de rencontre et d'événements. Cette place est incontournable pour les touristes. Dimanche passé, j'y étais pour la semaine des consulats.",
+      45.758133231660125, 
+      4.83229483309206,
+      true,
+      true,
+      true
+    );
+
+    const firstGame = new Pin(
+      "DreamAway Lyon",
+      "36 Rue du Plat", 
+      "69002",
+      "Lyon",
+      [gameCategory],
+      "Salle agréable, très bon accueil. Expérience(s) qui vaut vraiment le coup même si on est encore clairement dans un jeu vidéo. Un peu cher mais très fun, pour presque tous âges et notamment les moins jeunes.",
+      45.769895245436864, 
+      4.824441849476291,
+      true,
+      true,
+      false
+    );
+
+    const secondGame = new Pin(
+      "DreamAway Lyon",
+      "7 Bd Yves Farge", 
+      "69007",
+      "Lyon",
+      [gameCategory],
+      "Très belle salle d’escape, sur le thème de la Mafia nous avons beaucoup apprécié le décors très bien élaboré et l’ambiance totalement mafieuse.",
+      45.74480793233951, 
+      4.8350338546579446,
+      false,
+      true,
+      false
+    );
+
+    const firstArt = new Pin(
+      "Fontaine Bartholdi",
+      "Pl. des Terreaux", 
+      "69001", 
+      "Lyon",
+      [artCategory],
+      "Magnifique fontaine du célèbre sculpteur français Frédéric Auguste Bartholdi inaugurée en 1892.",
+      45.76775910087315, 
+      4.833419782193786,
+      true,
+      true,
+      true
+    );
+
+    await this.repository.save([firstArt, firstResto, secondResto, firstLibrairie, secondLibrairie, firstPark, secondPark, thirdPark, firstGame, secondGame]);
   }
 
   static async getPins(): Promise<Pin[]> {
@@ -158,6 +286,20 @@ export default class PinRepository extends PinDb {
       result.push(await CategoryRepository.getCategoryByName(categoryName));
     }
     return result;
+  }
+
+  static async getPinsByCategoryId(categoryId: string): Promise<Pin[]> {
+    const existingCategory = await CategoryRepository.findCategoryById(
+      categoryId
+    );
+    if (!existingCategory) {
+      throw Error("La catégorie avec un identifiant demandé introuvable");
+    }
+    const pins = await this.repository.find({
+      relations: ["categories"],
+      where: { categories: { id: categoryId } },
+    });
+    return pins;
   }
 
   static async addImageToPin(pinId: string, fileName: string): Promise<Pin> {

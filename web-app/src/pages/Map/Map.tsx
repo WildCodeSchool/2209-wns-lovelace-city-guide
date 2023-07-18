@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { TileLayer } from "react-leaflet";
-
+import { useLocation, useNavigate } from "react-router-dom";
 import { AppContext } from "context/AppContext";
 import { useContext } from "react";
 
@@ -11,6 +11,7 @@ import {
   Header,
   Logo,
   ControlBoard,
+  Overlay
 } from "./Map.styled";
 
 import Pin from "./Pin"
@@ -21,41 +22,41 @@ import {
   BtnBlueRounded,
   BtnYellowRounded,
   BtnRedRounded,
-  FavButton,
 } from "../../styles/base-styles";
 
 import { useQuery, gql } from "@apollo/client";
 import {
-  GetPinsQuery,
   GetPinsFromUserFavoritesQuery,
+  GetPinsByCategoryIdQuery,
 } from "../../gql/graphql";
 import PinMeLogo from "../../media/logo.png";
-import { FaHome, FaHeart, FaTree } from "react-icons/fa";
-import { IoClose } from "react-icons/io5";
+import { FaHome } from "react-icons/fa";
+import { IoClose, IoAlertCircleOutline, IoHammer } from "react-icons/io5";
 import "./TooltipStyle.css";
 import { Link } from "react-router-dom";
 import { HOME_PATH } from "pages/paths";
 
-const GET_PINS = gql`
-  query GetPins {
-    pins {
+const GET_PINS_BY_CATEGORY_ID = gql`
+query GetPinsByCategoryId($categoryId: String, $fav: Boolean) {
+  getPinsByCategoryId(categoryId: $categoryId, fav: $fav) {
+    id
+    name
+    address
+    categories {
       id
-      name
-      address
-      categories {
-        id
-        categoryName
-      }
-      description
-      latitude
-      longitude
-      isOutdoor
-      isAccessible
-      isChildFriendly
-      createdAt
+      categoryName
     }
+    description
+    latitude
+    longitude
+    isOutdoor
+    isAccessible
+    isChildFriendly
+    createdAt
   }
+}
 `;
+
 
 const GET_FAVORITE_PIN = gql`
   query GetPinsFromUserFavorites {
@@ -70,6 +71,7 @@ type NewPinPropType = {
   setNewPin: (argument: boolean) => void;
   position: any[] | [] | null;
 };
+
 function CreateNewPin({ newPin, setNewPin, position }: NewPinPropType) {
   if (!newPin) {
     return (
@@ -94,12 +96,12 @@ function CreateNewPin({ newPin, setNewPin, position }: NewPinPropType) {
 }
 
 
-
 const Map = () => {
+  let { state } = useLocation();
   const appContext = useContext(AppContext);
   const [newPin, setNewPin] = useState(false);
-  // const [newPinLocation, setNewPinLocation] = useState<any | null>(null);
   const [position, setPosition] = useState<any[] | [] | null>(null);
+
 
   const { data: userFavoritePins } = useQuery<GetPinsFromUserFavoritesQuery>(
     GET_FAVORITE_PIN,
@@ -108,48 +110,53 @@ const Map = () => {
     }
   );
 
-  const { data, loading, error } = useQuery<GetPinsQuery>(GET_PINS, {
-    fetchPolicy: "cache-and-network",
+  const { data, loading, error } = useQuery<GetPinsByCategoryIdQuery>(GET_PINS_BY_CATEGORY_ID, {
+    variables: { categoryId: state && state.category, fav: state && state.favoris }
   });
+
+  console.log(data?.getPinsByCategoryId)
 
   const renderMainContent = () => {
     if (loading) {
       return <MapLoader />;
     }
     if (error) {
-      return error.message;
+      return <Overlay> <IoAlertCircleOutline/> {error.message} </Overlay> ;
     }
-    if (!data?.pins?.length) {
-      return "Aucun pin à afficher.";
+    if (!data?.getPinsByCategoryId?.length) {
+      return <Overlay> <IoHammer/> Aucun pin ne correspond à cette catégorie </Overlay>;
     }
-    return (
-      <>
-        {newPin && <Location setPosition={setPosition} position={position} />}
-        {data.pins.map((pin) => (
-          <Pin
-            key={pin.id}
-            id={pin.id}
-            name={pin.name}
-            latitude={pin.latitude}
-            longitude={pin.longitude}
-            address={pin.address}
-            description={pin.description}
-            isAccessible={pin.isAccessible}
-            isOutdoor={pin.isOutdoor}
-            isChildFriendly={pin.isChildFriendly}
-            isFavorite={
-              userFavoritePins !== undefined &&
-              userFavoritePins.getPinsFromUserFavorites.find(
-                (o) => o.id === pin.id
-              )
-                ? true
-                : false
-            }
-          />
-        ))}
-      </>
-    );
-  };
+    const pins = data.getPinsByCategoryId.map((pin) => (
+        <Pin
+          key={pin.id}
+          id={pin.id}
+          name={pin.name}
+          categories={pin.categories[0].categoryName}
+          latitude={pin.latitude}
+          longitude={pin.longitude}
+          address={pin.address}
+          description={pin.description}
+          isAccessible={pin.isAccessible}
+          isOutdoor={pin.isOutdoor}
+          isChildFriendly={pin.isChildFriendly}
+          isFavorite={
+            userFavoritePins !== undefined &&
+            userFavoritePins.getPinsFromUserFavorites.find(
+              (o) => o.id === pin.id
+            )
+              ? true
+              : false
+          }
+        />
+      )
+    )
+    if (state && state.category === 'Favoris') {
+      return pins.filter(pin => pin.props.isFavorite === true);
+    } else {
+      return pins;
+    }
+  }
+  
   return (
     <>
       <Header>
@@ -165,6 +172,7 @@ const Map = () => {
           scrollWheelZoom={true}
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          {newPin && <Location setPosition={setPosition} position={position} />}
           {renderMainContent()}
         </LeafletContainer>
           <ControlBoard>

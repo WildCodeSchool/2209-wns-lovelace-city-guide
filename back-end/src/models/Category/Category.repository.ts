@@ -8,6 +8,9 @@ export default class CategoryRepository extends CategoryDb {
       categoryName: "Restaurant",
     });
     await this.repository.save({
+      categoryName: "Bar",
+    });
+    await this.repository.save({
       categoryName: "Musée",
     });
     await this.repository.save({
@@ -15,6 +18,15 @@ export default class CategoryRepository extends CategoryDb {
     });
     await this.repository.save({
       categoryName: "Parc",
+    });
+    await this.repository.save({
+      categoryName: "Jeux",
+    });
+    await this.repository.save({
+      categoryName: "Médiathèque/Librairie",
+    });
+    await this.repository.save({
+      categoryName: "Art urbain",
     });
   }
 

@@ -8,7 +8,7 @@ export default class CategoryDb {
     this.repository = await getRepository(Category);
   }
 
-  protected static findCategoryById(categoryId: string) {
+  public static findCategoryById(categoryId: string) {
     return this.repository.findOneBy({ id: categoryId });
   }
 

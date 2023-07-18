@@ -23,6 +23,8 @@ export const SectionTitle = styled.h2`
 `;
 
 export const RedButton = styled(Link)<{rounded?:boolean, icon?:boolean, light?:boolean}>`
+  display: flex;
+  justify-content: center;
   margin: 5px;
   text-align: center;
   padding: ${props => props.icon ? "8px" : "5px"};
@@ -53,10 +55,9 @@ export const HollowButtonTitle = styled.h1<{rounded:boolean}>`
 text-align: center;
 padding: 5px;
 font-size: 1.2rem;
-border-radius: ${props => props.rounded ? "25px" : "0px"};
 background-color: #FF8787;
 margin: 10px ;
-box-shadow: -3px -3px 0 #912B2B;
+// box-shadow: -3px -3px 0 #912B2B;
 `;
 
 export const FavButton = styled.button<{fave?:boolean}>`
