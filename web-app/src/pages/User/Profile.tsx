@@ -1,14 +1,13 @@
 import { Avatar, Box, Button, Center, Editable, EditableInput, EditablePreview, Flex, FormControl, FormLabel, Heading, Input, WrapItem, useToast } from "@chakra-ui/react"
 import { useContext, useState } from "react";
 import { AppContext } from "context/AppContext";
-import { FaHeart, FaRandom, FaSignOutAlt } from "react-icons/fa";
+import { FaSignOutAlt } from "react-icons/fa";
 import { gql, useMutation } from "@apollo/client";
 import { SignOutMutation, SignOutMutationVariables, UpdateUserMutation, UpdateUserMutationVariables } from "gql/graphql";
 import { HOME_PATH } from "pages/paths";
 import { useNavigate } from "react-router-dom";
 import { getErrorMessage } from "utils";
 import { RedButton } from "styles/base-styles";
-import { MenuRow } from "pages/Home/Home.styled";
 import { ContainerTable } from "pages/Admin/ContainerTable.style";
 import { MAP_PATH } from "pages/paths";
 
@@ -155,7 +154,7 @@ const Profile = () => {
             </Box>
             <Box mt={5}>
               <RedButton to={`#`} icon> Mes Pins </RedButton>
-              <RedButton to={MAP_PATH} state={{category: 'Favoris'}} icon> Mes Favoris </RedButton>
+              <RedButton to={MAP_PATH} state={{favoris: true}} icon> Mes Favoris </RedButton>
             </Box>
             <Box textAlign="center">
               <Heading as='h2'size='md' mt='8'>Mettre les informations à jour</Heading>

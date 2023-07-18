@@ -16,11 +16,14 @@ import {
   MenuColumn,
   MenuRow,
   Logo,
-  Selector
+  Selector,
+  SearchBar
 } from "./Home.styled";
 
 import PinMeLogo from "../../media/logoFull.png";
 import { FaUser, FaHeart, FaRandom } from 'react-icons/fa';
+import { IoEnter } from "react-icons/io5";
+
 import { GetCategoriesQuery } from 'gql/graphql';
 
 const GET_CATEGORIES = gql`
@@ -49,6 +52,7 @@ const Home = () => {
 
     return (
       <Selector value={pickCategory} name="pets" id="pet-select" onChange={handleChange} >
+          <option > Afficher tout </option>
         {loading && <option value=''> loading </option> }
         {error && error.message}
         {!data?.categories.length && "Aucune catégorie" }
@@ -64,17 +68,16 @@ const Home = () => {
   return (
     <MenuColumn>
       <Logo src={PinMeLogo} />
-      <label>
-        <HollowButtonTitle rounded>Je cherche...</HollowButtonTitle>
-        {renderCategoriesPicker()}
-      </label>
-      <BlueButton to={MAP_PATH} state={{category: pickCategory}}>C'est parti</BlueButton>
-      <BlueButton to={MAP_PATH} >Afficher tout</BlueButton>
-      <MenuRow> 
-        <RedButton to={MAP_PATH} state={{favoris: true}} icon> <FaHeart/> </RedButton>
-        <RedButton to={`#`} icon> <FaRandom/> </RedButton> 
-        <RedButton to={PROFILE_PATH} icon> <FaUser/> </RedButton> 
-      </MenuRow>
+        <label>
+          <HollowButtonTitle rounded>Je cherche...</HollowButtonTitle>
+      <SearchBar>
+          {renderCategoriesPicker()}
+        <BlueButton to={MAP_PATH} state={{category: pickCategory}} icon><IoEnter/></BlueButton>
+      </SearchBar>
+        </label>
+        <RedButton to={MAP_PATH} state={{favoris: true}}> <FaHeart/> &nbsp; Mes favoris </RedButton>
+        {/* <RedButton to={`#`}> <FaRandom/> </RedButton>  */}
+        <RedButton to={PROFILE_PATH} > <FaUser/> &nbsp; Mon profil </RedButton> 
     </MenuColumn>
   );
 };

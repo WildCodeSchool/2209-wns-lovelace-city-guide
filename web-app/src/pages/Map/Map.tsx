@@ -124,7 +124,7 @@ const Map = () => {
       return <Overlay> <IoAlertCircleOutline/> {error.message} </Overlay> ;
     }
     if (!data?.getPinsByCategoryId?.length) {
-      return <Overlay> <IoHammer/> Aucun pin à afficher. </Overlay>;
+      return <Overlay> <IoHammer/> Aucun pin ne correspond à cette catégorie </Overlay>;
     }
     const pins = data.getPinsByCategoryId.map((pin) => (
         <Pin

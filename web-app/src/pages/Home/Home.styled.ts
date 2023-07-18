@@ -30,7 +30,9 @@ border-radius: 0px;
 background-color: #93CFD2;
 box-shadow: 3px 3px 0 #31777A;
 transition: 0.1s;
-
+max-width: 76%;
 `
- 
+export const SearchBar = styled.div`
+  display: flex;
+`
 
