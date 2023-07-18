@@ -103,10 +103,20 @@ export default class PinResolver {
   getPinById(@Arg("id") id: string): Promise<Pin | null> {
     return PinRepository.findPinById(id);
   }
-
+ 
   @Query(() => [Pin])
-  getPinsByCategoryId(@Arg("categoryId") categoryId: string): Promise<Pin[]> {
-    return PinRepository.getPinsByCategoryId(categoryId);
+  getPinsByCategoryId(
+    @Ctx() context: GlobalContext,
+    @Arg("categoryId",{ nullable: true }) categoryId?: string,
+    @Arg("fav",{ nullable: true }) fav?: boolean
+  ): Promise<Pin[]> {
+    if (fav) {
+      return PinRepository.getPinsFromUserFavorites((context.user as AppUser).id);
+    } else if (categoryId) {
+      return PinRepository.getPinsByCategoryId(categoryId);
+    } else {
+      return PinRepository.getPins();
+    }
   }
 
   @Authorized()

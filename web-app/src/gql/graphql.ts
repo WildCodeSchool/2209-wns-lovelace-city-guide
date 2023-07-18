@@ -425,6 +425,7 @@ export type GetPinsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetPinsQuery = { __typename?: 'Query', pins: Array<{ __typename?: 'Pin', id: string, name: string, address: string, description: string, latitude: number, longitude: number, isOutdoor: boolean, isAccessible: boolean, isChildFriendly: boolean, createdAt?: string | null, categories: Array<{ __typename?: 'Category', id: string, categoryName: string }> }> };
+
 export type GetPinsByCategoryIdQueryVariables = Exact<{
   categoryId: Scalars['String'];
 }>;

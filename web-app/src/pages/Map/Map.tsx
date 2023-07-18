@@ -11,6 +11,7 @@ import {
   Header,
   Logo,
   ControlBoard,
+  Overlay
 } from "./Map.styled";
 
 import Pin from "./Pin"
@@ -30,14 +31,14 @@ import {
 } from "../../gql/graphql";
 import PinMeLogo from "../../media/logo.png";
 import { FaHome } from "react-icons/fa";
-import { IoClose } from "react-icons/io5";
+import { IoClose, IoAlertCircleOutline, IoHammer } from "react-icons/io5";
 import "./TooltipStyle.css";
 import { Link } from "react-router-dom";
 import { HOME_PATH } from "pages/paths";
 
 const GET_PINS_BY_CATEGORY_ID = gql`
-query GetPinsByCategoryId($categoryId: String!) {
-  getPinsByCategoryId(categoryId: $categoryId) {
+query GetPinsByCategoryId($categoryId: String, $fav: Boolean) {
+  getPinsByCategoryId(categoryId: $categoryId, fav: $fav) {
     id
     name
     address
@@ -110,7 +111,7 @@ const Map = () => {
   );
 
   const { data, loading, error } = useQuery<GetPinsByCategoryIdQuery>(GET_PINS_BY_CATEGORY_ID, {
-    variables: { categoryId: state.category },
+    variables: { categoryId: state && state.category, fav: state && state.favoris }
   });
 
   console.log(data?.getPinsByCategoryId)
@@ -120,10 +121,10 @@ const Map = () => {
       return <MapLoader />;
     }
     if (error) {
-      return error.message;
+      return <Overlay> <IoAlertCircleOutline/> {error.message} </Overlay> ;
     }
     if (!data?.getPinsByCategoryId?.length) {
-      return "Aucun pin à afficher.";
+      return <Overlay> <IoHammer/> Aucun pin à afficher. </Overlay>;
     }
     const pins = data.getPinsByCategoryId.map((pin) => (
         <Pin

@@ -49,6 +49,17 @@ export const MapLoader = styled(Loader)`
   top: 50%;
   transform: translate(-50%)
 `
+
+export const Overlay = styled.div`
+  display: flex;
+  font-size: 1.3rem;
+  position: absolute;
+  z-index: 1000;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%)
+`
+
 export const ControlBoard = styled.div`
   margin: 10px;
   position: absolute;

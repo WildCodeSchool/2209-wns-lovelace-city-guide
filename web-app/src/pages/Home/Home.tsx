@@ -33,14 +33,15 @@ const GET_CATEGORIES = gql`
 `;
 
 const Home = () => {
+  const [pickCategory, setPickCategory] = useState('')
+  
   const { data, loading, error } = useQuery<GetCategoriesQuery>(
     GET_CATEGORIES,
     {
       fetchPolicy: "cache-and-network",
     }
+
   );
-    
-  const [pickCategory, setPickCategory] = useState(data?.categories[0].id)
   const renderCategoriesPicker = () => {
     const handleChange = (event:any) => {
       setPickCategory(event.target.value);
@@ -68,9 +69,9 @@ const Home = () => {
         {renderCategoriesPicker()}
       </label>
       <BlueButton to={MAP_PATH} state={{category: pickCategory}}>C'est parti</BlueButton>
-      <BlueButton to={MAP_PATH}>Afficher tout</BlueButton>
+      <BlueButton to={MAP_PATH} >Afficher tout</BlueButton>
       <MenuRow> 
-        <RedButton to={MAP_PATH} state={{category: 'Favoris'}} icon> <FaHeart/> </RedButton>
+        <RedButton to={MAP_PATH} state={{favoris: true}} icon> <FaHeart/> </RedButton>
         <RedButton to={`#`} icon> <FaRandom/> </RedButton> 
         <RedButton to={PROFILE_PATH} icon> <FaUser/> </RedButton> 
       </MenuRow>
