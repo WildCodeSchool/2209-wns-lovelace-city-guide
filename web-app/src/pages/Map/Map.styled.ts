@@ -25,6 +25,7 @@ export const Logo = styled.img`
 export const LeafletContainer = styled(MapContainer)`
   width: 100vw;
   height: 100vh;
+  font-family: 'Fredoka';
 `;
 
 export const PinPopup = styled(Popup)`
