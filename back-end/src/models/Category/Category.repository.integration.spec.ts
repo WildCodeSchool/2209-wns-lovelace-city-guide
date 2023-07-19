@@ -4,7 +4,6 @@ import {
   getDatabase,
   initializeDatabaseRepositories,
 } from "../../database/utils";
-import Category from "./Category.entity";
 import CategoryRepository from "./Category.repository";
 
 describe("CategoryRepository", () => {
@@ -64,6 +63,26 @@ describe("CategoryRepository", () => {
         );
         expect(categoryNames).not.toContain(newCategoryName);
         expect(newCategory.categoryName).toEqual(newCategoryName);
+      });
+    });
+
+    describe("getCategoryByName", () => {
+      it("should retrun only the category asking", async () => {
+        const askedCategory = "Restaurant";
+        const restoCategory = await CategoryRepository.createCategory(
+          "Restaurant"
+        );
+        const parcCategory = await CategoryRepository.createCategory("Parc");
+        const categories = await CategoryRepository.getCategories();
+        const result = await CategoryRepository.getCategoryByName(
+          askedCategory
+        );
+        expect(result).toEqual(
+          expect.objectContaining({
+            categoryName: "Restaurant",
+            id: expect.any(String),
+          })
+        );
       });
     });
   });
