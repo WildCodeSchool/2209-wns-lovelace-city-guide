@@ -35,15 +35,17 @@ export default class CategoryRepository extends CategoryDb {
   }
 
   static async createCategory(categoryName: string): Promise<Category> {
-    const newCategory = this.repository.create({
-      categoryName,
-    });
     const categories = await this.repository.find();
     const categoryList = categories.map((category) => category.categoryName);
 
     if (categoryList.includes(categoryName)) {
-      throw Error(`Categorie: ${categoryName} déjà existe`);
+      throw new Error(`Categorie: ${categoryName} déjà existe`);
     }
+
+    const newCategory = this.repository.create({
+      categoryName,
+    });
+
     await this.repository.save(newCategory);
     return newCategory;
   }
