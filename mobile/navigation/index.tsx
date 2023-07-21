@@ -19,7 +19,9 @@ export default function Navigation() {
 
 function RootNavigator() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{ contentStyle: { backgroundColor: "#222231" } }}
+    >
       <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="Map" component={MapScreen} />
       <Stack.Screen name="CreatePin" component={CreatePinScreen} />

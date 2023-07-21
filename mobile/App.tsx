@@ -30,7 +30,6 @@ const authMiddleware = new ApolloLink((operation, forward) => {
 
 const authLink = setContext(async (_, { headers }) => {
   const sessionId = await AsyncStorage.getItem("Cookie");
-  console.log(sessionId, "will-set-session");
   return {
     headers: {
       ...headers,

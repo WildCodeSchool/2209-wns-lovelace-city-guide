@@ -18,6 +18,7 @@ export type Scalars = {
 
 export type AppUser = {
   __typename?: 'AppUser';
+  comments?: Maybe<Array<Comment>>;
   emailAddress: Scalars['String']['output'];
   favoritePins: Array<Pin>;
   firstName: Scalars['String']['output'];
@@ -34,6 +35,16 @@ export type Category = {
   pins: Array<Pin>;
 };
 
+export type Comment = {
+  __typename?: 'Comment';
+  content: Scalars['String']['output'];
+  createdAt?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  pin: Pin;
+  rating: Scalars['Float']['output'];
+  user: AppUser;
+};
+
 export type Image = {
   __typename?: 'Image';
   fileName: Scalars['String']['output'];
@@ -43,19 +54,41 @@ export type Image = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addComment: Comment;
+  addCommentToPin: Pin;
   addImage: Image;
   addImageToPin: Pin;
   addPinToUserFavorite: Pin;
+  assignAdmin: AppUser;
   createCategory: Category;
   createPin: Pin;
   deleteCategory: Category;
+  deleteComment: Comment;
   deletePin: Pin;
+  deleteUser: AppUser;
+  removeAdmin: AppUser;
   removePinFromUserFavorite: Pin;
   signIn: AppUser;
   signOut: AppUser;
   signUp: AppUser;
   updateCategory: Category;
+  updateComment: Comment;
   updatePin: Pin;
+  updateUser: AppUser;
+};
+
+
+export type MutationAddCommentArgs = {
+  content: Scalars['String']['input'];
+  rating: Scalars['Float']['input'];
+};
+
+
+export type MutationAddCommentToPinArgs = {
+  content: Scalars['String']['input'];
+  pinId: Scalars['String']['input'];
+  rating: Scalars['Float']['input'];
+  userEmail: Scalars['String']['input'];
 };
 
 
@@ -75,6 +108,11 @@ export type MutationAddPinToUserFavoriteArgs = {
 };
 
 
+export type MutationAssignAdminArgs = {
+  id: Scalars['String']['input'];
+};
+
+
 export type MutationCreateCategoryArgs = {
   categoryName: Scalars['String']['input'];
 };
@@ -83,6 +121,7 @@ export type MutationCreateCategoryArgs = {
 export type MutationCreatePinArgs = {
   address: Scalars['String']['input'];
   categories: Array<Scalars['String']['input']>;
+  city: Scalars['String']['input'];
   description: Scalars['String']['input'];
   isAccessible: Scalars['Boolean']['input'];
   isChildFriendly: Scalars['Boolean']['input'];
@@ -90,6 +129,7 @@ export type MutationCreatePinArgs = {
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
   name: Scalars['String']['input'];
+  zipcode: Scalars['String']['input'];
 };
 
 
@@ -98,7 +138,22 @@ export type MutationDeleteCategoryArgs = {
 };
 
 
+export type MutationDeleteCommentArgs = {
+  id: Scalars['String']['input'];
+};
+
+
 export type MutationDeletePinArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationDeleteUserArgs = {
+  id: Scalars['String']['input'];
+};
+
+
+export type MutationRemoveAdminArgs = {
   id: Scalars['String']['input'];
 };
 
@@ -133,9 +188,17 @@ export type MutationUpdateCategoryArgs = {
 };
 
 
+export type MutationUpdateCommentArgs = {
+  content: Scalars['String']['input'];
+  id: Scalars['String']['input'];
+  rating: Scalars['Float']['input'];
+};
+
+
 export type MutationUpdatePinArgs = {
   address: Scalars['String']['input'];
   categories: Array<Scalars['String']['input']>;
+  city: Scalars['String']['input'];
   description: Scalars['String']['input'];
   id: Scalars['ID']['input'];
   isAccessible: Scalars['Boolean']['input'];
@@ -144,12 +207,23 @@ export type MutationUpdatePinArgs = {
   latitude: Scalars['Float']['input'];
   longitude: Scalars['Float']['input'];
   name: Scalars['String']['input'];
+  zipcode: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateUserArgs = {
+  emailAddress: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  id: Scalars['ID']['input'];
+  lastName: Scalars['String']['input'];
 };
 
 export type Pin = {
   __typename?: 'Pin';
   address: Scalars['String']['output'];
   categories: Array<Category>;
+  city: Scalars['String']['output'];
+  comments?: Maybe<Array<Comment>>;
   createdAt?: Maybe<Scalars['String']['output']>;
   currentUser: AppUser;
   description: Scalars['String']['output'];
@@ -162,12 +236,15 @@ export type Pin = {
   latitude: Scalars['Float']['output'];
   longitude: Scalars['Float']['output'];
   name: Scalars['String']['output'];
+  zipcode: Scalars['String']['output'];
 };
 
 export type Query = {
   __typename?: 'Query';
   categories: Array<Category>;
+  comments: Array<Comment>;
   getPinById: Pin;
+  getPinsByCategoryId: Array<Pin>;
   getPinsFromUserFavorites: Array<Pin>;
   getUsers: Array<AppUser>;
   images: Array<Image>;
@@ -180,9 +257,16 @@ export type QueryGetPinByIdArgs = {
   id: Scalars['String']['input'];
 };
 
+
+export type QueryGetPinsByCategoryIdArgs = {
+  categoryId?: InputMaybe<Scalars['String']['input']>;
+  fav?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export enum UserStatus {
   Admin = 'ADMIN',
   BannedUser = 'BANNED_USER',
+  SuperAdmin = 'SUPER_ADMIN',
   User = 'USER'
 }
 
@@ -194,6 +278,8 @@ export type GetCategoriesQuery = { __typename?: 'Query', categories: Array<{ __t
 export type CreatePinMutationVariables = Exact<{
   name: Scalars['String']['input'];
   address: Scalars['String']['input'];
+  city: Scalars['String']['input'];
+  zipcode: Scalars['String']['input'];
   categories: Array<Scalars['String']['input']> | Scalars['String']['input'];
   description: Scalars['String']['input'];
   latitude: Scalars['Float']['input'];
@@ -204,7 +290,7 @@ export type CreatePinMutationVariables = Exact<{
 }>;
 
 
-export type CreatePinMutation = { __typename?: 'Mutation', createPin: { __typename?: 'Pin', id: string, name: string, address: string, description: string, latitude: number, longitude: number, createdAt?: string | null, isAccessible: boolean, isChildFriendly: boolean, isOutdoor: boolean, categories: Array<{ __typename?: 'Category', id: string, categoryName: string }> } };
+export type CreatePinMutation = { __typename?: 'Mutation', createPin: { __typename?: 'Pin', id: string, name: string, address: string, description: string, latitude: number, longitude: number, createdAt?: string | null, isAccessible: boolean, isChildFriendly: boolean, isOutdoor: boolean, city: string, zipcode: string, categories: Array<{ __typename?: 'Category', id: string, categoryName: string }> } };
 
 export type GetPinsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -231,7 +317,7 @@ export type SignUpMutation = { __typename?: 'Mutation', signUp: { __typename?: '
 
 
 export const GetCategoriesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"getCategories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"categories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"categoryName"}}]}}]}}]} as unknown as DocumentNode<GetCategoriesQuery, GetCategoriesQueryVariables>;
-export const CreatePinDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createPin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"categories"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"description"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"latitude"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Float"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"longitude"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Float"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"isAccessible"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"isChildFriendly"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"isOutdoor"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createPin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"Argument","name":{"kind":"Name","value":"address"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}},{"kind":"Argument","name":{"kind":"Name","value":"categories"},"value":{"kind":"Variable","name":{"kind":"Name","value":"categories"}}},{"kind":"Argument","name":{"kind":"Name","value":"description"},"value":{"kind":"Variable","name":{"kind":"Name","value":"description"}}},{"kind":"Argument","name":{"kind":"Name","value":"latitude"},"value":{"kind":"Variable","name":{"kind":"Name","value":"latitude"}}},{"kind":"Argument","name":{"kind":"Name","value":"longitude"},"value":{"kind":"Variable","name":{"kind":"Name","value":"longitude"}}},{"kind":"Argument","name":{"kind":"Name","value":"isAccessible"},"value":{"kind":"Variable","name":{"kind":"Name","value":"isAccessible"}}},{"kind":"Argument","name":{"kind":"Name","value":"isChildFriendly"},"value":{"kind":"Variable","name":{"kind":"Name","value":"isChildFriendly"}}},{"kind":"Argument","name":{"kind":"Name","value":"isOutdoor"},"value":{"kind":"Variable","name":{"kind":"Name","value":"isOutdoor"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"categories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"categoryName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"isAccessible"}},{"kind":"Field","name":{"kind":"Name","value":"isChildFriendly"}},{"kind":"Field","name":{"kind":"Name","value":"isOutdoor"}}]}}]}}]} as unknown as DocumentNode<CreatePinMutation, CreatePinMutationVariables>;
+export const CreatePinDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"createPin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"name"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"address"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"city"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"zipcode"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"categories"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"description"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"latitude"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Float"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"longitude"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Float"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"isAccessible"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"isChildFriendly"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"isOutdoor"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Boolean"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createPin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"name"},"value":{"kind":"Variable","name":{"kind":"Name","value":"name"}}},{"kind":"Argument","name":{"kind":"Name","value":"address"},"value":{"kind":"Variable","name":{"kind":"Name","value":"address"}}},{"kind":"Argument","name":{"kind":"Name","value":"city"},"value":{"kind":"Variable","name":{"kind":"Name","value":"city"}}},{"kind":"Argument","name":{"kind":"Name","value":"zipcode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"zipcode"}}},{"kind":"Argument","name":{"kind":"Name","value":"categories"},"value":{"kind":"Variable","name":{"kind":"Name","value":"categories"}}},{"kind":"Argument","name":{"kind":"Name","value":"description"},"value":{"kind":"Variable","name":{"kind":"Name","value":"description"}}},{"kind":"Argument","name":{"kind":"Name","value":"latitude"},"value":{"kind":"Variable","name":{"kind":"Name","value":"latitude"}}},{"kind":"Argument","name":{"kind":"Name","value":"longitude"},"value":{"kind":"Variable","name":{"kind":"Name","value":"longitude"}}},{"kind":"Argument","name":{"kind":"Name","value":"isAccessible"},"value":{"kind":"Variable","name":{"kind":"Name","value":"isAccessible"}}},{"kind":"Argument","name":{"kind":"Name","value":"isChildFriendly"},"value":{"kind":"Variable","name":{"kind":"Name","value":"isChildFriendly"}}},{"kind":"Argument","name":{"kind":"Name","value":"isOutdoor"},"value":{"kind":"Variable","name":{"kind":"Name","value":"isOutdoor"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"categories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"categoryName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"isAccessible"}},{"kind":"Field","name":{"kind":"Name","value":"isChildFriendly"}},{"kind":"Field","name":{"kind":"Name","value":"isOutdoor"}},{"kind":"Field","name":{"kind":"Name","value":"city"}},{"kind":"Field","name":{"kind":"Name","value":"zipcode"}}]}}]}}]} as unknown as DocumentNode<CreatePinMutation, CreatePinMutationVariables>;
 export const GetPinsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPins"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pins"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"address"}},{"kind":"Field","name":{"kind":"Name","value":"categories"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"categoryName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"latitude"}},{"kind":"Field","name":{"kind":"Name","value":"longitude"}},{"kind":"Field","name":{"kind":"Name","value":"isOutdoor"}},{"kind":"Field","name":{"kind":"Name","value":"isAccessible"}},{"kind":"Field","name":{"kind":"Name","value":"isChildFriendly"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}}]}}]}}]} as unknown as DocumentNode<GetPinsQuery, GetPinsQueryVariables>;
 export const SignInDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SignIn"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"emailAddress"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signIn"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"emailAddress"},"value":{"kind":"Variable","name":{"kind":"Name","value":"emailAddress"}}},{"kind":"Argument","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"emailAddress"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}}]}}]} as unknown as DocumentNode<SignInMutation, SignInMutationVariables>;
 export const SignUpDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"SignUp"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"firstName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"lastName"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"emailAddress"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signUp"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"firstName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"firstName"}}},{"kind":"Argument","name":{"kind":"Name","value":"lastName"},"value":{"kind":"Variable","name":{"kind":"Name","value":"lastName"}}},{"kind":"Argument","name":{"kind":"Name","value":"emailAddress"},"value":{"kind":"Variable","name":{"kind":"Name","value":"emailAddress"}}},{"kind":"Argument","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"emailAddress"}},{"kind":"Field","name":{"kind":"Name","value":"userStatus"}}]}}]}}]} as unknown as DocumentNode<SignUpMutation, SignUpMutationVariables>;

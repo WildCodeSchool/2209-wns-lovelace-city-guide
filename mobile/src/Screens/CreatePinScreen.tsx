@@ -23,6 +23,8 @@ const CREATE_PIN = gql`
   mutation createPin(
     $name: String!
     $address: String!
+    $city: String!
+    $zipcode: String!
     $categories: [String!]!
     $description: String!
     $latitude: Float!
@@ -34,6 +36,8 @@ const CREATE_PIN = gql`
     createPin(
       name: $name
       address: $address
+      city: $city
+      zipcode: $zipcode
       categories: $categories
       description: $description
       latitude: $latitude
@@ -56,6 +60,8 @@ const CREATE_PIN = gql`
       isAccessible
       isChildFriendly
       isOutdoor
+      city
+      zipcode
     }
   }
 `;
@@ -66,6 +72,8 @@ export default function CreatePinScreen({
   const { dragablePosition } = route.params;
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [zipcode, setZipcode] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
   const [description, setDescription] = useState("");
   const [latitude, setLatitude] = useState(dragablePosition.latitude);
@@ -112,6 +120,8 @@ export default function CreatePinScreen({
         variables: {
           name,
           address,
+          city,
+          zipcode,
           categories,
           description,
           latitude,
@@ -124,6 +134,8 @@ export default function CreatePinScreen({
       console.log(
         name,
         address,
+        city,
+        zipcode,
         categories,
         description,
         latitude,
@@ -135,6 +147,8 @@ export default function CreatePinScreen({
       navigation.navigate("Map");
       setName("");
       setAddress("");
+      setCity("");
+      setZipcode("");
       setCategories([]);
       setDescription("");
       setLatitude(0);
@@ -166,13 +180,26 @@ export default function CreatePinScreen({
             defaultValue={address}
             value={address}
           />
+          <TextInput
+            style={styles.input}
+            placeholder="Ville"
+            onChangeText={(city) => setCity(city)}
+            defaultValue={city}
+            value={city}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Code Postal"
+            onChangeText={(zipcode) => setZipcode(zipcode)}
+            defaultValue={zipcode}
+            value={zipcode}
+          />
           <MultipleSelectList
             data={optionsCategoies}
             label="Catégories"
             setSelected={(value: any) => setCategories(value)}
-            onSelect={() => console.log(categories)}
             notFoundText="Catégorie non trouvable"
-            badgeStyles={{ backgroundColor: "#56b7da" }}
+            badgeStyles={{ backgroundColor: "#31777A" }}
           />
           <TextInput
             style={styles.textarea}
@@ -196,10 +223,10 @@ export default function CreatePinScreen({
           />
           <BouncyCheckbox
             size={20}
-            fillColor="#1e86b6"
+            fillColor="#31777A"
             unfillColor="#b4eaef"
             text="Acessible"
-            iconStyle={{ borderColor: "#1e86b6" }}
+            iconStyle={{ borderColor: "#31777A" }}
             innerIconStyle={{ borderWidth: 2 }}
             onPress={(isChecked: boolean) => {
               handleCheckIsAccessible;
@@ -207,10 +234,10 @@ export default function CreatePinScreen({
           />
           <BouncyCheckbox
             size={20}
-            fillColor="#1e86b6"
+            fillColor="#31777A"
             unfillColor="#b4eaef"
             text="Child Friendly"
-            iconStyle={{ borderColor: "#1e86b6" }}
+            iconStyle={{ borderColor: "#31777A" }}
             innerIconStyle={{ borderWidth: 2 }}
             onPress={(isChecked: boolean) => {
               handleCheckIsChildFriendly;
@@ -218,19 +245,16 @@ export default function CreatePinScreen({
           />
           <BouncyCheckbox
             size={20}
-            fillColor="#1e86b6"
+            fillColor="#31777A"
             unfillColor="#b4eaef"
             text="Outdoor"
-            iconStyle={{ borderColor: "#1e86b6" }}
+            iconStyle={{ borderColor: "#31777A" }}
             innerIconStyle={{ borderWidth: 2 }}
             onPress={(isChecked: boolean) => {
               handleCheckIsOutDoor;
             }}
           />
-          <Pressable
-            style={[styles.button, styles.buttonSubmit]}
-            onPress={() => onSubmit()}
-          >
+          <Pressable style={[styles.buttonSubmit]} onPress={() => onSubmit()}>
             <Text style={styles.textStyle}>Envoyer</Text>
           </Pressable>
         </View>
@@ -262,36 +286,59 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   input: {
-    borderRadius: 20,
+    borderRadius: 0,
     width: "100%",
     padding: 10,
     backgroundColor: "#b4eaef",
     margin: 10,
+    shadowColor: "#31777A",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    borderWidth: 2,
+    borderColor: "#31777A",
+    shadowOpacity: 1,
+    shadowRadius: 0,
   },
   textarea: {
-    borderRadius: 20,
     width: "100%",
     padding: 10,
     backgroundColor: "#b4eaef",
     height: 100,
     textAlignVertical: "top",
+    shadowColor: "#31777A",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    borderWidth: 2,
+    borderColor: "#31777A",
+    shadowOpacity: 1,
+    shadowRadius: 0,
   },
   titleText: {
     marginBottom: 15,
     textAlign: "center",
     fontWeight: "bold",
   },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-    margin: 5,
-  },
   buttonSubmit: {
-    backgroundColor: "#e97ee2",
+    backgroundColor: "#FF8787",
+    padding: 10,
+    margin: 8,
+    display: "flex",
+    justifyContent: "center",
+    shadowColor: "#912B2B",
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    borderWidth: 2,
+    borderColor: "#912B2B",
+    shadowOpacity: 1,
+    shadowRadius: 0,
   },
   textStyle: {
-    color: "white",
     fontWeight: "bold",
     textAlign: "center",
   },

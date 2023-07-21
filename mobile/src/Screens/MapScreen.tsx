@@ -91,37 +91,6 @@ export default function Map({ navigation }: RootStackScreenProps<"Map">) {
       );
     });
   };
-
-  const CreateNewPin = ({ navigation, newPin }: any) => {
-    if (!newPin) {
-      return (
-        <>
-          <Pressable
-            style={[styles.button, styles.buttonAddPin]}
-            onPress={() => {
-              setNewPin(true);
-            }}
-          >
-            <Text style={styles.textStyle}>Ajoute un Pin</Text>
-          </Pressable>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <Pressable
-            style={[styles.button, styles.buttonPlacePin]}
-            onPress={() => {
-              navigation.navigate("CreatePin", { dragablePosition });
-              setNewPin(false);
-            }}
-          >
-            <Text style={styles.textStyle}>On le met ici ?</Text>
-          </Pressable>
-        </>
-      );
-    }
-  };
   return (
     <View style={styles.container}>
       <MapView
@@ -139,8 +108,29 @@ export default function Map({ navigation }: RootStackScreenProps<"Map">) {
             onDragEnd={(e) => setDragablePosition(e.nativeEvent.coordinate)}
           />
         )}
-        {CreateNewPin({ newPin, navigation })}
       </MapView>
+      <View style={styles.buttonContainer}>
+        {newPin ? (
+          <Pressable
+            style={[styles.button, styles.buttonPlacePin]}
+            onPress={() => {
+              navigation.navigate("CreatePin", { dragablePosition });
+              setNewPin(false);
+            }}
+          >
+            <Text style={styles.textStyle}>On le met ici ?</Text>
+          </Pressable>
+        ) : (
+          <Pressable
+            style={[styles.button, styles.buttonAddPin]}
+            onPress={() => {
+              setNewPin(true);
+            }}
+          >
+            <Text style={styles.textStyle}>Ajoute un Pin</Text>
+          </Pressable>
+        )}
+      </View>
     </View>
   );
 }
@@ -159,6 +149,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 6,
     borderColor: "#ccc",
+  },
+  buttonContainer: {
+    position: "absolute",
+    bottom: 20, // Adjust this value as needed to set the button at the desired distance from the bottom of the screen
+    alignSelf: "center",
   },
   button: {
     borderRadius: 20,
