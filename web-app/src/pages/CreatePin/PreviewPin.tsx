@@ -192,7 +192,7 @@ const PreviewPin = () => {
     }
     if (error) {
       return error.message;
-    }
+    } 
     if (!data?.getPinById) {
       return "Pin not found";
     }
@@ -234,7 +234,8 @@ const PreviewPin = () => {
                           boxSize="200px"
                           key={image.id}
                           src={`/uploader/${image.fileName}`}
-                          alt="pin"
+                          fallbackSrc='https://via.placeholder.com/150'
+                          alt={image.fileName}
                         />
                       </CardBody>
                     </Card>

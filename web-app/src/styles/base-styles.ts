@@ -93,9 +93,12 @@ export const BtnRedSquare = styled.button`
 `;
 
 export const BtnBlueRounded = styled.button`
+  color: #222231;
   margin: 10px;
-  padding: 6px;
-  border-radius: 15px;
+  font-size: 1.2rem;
+
+  padding: 4px 12px;
+  border-radius: 8px;
   background-color: #93CFD2;
   box-shadow: 3px 3px 0 #31777A;
 `;
