@@ -37,11 +37,15 @@ export default class PinRepository extends PinDb {
     )) as Image;
 
     const bellecour2 = (await ImageRepository.addImage(
-      "bellecour1"
+      "bellecour2.jpg"
     )) as Image;
 
     const bellecour3 = (await ImageRepository.addImage(
-      "bellecour1"
+      "bellecour3.jpg"
+    )) as Image;
+
+    const ardents1 = (await ImageRepository.addImage(
+      "ardents1.jpg"
     )) as Image;
 
 
@@ -98,7 +102,7 @@ export default class PinRepository extends PinDb {
       "Une arche de livres encadre la porte de ce libraire qui offre une sélection généraliste et des événements.",
       45.76541870299749, 
       4.835453839344742,
-      undefined,
+      [ardents1],
       true,
       false,
       false
@@ -143,7 +147,7 @@ export default class PinRepository extends PinDb {
       "Lieu de rencontre et d'événements. Cette place est incontournable pour les touristes. Dimanche passé, j'y étais pour la semaine des consulats.",
       45.758133231660125, 
       4.83229483309206,
-      [bellecour1],
+      [bellecour1, bellecour2, bellecour3],
       true,
       true,
       true

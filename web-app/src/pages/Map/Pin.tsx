@@ -3,9 +3,13 @@ import { Marker, Popup, Tooltip } from "react-leaflet";
 
 import {
   Infos,
-  Footer
+  Footer,
+  PinModalFooter,
+  SmallText,
+  PinModalContent,
+  Slideshow,
+  Row
 } from "./Map.styled";
-import CreateCategory from "components/Modal/CreateCategory";
 import { FavButton, BtnBlueRounded  } from "../../styles/base-styles";
 
 import { useMutation, gql } from "@apollo/client";
@@ -23,7 +27,7 @@ import { DragMarker, PinMarker, FavedMarker } from "components/PinMarkers";
 import { getErrorMessage } from "utils";
 
 import "./TooltipStyle.css";
-import { Button, Card, CardBody, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, SimpleGrid, useDisclosure, useToast } from "@chakra-ui/react";
+import { Image, Button, Card, CardBody, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, SimpleGrid, useDisclosure, useToast } from "@chakra-ui/react";
 
 const ADD_PIN_TO_USER_FAVORITE = gql`
   mutation addPinToUserFavorite($pinId: String!) {
@@ -150,8 +154,16 @@ const Pin = ({
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay bg='blackAlpha.300'
       backdropFilter='blur(10px) hue-rotate(90deg)'/>
-          <ModalContent>
-            <ModalHeader> {name} <br/> {categories[0].categoryName} {categories[1] && '/ ' + categories[1].categoryName}  </ModalHeader>
+          <PinModalContent>
+            <ModalHeader> 
+              <h1>
+                {name} 
+              </h1>
+              <br/> 
+              <SmallText>
+                {categories[0].categoryName} {categories[1] && '/ ' + categories[1].categoryName}  
+              </SmallText>
+            </ModalHeader>
             <ModalCloseButton />
             <ModalBody>
             <div className="row">
@@ -166,49 +178,43 @@ const Pin = ({
                 </p>
             </div>
             <div className="row">
-              <p>
+              <SmallText>
               {address} <br/>
               {zipcode}, {city}
-              </p>
+              </SmallText>
               <Infos>
-                {" "}
-                {isAccessible && <><MdAccessible /> Acessible PMR </>} 
-                {isOutdoor && <><FaTree/> En exterieur </>}{" "}
-                {isChildFriendly && <><MdChildFriendly/> Famillial </>}{" "}
+                {isAccessible && <MdAccessible title="Acessible PMR" />}{" "}
+                {isOutdoor && <FaTree title="En exterieur" />}{" "}
+                {isChildFriendly && <MdChildFriendly title="Famillial" />}{" "}
               </Infos>
             </div>
             {images[0] && (
               <>
-                <h2>Galerie</h2>
-                <SimpleGrid
-                  spacing={4}
-                  templateColumns="repeat(auto-fill, minmax(200px, 1fr))"
-                >
-                  {images.map((image: any) => (
-                      <Card maxW="md" key={image.id}>
-                        <CardBody>
-                          <img
-                            key={image.id}
-                            src={`/uploader/${image.fileName}`}
-                            alt={image.fileName}
-                          />
-                        </CardBody>
-                      </Card>
-                    ))}
-                </SimpleGrid>
+              <h2>Galerie</h2>
+              <Slideshow> 
+                <Row>
+                {images.map((image: any) => (
+                        <Image
+                          objectFit="cover"
+                          key={image.id}
+                          src={`/uploader/${image.fileName}`}
+                          fallbackSrc='https://via.placeholder.com/150'
+                          alt={image.fileName}
+                          mr="1rem"
+                        />
+                  ))}
+                  </Row>
+              </Slideshow>
               </>
-            )
-            }
-
+            )}
             </ModalBody>
   
-            <ModalFooter>
+            <PinModalFooter>
               <Button colorScheme='blue' mr={3} onClick={onClose}>
                 Close
               </Button>
-              <Button variant='ghost'>Secondary Action</Button>
-            </ModalFooter>
-          </ModalContent>
+            </PinModalFooter>
+          </PinModalContent>
         </Modal>
       </>
     )
@@ -238,7 +244,6 @@ const Pin = ({
         </div>
         <Footer>
           <Infos>
-            {" "}
             {isAccessible && <MdAccessible title="Acessible PMR" />}{" "}
             {isOutdoor && <FaTree title="En exterieur" />}{" "}
             {isChildFriendly && <MdChildFriendly title="Famillial" />}{" "}

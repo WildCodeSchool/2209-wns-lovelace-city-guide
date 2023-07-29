@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { MapContainer, Popup } from 'react-leaflet'
 import Loader from "../../components/Loader";
-import { ModalFooter } from "@chakra-ui/react";
+import {  ModalContent, ModalFooter } from "@chakra-ui/react";
 
 
 export const Header = styled.header`
@@ -85,5 +85,23 @@ export const Infos = styled.div`
  `
 
  export const PinModalFooter = styled(ModalFooter)`
-  position: absolute;
  `
+ export const SmallText = styled.span`
+  font-size: 0.8rem;
+  opacity: 0.8;
+ `
+ export const PinModalContent = styled(ModalContent)`
+ background-color: #222231 !important;
+ color: white !important;
+ `
+export const Slideshow = styled.div`
+overflow: scroll;
+`
+
+export const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+
+  
+`
+
