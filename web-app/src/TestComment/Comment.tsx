@@ -38,13 +38,13 @@ const CREATE_COMMENT = gql`
   }
 `;
 
-const Comment = () => {
+const Comment = ({pinId}: {pinId: string}) => {
   const [content, setContent] = useState("");
   const [rating, setRating] = useState(0);
   const toast = useToast();
-  const pinId = "37fb7b31-2c5f-4229-8fa4-52372736f576";
   const appContext = useContext(AppContext);
   const userEmail = appContext?.userProfile?.myProfile.emailAddress as string;
+  console.log(userEmail)
 
   const [createComment] = useMutation<
     AddCommentToPinMutation,

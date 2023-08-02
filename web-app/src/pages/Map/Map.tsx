@@ -64,9 +64,6 @@ query GetPinsByCategoryId($categoryId: String, $fav: Boolean) {
       id
       rating
       createdAt
-      user {
-        firstName
-      }
     }
   }
 }
@@ -165,6 +162,7 @@ const Map = () => {
               ? true
               : false
           }
+          comments = {pin.comments}
         />
       )
     )

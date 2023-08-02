@@ -101,7 +101,12 @@ overflow: scroll;
 export const Row = styled.div`
   display: flex;
   flex-direction: row;
-
-  
+`
+export const RatingColor = styled.div`
+  color: #FBC63F;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-right: 0.2rem;
 `
 
