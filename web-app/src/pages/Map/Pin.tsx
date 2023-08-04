@@ -28,8 +28,8 @@ import { DragMarker, PinMarker, FavedMarker } from "components/PinMarkers";
 import { getErrorMessage } from "utils";
 
 import "./TooltipStyle.css";
-import { Image, Button, Card, CardBody, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, SimpleGrid, useDisclosure, useToast, Flex } from "@chakra-ui/react";
-import Comment from "TestComment/Comment";
+import { Image, Button, Card, CardBody, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, SimpleGrid, useDisclosure, useToast, Flex, Heading } from "@chakra-ui/react";
+import Comment from "components/Comments/Comment"
 import { Column } from "components/Footer/Footer.styled";
 const ADD_PIN_TO_USER_FAVORITE = gql`
   mutation addPinToUserFavorite($pinId: String!) {
@@ -205,7 +205,7 @@ const Pin = ({
                 </FavButton>
                 </p>
             </div>
-            <div className="row">
+            <Flex flexDirection='row' justifyContent='space-between' mt='1.5rem'>
               <SmallText>
               {address} <br/>
               {zipcode}, {city}
@@ -215,10 +215,10 @@ const Pin = ({
                 {isOutdoor && <FaTree title="En exterieur" />}{" "}
                 {isChildFriendly && <MdChildFriendly title="Famillial" />}{" "}
               </Infos>
-            </div>
+            </Flex>
             {images[0] && (
-              <>
-              <h2>Galerie</h2>
+              <Flex flexDirection='column' my='2rem'>
+              <Heading as='h2' size='md' mb='0.5rem'>Galerie</Heading>
               <Slideshow> 
                 <Row>
                 {images.map((image: any) => (
@@ -234,26 +234,24 @@ const Pin = ({
                   ))}
                   </Row>
               </Slideshow>
-              </>
+              </Flex>
             )}
-            {comments[0] && (
+            <Heading as='h2' size='md' mb='0.5rem'> Avis</Heading>
+            <Comment pinId={id}/>
+            {comments[0] ? (
               <>
-              <h2>Avis</h2>
                 {comments.map((comment: any) => (
                     <p> {comment.content} </p>
                   ))}
               </>
+            ) : (
+              <>
+              Il n'y a pas encore d'avis... Donnez le vôtre !</>
             )}
 
-            
-
-            <Comment pinId={id}/>
             </ModalBody>
 
             <PinModalFooter>
-              <Button colorScheme='blue' mr={3} onClick={onClose}>
-                Écrire un avis
-              </Button>
               <Button colorScheme='red' mr={3} onClick={onClose}>
                 Signaler
               </Button>
