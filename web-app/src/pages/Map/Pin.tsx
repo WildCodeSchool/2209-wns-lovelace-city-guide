@@ -28,7 +28,7 @@ import { DragMarker, PinMarker, FavedMarker } from "components/PinMarkers";
 import { getErrorMessage } from "utils";
 
 import "./TooltipStyle.css";
-import { Image, Button, Card, CardBody, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, SimpleGrid, useDisclosure, useToast, Flex, Heading } from "@chakra-ui/react";
+import { Text, Image, Button, Card, CardBody, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, SimpleGrid, useDisclosure, useToast, Flex, Heading } from "@chakra-ui/react";
 import Comment from "components/Comments/Comment"
 import { Column } from "components/Footer/Footer.styled";
 const ADD_PIN_TO_USER_FAVORITE = gql`
@@ -236,19 +236,32 @@ const Pin = ({
               </Slideshow>
               </Flex>
             )}
+            <Flex flexDirection='column' my='2rem'>
             <Heading as='h2' size='md' mb='0.5rem'> Avis</Heading>
             <Comment pinId={id}/>
             {comments[0] ? (
               <>
                 {comments.map((comment: any) => (
-                    <p> {comment.content} </p>
-                  ))}
+                  <>
+                    <Card color='white' backgroundColor='blackAlpha.300' mt='1rem'>
+                      <CardBody>
+                        <Flex justifyContent='space-between' flexDir='row' align='start'>
+                          <Text> {comment.content !== '' ? comment.content : <SmallText>(pas de commentaire)</SmallText>} </Text>
+                            <RatingColor>
+                              {comment.rating} &nbsp;
+                              <FaStar/>
+                            </RatingColor>
+                        </Flex>    
+                      </CardBody>
+                    </Card>
+                  </>
+                ))}
               </>
             ) : (
               <>
               Il n'y a pas encore d'avis... Donnez le vôtre !</>
             )}
-
+            </Flex>
             </ModalBody>
 
             <PinModalFooter>

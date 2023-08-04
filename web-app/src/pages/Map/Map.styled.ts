@@ -105,6 +105,7 @@ export const Row = styled.div`
 export const RatingColor = styled.div`
   color: #FBC63F;
   display: flex;
+  align-items: first baseline !important;
   flex-direction: row;
   align-items: center;
   margin-right: 0.2rem;
