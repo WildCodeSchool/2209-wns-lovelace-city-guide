@@ -2,6 +2,7 @@ import ImageDb from "./Image.db";
 import Image from "./Image.entity";
 
 export default class ImageRepository extends ImageDb {
+
   static async getImages(): Promise<Image[]> {
     return this.repository.find();
   }

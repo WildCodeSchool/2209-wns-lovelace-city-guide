@@ -3,9 +3,15 @@ import { Marker, Popup, Tooltip } from "react-leaflet";
 
 import {
   Infos,
+  Footer,
+  PinModalFooter,
+  SmallText,
+  PinModalContent,
+  Slideshow,
+  Row,
+  RatingColor
 } from "./Map.styled";
-
-import { FavButton } from "../../styles/base-styles";
+import { FavButton, BtnBlueRounded  } from "../../styles/base-styles";
 
 import { useMutation, gql } from "@apollo/client";
 import {
@@ -14,16 +20,17 @@ import {
   RemovePinFromUserFavoriteMutation,
   RemovePinFromUserFavoriteMutationVariables,
 } from "../../gql/graphql";
-import PinMeLogo from "../../media/logo.png";
-import { FaHeart, FaTree } from "react-icons/fa";
+import { FaHeart, FaPlus, FaStar, FaTree } from "react-icons/fa";
+
 import { MdAccessible, MdChildFriendly } from "react-icons/md";
 
 import { DragMarker, PinMarker, FavedMarker } from "components/PinMarkers";
 import { getErrorMessage } from "utils";
 
 import "./TooltipStyle.css";
-import { useToast } from "@chakra-ui/react";
-
+import { Text, Image, Button, Card, CardBody, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, SimpleGrid, useDisclosure, useToast, Flex, Heading } from "@chakra-ui/react";
+import Comment from "components/Comments/Comment"
+import { Column } from "components/Footer/Footer.styled";
 const ADD_PIN_TO_USER_FAVORITE = gql`
   mutation addPinToUserFavorite($pinId: String!) {
     addPinToUserFavorite(pinId: $pinId) {
@@ -45,33 +52,44 @@ const REMOVE_PIN_FROM_USER_FAVORITE = gql`
 type PropType = {
   id: string;
   name: string;
-  categories: string;
+  categories: any;
+  images: any;
   latitude: number;
   longitude: number;
   address: string;
+  city: string;
+  zipcode: string;
   description: string;
   isOutdoor: boolean;
   isAccessible: boolean;
   isChildFriendly: boolean;
   isFavorite: boolean;
+  comments: any
 };
+
 
 const Pin = ({
   id,
   name,
   categories,
+  images,
   latitude,
   longitude,
   address,
+  city,
+  zipcode,
   description,
   isOutdoor,
   isAccessible,
   isChildFriendly,
   isFavorite,
+  comments,
 }: PropType) => {
   const [isFaved, setIsFaved] = useState(isFavorite);
 
   const toast = useToast();
+
+
 
   const [favoritePin] = useMutation<
     AddPinToUserFavoriteMutation,
@@ -82,6 +100,22 @@ const Pin = ({
     RemovePinFromUserFavoriteMutation,
     RemovePinFromUserFavoriteMutationVariables
   >(REMOVE_PIN_FROM_USER_FAVORITE);
+
+  const Rating = () => {
+    let defaultRating = comments[0] ? comments.reduce((acc:any, curr:any) => acc + curr.rating, 0)/comments.length : 0
+    return (
+      <Row>
+      <RatingColor>
+        {defaultRating.toFixed(1)} &nbsp;
+        <FaStar/>
+      </RatingColor>
+      <SmallText>
+       ({comments[0] ? comments.length : 0}) 
+      </SmallText>
+      </Row>
+    )
+  }
+
 
   const onSubmitFavorite = async (event: React.MouseEvent<HTMLElement>) => {
     const pinId = id;
@@ -134,6 +168,114 @@ const Pin = ({
     }
   };
 
+  const BasicUsage = () => {
+
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    return (
+      <>
+        <BtnBlueRounded onClick={onOpen}> Voir +</BtnBlueRounded> 
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay bg='blackAlpha.300'
+      backdropFilter='blur(10px) hue-rotate(90deg)'/>
+          <PinModalContent>
+            <ModalHeader> 
+              <Flex justify='space-between' marginTop='2rem'>
+                <Flex direction='column'>
+                  <h1>
+                    {name} 
+                  </h1>
+                    <SmallText>
+                      {categories[0].categoryName} {categories[1] && '/ ' + categories[1].categoryName}  
+                    </SmallText>
+
+                </Flex>
+                <Rating/>
+              </Flex>
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+            <div className="row">
+              <p>
+                {description}
+              </p>
+                <p>
+                <FavButton onClick={onSubmitFavorite} fave={isFaved ? true : false}>
+                  {" "}
+                  <FaHeart />{" "}
+                </FavButton>
+                </p>
+            </div>
+            <Flex flexDirection='row' justifyContent='space-between' mt='1.5rem'>
+              <SmallText>
+              {address} <br/>
+              {zipcode}, {city}
+              </SmallText>
+              <Infos>
+                {isAccessible && <MdAccessible title="Acessible PMR" />}{" "}
+                {isOutdoor && <FaTree title="En exterieur" />}{" "}
+                {isChildFriendly && <MdChildFriendly title="Famillial" />}{" "}
+              </Infos>
+            </Flex>
+            {images[0] && (
+              <Flex flexDirection='column' my='2rem'>
+              <Heading as='h2' size='md' mb='0.5rem'>Galerie</Heading>
+              <Slideshow> 
+                <Row>
+                {images.map((image: any) => (
+                        <Image
+                          objectFit="cover"
+                          maxH='220px'
+                          key={image.id}
+                          src={`/uploader/${image.fileName}`}
+                          fallbackSrc='https://via.placeholder.com/150'
+                          alt={image.fileName}
+                          mr="1rem"
+                        />
+                  ))}
+                  </Row>
+              </Slideshow>
+              </Flex>
+            )}
+            <Flex flexDirection='column' my='2rem'>
+            <Heading as='h2' size='md' mb='0.5rem'> Avis</Heading>
+            <Comment pinId={id}/>
+            {comments[0] ? (
+              <>
+                {comments.map((comment: any) => (
+                  <>
+                    <Card color='white' backgroundColor='blackAlpha.300' mt='1rem'>
+                      <CardBody>
+                        <Flex justifyContent='space-between' flexDir='row' align='start'>
+                          <Text> {comment.content !== '' ? comment.content : <SmallText>(pas de commentaire)</SmallText>} </Text>
+                            <RatingColor>
+                              {comment.rating} &nbsp;
+                              <FaStar/>
+                            </RatingColor>
+                        </Flex>    
+                      </CardBody>
+                    </Card>
+                  </>
+                ))}
+              </>
+            ) : (
+              <>
+              Il n'y a pas encore d'avis... Donnez le vôtre !</>
+            )}
+            </Flex>
+            </ModalBody>
+
+            <PinModalFooter>
+              <Button colorScheme='red' mr={3} onClick={onClose}>
+                Signaler
+              </Button>
+            </PinModalFooter>
+          </PinModalContent>
+        </Modal>
+      </>
+    )
+  }
+  
+
   return (
     <Marker
       position={[latitude, longitude]}
@@ -145,25 +287,25 @@ const Pin = ({
           <span>{name}</span>
         </header>
         <div className="row">
-          
-          <p> 
-            <span>{categories}</span> 
-            <br/>
-            {description}</p>
-          <FavButton onClick={onSubmitFavorite} fave={isFaved ? true : false}>
-            {" "}
-            <FaHeart />{" "}
-          </FavButton>
+          <p>
+            {description}
+          </p>
+            <p>
+            <FavButton onClick={onSubmitFavorite} fave={isFaved ? true : false}>
+              {" "}
+              <FaHeart />{" "}
+            </FavButton>
+            </p>
         </div>
-        <footer>
-          <p className="adress">{address}</p>
+        <Footer>
           <Infos>
-            {" "}
             {isAccessible && <MdAccessible title="Acessible PMR" />}{" "}
             {isOutdoor && <FaTree title="En exterieur" />}{" "}
             {isChildFriendly && <MdChildFriendly title="Famillial" />}{" "}
           </Infos>
-        </footer>
+          
+          <BasicUsage />
+        </Footer>
       </Popup>
     </Marker>
   );

@@ -1,10 +1,16 @@
 import { gql, useMutation } from "@apollo/client";
 import {
   Button,
+  Flex,
   FormControl,
   FormLabel,
   Input,
-  Heading,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  Textarea,
   useToast,
 } from "@chakra-ui/react";
 import { AppContext } from "context/AppContext";
@@ -38,13 +44,13 @@ const CREATE_COMMENT = gql`
   }
 `;
 
-const Comment = () => {
+const Comment = ({pinId}: {pinId: string}) => {
   const [content, setContent] = useState("");
   const [rating, setRating] = useState(0);
   const toast = useToast();
-  const pinId = "37fb7b31-2c5f-4229-8fa4-52372736f576";
   const appContext = useContext(AppContext);
   const userEmail = appContext?.userProfile?.myProfile.emailAddress as string;
+  console.log(userEmail)
 
   const [createComment] = useMutation<
     AddCommentToPinMutation,
@@ -80,31 +86,38 @@ const Comment = () => {
   };
   return (
     <>
-      <Heading color="white">Ajoute un Pin</Heading>
+    <Flex justifyContent='space-between'>
       <FormControl>
-        <FormLabel color="white">Content</FormLabel>
-        <Input
-          type="text"
-          id="content"
-          name="content"
-          value={content}
-          onChange={(event) => {
-            setContent(event.target.value);
-          }}
+        <Textarea
+        width='80'
+        mr='1rem'
+        resize='none'
+        placeholder='Qu&apos;en avez vous pensé ?'
+        id="content"
+        name="content"
+        value={content}
+        onChange={(event) => {
+          setContent(event.target.value);
+        }}
         />
       </FormControl>
       <FormControl>
-        <FormLabel color="white">Rating</FormLabel>
-        <Input
-          type="number"
-          id="rating"
-          name="rating"
-          value={rating}
-          onChange={(event) => {
-            setRating(parseFloat(event.target.value));
-          }}
-        />
+
+      <NumberInput size='md' maxW={16} step={1} defaultValue={3} min={0} max={5} 
+      id="rating"
+      name="rating"
+      value={rating}
+      onChange={(event) => {
+        setRating(parseFloat(event));
+      }}>
+        <NumberInputField/>
+        <NumberInputStepper>
+          <NumberIncrementStepper color='#FBC63F' />
+          <NumberDecrementStepper color='#FBC63F'/>
+        </NumberInputStepper>
+      </NumberInput>      
       </FormControl>
+      </Flex>
       <Button onClick={onSubmit} colorScheme="teal" width="full" mt={4}>
         Envoyer
       </Button>

@@ -26,6 +26,7 @@ export default class Pin {
     description: string,
     latitude: number,
     longitude: number,
+    images?: Image[],
     isAccessible?: boolean,
     isChildFriendly?: boolean,
     isOutdoor?: boolean,
@@ -39,6 +40,9 @@ export default class Pin {
     this.description = description;
     this.latitude = latitude;
     this.longitude = longitude;
+    if (images) {
+      this.images = images;
+    }
     if (isAccessible) {
       this.isAccessible = isAccessible;
     }

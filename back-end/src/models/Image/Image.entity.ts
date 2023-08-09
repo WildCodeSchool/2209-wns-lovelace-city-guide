@@ -13,7 +13,7 @@ export default class Image {
   @Field()
   fileName: string;
 
-  @ManyToOne(() => Pin, (pin) => pin.images)
+  @ManyToOne(() => Pin, (pin) => pin.images, {onDelete: "CASCADE"})
   @Field(() => Pin)
   pin: Pin;
 }

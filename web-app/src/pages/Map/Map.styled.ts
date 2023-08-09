@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { MapContainer, Popup } from 'react-leaflet'
 import Loader from "../../components/Loader";
+import {  ModalContent, ModalFooter } from "@chakra-ui/react";
 
 
 export const Header = styled.header`
@@ -43,6 +44,7 @@ export const Container = styled.section`
   position: relative;
 `
 
+
 export const MapLoader = styled(Loader)`
   position: absolute;
   z-index: 1000;
@@ -75,5 +77,37 @@ export const Infos = styled.div`
   color: #99EF9D;
   font-size: 1.3rem;
 `
- 
+ export const Footer = styled.footer`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+ `
+
+ export const PinModalFooter = styled(ModalFooter)`
+ `
+ export const SmallText = styled.span`
+  font-size: 0.8rem;
+  opacity: 0.8;
+ `
+ export const PinModalContent = styled(ModalContent)`
+ background-color: #222231 !important;
+ color: white !important;
+ `
+export const Slideshow = styled.div`
+overflow: scroll;
+`
+
+export const Row = styled.div`
+  display: flex;
+  flex-direction: row;
+`
+export const RatingColor = styled.div`
+  color: #FBC63F;
+  display: flex;
+  align-items: first baseline !important;
+  flex-direction: row;
+  align-items: center;
+  margin-right: 0.2rem;
+`
 

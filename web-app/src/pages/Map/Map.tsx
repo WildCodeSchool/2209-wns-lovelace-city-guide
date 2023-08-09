@@ -40,19 +40,31 @@ const GET_PINS_BY_CATEGORY_ID = gql`
 query GetPinsByCategoryId($categoryId: String, $fav: Boolean) {
   getPinsByCategoryId(categoryId: $categoryId, fav: $fav) {
     id
-    name
     address
+    name
+    city
+    zipcode
     categories {
-      id
       categoryName
+      id
     }
     description
+    images {
+      fileName
+      id
+    }
     latitude
     longitude
-    isOutdoor
     isAccessible
     isChildFriendly
+    isOutdoor
     createdAt
+    comments {
+      content
+      id
+      rating
+      createdAt
+    }
   }
 }
 `;
@@ -131,10 +143,13 @@ const Map = () => {
           key={pin.id}
           id={pin.id}
           name={pin.name}
-          categories={pin.categories[0].categoryName}
+          categories={pin.categories}
+          images={pin.images}
           latitude={pin.latitude}
           longitude={pin.longitude}
           address={pin.address}
+          city={pin.city}
+          zipcode={pin.zipcode}
           description={pin.description}
           isAccessible={pin.isAccessible}
           isOutdoor={pin.isOutdoor}
@@ -147,6 +162,7 @@ const Map = () => {
               ? true
               : false
           }
+          comments = {pin.comments}
         />
       )
     )
