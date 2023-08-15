@@ -20,4 +20,3 @@ Build and start in dev mode:
 ```
 ./build-start.dev.sh
 ```
-:)
