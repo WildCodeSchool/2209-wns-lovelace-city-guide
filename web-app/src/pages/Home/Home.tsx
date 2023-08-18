@@ -28,6 +28,7 @@ const Home = () => {
   return (
     <MenuColumn>
       <Logo src={PinMeLogo} />
+      <p> (staging) </p>
       <HollowButtonTitle rounded>J’ai envie de...</HollowButtonTitle>
       <BlueButton to={MAP_PATH}>Manger un morceau</BlueButton>
       <BlueButton to={MAP_PATH}>Découvrir des choses</BlueButton>
