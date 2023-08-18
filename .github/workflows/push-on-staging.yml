@@ -5,7 +5,16 @@ on:
     branches:
       - staging
 
+
 jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Goto client and run tests
+        run: cd web-app && npm i && npm test
+
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:

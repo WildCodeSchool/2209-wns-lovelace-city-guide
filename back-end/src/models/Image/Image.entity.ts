@@ -13,11 +13,7 @@ export default class Image {
   @Field()
   fileName: string;
 
-  // @Column() //Change to relation later
-  // @Field()
-  // commentId: string;
-
-  @ManyToOne(() => Pin, (pin) => pin.images)
+  @ManyToOne(() => Pin, (pin) => pin.images, {onDelete: "CASCADE"})
   @Field(() => Pin)
   pin: Pin;
 }

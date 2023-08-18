@@ -1,15 +1,21 @@
-import { useEffect, useState, useMemo, useRef } from "react";
-import { Marker, Popup, TileLayer, useMap, Pane, Tooltip } from "react-leaflet";
+import { useState } from "react";
+import { TileLayer } from "react-leaflet";
+import { useLocation, useNavigate } from "react-router-dom";
+import { AppContext } from "context/AppContext";
+import { useContext } from "react";
 
 import {
   LeafletContainer,
-  PinPopup,
   Container,
   MapLoader,
   Header,
   Logo,
   ControlBoard,
+  Overlay
 } from "./Map.styled";
+
+import Pin from "./Pin"
+import Location from "./Location"
 
 import {
   RedButton,
@@ -19,98 +25,65 @@ import {
 } from "../../styles/base-styles";
 
 import { useQuery, gql } from "@apollo/client";
-import { GetPinsQuery } from "../../gql/graphql";
+import {
+  GetPinsFromUserFavoritesQuery,
+  GetPinsByCategoryIdQuery,
+} from "../../gql/graphql";
 import PinMeLogo from "../../media/logo.png";
-import { FaHome, FaHeart } from "react-icons/fa";
-import { IoClose } from "react-icons/io5";
-
-import { DragMarker, PinMarker } from "components/PinMarkers";
-
+import { FaHome } from "react-icons/fa";
+import { IoClose, IoAlertCircleOutline, IoHammer } from "react-icons/io5";
 import "./TooltipStyle.css";
 import { Link } from "react-router-dom";
-import { useToast } from "@chakra-ui/react";
 import { HOME_PATH } from "pages/paths";
 
-const GET_PINS = gql`
-  query GetPins {
-    pins {
+const GET_PINS_BY_CATEGORY_ID = gql`
+query GetPinsByCategoryId($categoryId: String, $fav: Boolean) {
+  getPinsByCategoryId(categoryId: $categoryId, fav: $fav) {
+    id
+    address
+    name
+    city
+    zipcode
+    categories {
+      categoryName
       id
-      name
-      address
-      categories {
-        id
-        categoryName
-      }
-      description
-      latitude
-      longitude
-      isOutdoor
-      isAccessible
-      isChildFriendly
+    }
+    description
+    images {
+      fileName
+      id
+    }
+    latitude
+    longitude
+    isAccessible
+    isChildFriendly
+    isOutdoor
+    createdAt
+    comments {
+      content
+      id
+      rating
       createdAt
+    }
+  }
+}
+`;
+
+
+const GET_FAVORITE_PIN = gql`
+  query GetPinsFromUserFavorites {
+    getPinsFromUserFavorites {
+      id
     }
   }
 `;
 
-type PropType = {
-  id: string;
-  name: string;
-  latitude: number;
-  longitude: number;
-  address: string;
-  description: string;
-};
-
-const Pin = ({
-  id,
-  name,
-  latitude,
-  longitude,
-  address,
-  description,
-}: PropType) => {
-  return (
-    <Marker position={[latitude, longitude]} icon={PinMarker}>
-      <Tooltip>{name}</Tooltip>
-      <Popup>
-        <header className="row title">
-          <span>{name}</span>
-        </header>
-        <div className="row">
-          <p>{description}</p>
-          <button className="favBtn">
-            <FaHeart />
-          </button>
-        </div>
-        <footer>
-          <p className="adress">{address}</p>
-        </footer>
-      </Popup>
-    </Marker>
-  );
-};
-
-// const PopUp = (name, description, adress) => {
-//   return (
-//     <div>
-//       <header className='row title'>
-//         <span>{name}</span>
-//       </header>
-//       <div className='row'>
-//         <p>{description}</p>
-//         <button className='favBtn'><FaHeart/></button>
-//       </div>
-//       <footer>
-//         <p className='adress'>{address}</p>
-//       </footer>
-//     </div>
-//   )
-// }
 type NewPinPropType = {
   newPin: boolean;
   setNewPin: (argument: boolean) => void;
   position: any[] | [] | null;
 };
+
 function CreateNewPin({ newPin, setNewPin, position }: NewPinPropType) {
   if (!newPin) {
     return (
@@ -134,83 +107,72 @@ function CreateNewPin({ newPin, setNewPin, position }: NewPinPropType) {
   }
 }
 
-type LocationPropType = { position: any; setPosition: (argument: any) => void };
 
-const Location = ({ position, setPosition }: LocationPropType) => {
-  const map = useMap();
-  const markerRef = useRef<any>(null);
-
-  const eventHandlers = useMemo(
-    () => ({
-      dragend(e: any) {
-        const marker = markerRef.current;
-        if (marker != null) {
-          setPosition(marker.getLatLng());
-        }
-        //  console.log(e.target.getLatLng())
-      },
-    }),
-    []
-  );
-
-  useEffect(() => {
-    map.locate({
-      setView: true,
-    });
-    map.on("locationfound", (event) => {
-      !position && setPosition(event.latlng);
-    });
-  }, [map]);
-
-  return position ? (
-    <>
-      <Marker
-        icon={DragMarker}
-        draggable={true}
-        eventHandlers={eventHandlers}
-        position={position}
-        ref={markerRef}
-      />
-    </>
-  ) : null;
-};
-
-const Home = () => {
+const Map = () => {
+  let { state } = useLocation();
+  const appContext = useContext(AppContext);
   const [newPin, setNewPin] = useState(false);
-  // const [newPinLocation, setNewPinLocation] = useState<any | null>(null);
   const [position, setPosition] = useState<any[] | [] | null>(null);
 
-  const { data, loading, error, refetch } = useQuery<GetPinsQuery>(GET_PINS, {
-    fetchPolicy: "cache-and-network",
+
+  const { data: userFavoritePins } = useQuery<GetPinsFromUserFavoritesQuery>(
+    GET_FAVORITE_PIN,
+    {
+      fetchPolicy: "cache-and-network",
+    }
+  );
+
+  const { data, loading, error } = useQuery<GetPinsByCategoryIdQuery>(GET_PINS_BY_CATEGORY_ID, {
+    variables: { categoryId: state && state.category, fav: state && state.favoris }
   });
+
+  console.log(data?.getPinsByCategoryId)
 
   const renderMainContent = () => {
     if (loading) {
       return <MapLoader />;
     }
     if (error) {
-      return error.message;
+      return <Overlay> <IoAlertCircleOutline/> {error.message} </Overlay> ;
     }
-    if (!data?.pins?.length) {
-      return "Aucun pin à afficher.";
+    if (!data?.getPinsByCategoryId?.length) {
+      return <Overlay> <IoHammer/> Aucun pin ne correspond à cette catégorie </Overlay>;
     }
-    return (
-      <>
-        {newPin && <Location setPosition={setPosition} position={position} />}
-        {data.pins.map((pin) => (
-          <Pin
-            key={pin.id}
-            id={pin.id}
-            name={pin.name}
-            latitude={pin.latitude}
-            longitude={pin.longitude}
-            address={pin.address}
-            description={pin.description}
-          />
-        ))}
-      </>
-    );
-  };
+    const pins = data.getPinsByCategoryId.map((pin) => (
+        <Pin
+          key={pin.id}
+          id={pin.id}
+          name={pin.name}
+          categories={pin.categories}
+          images={pin.images}
+          latitude={pin.latitude}
+          longitude={pin.longitude}
+          address={pin.address}
+          city={pin.city}
+          zipcode={pin.zipcode}
+          description={pin.description}
+          isAccessible={pin.isAccessible}
+          isOutdoor={pin.isOutdoor}
+          isChildFriendly={pin.isChildFriendly}
+          isFavorite={
+            userFavoritePins !== undefined &&
+            userFavoritePins.getPinsFromUserFavorites.find(
+              (o) => o.id === pin.id
+            )
+              ? true
+              : false
+          }
+          comments = {pin.comments}
+        />
+      )
+    )
+    if (state && state.category === 'Favoris') {
+      return pins.filter(pin => pin.props.isFavorite === true);
+    } else {
+      return pins;
+    }
+  }
+  
   return (
     <>
       <Header>
@@ -226,18 +188,27 @@ const Home = () => {
           scrollWheelZoom={true}
         >
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          {newPin && <Location setPosition={setPosition} position={position} />}
           {renderMainContent()}
         </LeafletContainer>
-        <ControlBoard>
-          <CreateNewPin
-            newPin={newPin}
-            setNewPin={setNewPin}
-            position={position}
-          />
-        </ControlBoard>
+          <ControlBoard>
+        {appContext?.isLoggedIn ? 
+            <CreateNewPin
+              newPin={newPin}
+              setNewPin={setNewPin}
+              position={position}
+            />
+            : 
+            <Link to="/sign-in">
+              <BtnBlueRounded>
+                Connexion
+              </BtnBlueRounded>
+            </Link>
+          }
+          </ControlBoard>
       </Container>
     </>
   );
 };
 
-export default Home;
+export default Map;

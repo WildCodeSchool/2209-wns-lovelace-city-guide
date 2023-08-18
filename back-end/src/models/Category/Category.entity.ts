@@ -5,6 +5,9 @@ import Pin from "../Pin/Pin.entity";
 @Entity()
 @ObjectType()
 export default class Category {
+  constructor(categoryName: string) {
+    this.categoryName = categoryName;
+  }
   @PrimaryGeneratedColumn("uuid")
   @Field(() => ID)
   id: string;

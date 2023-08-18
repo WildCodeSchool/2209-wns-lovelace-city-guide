@@ -1,8 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
-import React from "react";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import { MyProfileQuery } from "../gql/graphql";
+import { Routes, Route, useLocation } from "react-router-dom";
 import AllPinsTable from "../pages/Admin/AllPinsTable";
 import Dashboard from "../pages/Admin/Dashboard";
 
@@ -10,11 +6,10 @@ import CreatePin from "../pages/CreatePin/CreatePin";
 import PreviewPin from "../pages/CreatePin/PreviewPin";
 import UploadImage from "../pages/CreatePin/UploadImage";
 
-import PinMeLogo from "../media/logo.png";
-import { FaHome } from "react-icons/fa";
-
 import Home from "../pages/Home/Home";
 import Map from "../pages/Map/Map";
+import BaseFooter from "components/Footer/Footer";
+import Profile from "pages/User/Profile";
 
 import {
   ADMIN_ALL_PINS_PATH,
@@ -27,55 +22,112 @@ import {
   UPLOAD_IMAGE,
   MAP_PATH,
   ADMIN_CATEGORIES,
+  PROFILE_PATH,
+  ADMIN_ALL_USERS_PATH,
 } from "../pages/paths";
 import SignIn from "../pages/SignIn/SignIn";
 import SignUp from "../pages/SignUp/SignUp";
-import { getErrorMessage } from "../utils";
-import {
-  Container,
-  Footer,
-  MainContainer,
-  PageTitle,
-  PageTitleLink,
-} from "./App.styled";
+import { MainContainer } from "./App.styled";
 import AdminCategories from "../pages/Admin/AdminCategories";
-
-const MY_PROFILE = gql`
-  query MyProfile {
-    myProfile {
-      id
-      firstName
-      lastName
-      emailAddress
-      userStatus
-    }
-  }
-`;
+import ProtectedRoute from "pages/Protected/ProtectedRoute";
+import AlreadyLoggedIn from "pages/Protected/AlreadyLoggedIn";
+import AdminRoute from "pages/Protected/AdminRoute";
+import NavbarPage from "components/Navbar/NavbarPage";
+import AllUsersTable from "pages/Admin/AllUsersTable";
 
 function App() {
-  const { data, refetch } = useQuery<MyProfileQuery>(MY_PROFILE);
+  const { pathname } = useLocation();
   return (
     <>
       <MainContainer>
+        {pathname !== "/" && pathname !== "/map" && <NavbarPage />}
+
         <Routes>
           <Route path={HOME_PATH} element={<Home />} />
           <Route path={MAP_PATH} element={<Map />} />
-          <Route path={SIGN_UP_PATH} element={<SignUp />} />
-          <Route path={SIGN_IN_PATH} element={<SignIn onSuccess={refetch} />} />
-          <Route path={CREATE_PIN_PATH} element={<CreatePin />} />
-          <Route path={ADMIN_ALL_PINS_PATH} element={<AllPinsTable />} />
-          <Route path={ADMIN_DASHBOARD} element={<Dashboard />} />
-          <Route path={UPLOAD_IMAGE} element={<UploadImage />} />
-          <Route path={PREVIEW_PIN} element={<PreviewPin />} />
-          <Route path={ADMIN_CATEGORIES} element={<AdminCategories />} />
+          <Route
+            path={SIGN_UP_PATH}
+            element={
+              <AlreadyLoggedIn>
+                <SignUp />
+              </AlreadyLoggedIn>
+            }
+          />
+          <Route
+            path={SIGN_IN_PATH}
+            element={
+              <AlreadyLoggedIn>
+                <SignIn />
+              </AlreadyLoggedIn>
+            }
+          />
+          <Route
+            path={PROFILE_PATH}
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={CREATE_PIN_PATH}
+            element={
+              <ProtectedRoute>
+                <CreatePin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ADMIN_ALL_PINS_PATH}
+            element={
+              <AdminRoute>
+                <AllPinsTable />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path={ADMIN_ALL_USERS_PATH}
+            element={
+              <AdminRoute>
+                <AllUsersTable />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path={ADMIN_DASHBOARD}
+            element={
+              <AdminRoute>
+                <Dashboard />
+              </AdminRoute>
+            }
+          />
+          <Route
+            path={UPLOAD_IMAGE}
+            element={
+              <ProtectedRoute>
+                <UploadImage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={PREVIEW_PIN}
+            element={
+              <ProtectedRoute>
+                <PreviewPin />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ADMIN_CATEGORIES}
+            element={
+              <AdminRoute>
+                <AdminCategories />
+              </AdminRoute>
+            }
+          />
         </Routes>
+        {pathname !== "/" && pathname !== "/map" && <BaseFooter />}
       </MainContainer>
-      <Footer>
-        <Container>
-          <p>&copy; 2022 Pin Me (Staging)</p>
-        </Container>
-      </Footer>
-      <ToastContainer />
     </>
   );
 }

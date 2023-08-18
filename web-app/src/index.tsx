@@ -6,6 +6,20 @@ import "./index.css";
 import App from "./App/App";
 import reportWebVitals from "./reportWebVitals";
 import { ChakraProvider } from "@chakra-ui/react";
+import { ContextProvider } from "context/AppContext";
+import { extendTheme } from "@chakra-ui/react";
+
+const theme = extendTheme({
+  styles: {
+    global: {
+      // styles for the `body`
+      body: {
+        bg: 'gray.400',
+      },
+    }
+  }
+  
+})
 
 const client = new ApolloClient({
   uri: "/api",
@@ -18,11 +32,13 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <ApolloProvider client={client}>
-      <ChakraProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </ChakraProvider>
+      <ContextProvider>
+        <ChakraProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </ChakraProvider>
+      </ContextProvider>
     </ApolloProvider>
   </React.StrictMode>
 );

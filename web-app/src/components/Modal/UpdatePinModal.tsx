@@ -13,6 +13,9 @@ import {
   Input,
   ModalFooter,
   useToast,
+  Checkbox,
+  CheckboxGroup,
+  Stack,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { FaPen } from "react-icons/fa";
@@ -33,22 +36,32 @@ const GET_CATEGORIES = gql`
 `;
 const UPDATE_PIN = gql`
   mutation UpdatePin(
-    $pinId: ID!
+    $updatePinId: ID!
     $name: String!
     $address: String!
+    $city: String!
+    $zipcode: String!
     $categories: [String!]!
     $description: String!
     $latitude: Float!
     $longitude: Float!
+    $isAccessible: Boolean!
+    $isChildFriendly: Boolean!
+    $isOutdoor: Boolean!
   ) {
     updatePin(
-      id: $pinId
+      id: $updatePinId
       name: $name
       address: $address
+      city: $city
+      zipcode: $zipcode
       categories: $categories
       description: $description
       latitude: $latitude
       longitude: $longitude
+      isAccessible: $isAccessible
+      isChildFriendly: $isChildFriendly
+      isOutdoor: $isOutdoor
     ) {
       id
       name
@@ -60,6 +73,12 @@ const UPDATE_PIN = gql`
       description
       latitude
       longitude
+      createdAt
+      isAccessible
+      isChildFriendly
+      isOutdoor
+      city
+      zipcode
     }
   }
 `;
@@ -68,6 +87,8 @@ type updatePinModalProps = {
   id: string;
   name: string;
   address: string;
+  city: string;
+  zipcode: string;
   categories: {
     __typename?: "Category" | undefined;
     categoryName: string;
@@ -76,6 +97,9 @@ type updatePinModalProps = {
   description: string;
   latitude: number;
   longitude: number;
+  isAccessible: boolean;
+  isChildFriendly: boolean;
+  isOutdoor: boolean;
 };
 
 const UpdatePinModal = (pin: updatePinModalProps) => {
@@ -84,19 +108,22 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
   const [id, setId] = useState(pin.id);
   const [name, setName] = useState(pin.name);
   const [address, setAddress] = useState(pin.address);
+  const [city, setCity] = useState(pin.city);
+  const [zipcode, setZipcode] = useState(pin.zipcode);
   const [categories, setCategories] = useState(
     pin.categories.map((category) => category.categoryName)
   );
   const [description, setDescription] = useState(pin.description);
   const [latitude, setLatitude] = useState(pin.latitude);
   const [longitude, setLongitude] = useState(pin.longitude);
+  const [isAccessible, setIsAccessible] = useState(pin.isAccessible);
+  const [isChildFriendly, setIsChildFriendly] = useState(pin.isChildFriendly);
+  const [isOutdoor, setIsOutdoor] = useState(pin.isOutdoor);
 
-  const { data, loading, error } = useQuery<GetCategoriesQuery>(
-    GET_CATEGORIES,
-    {
-      fetchPolicy: "cache-and-network",
-    }
-  );
+  const { data } = useQuery<GetCategoriesQuery>(GET_CATEGORIES, {
+    fetchPolicy: "cache-and-network",
+  });
+
   const [updatePin] = useMutation<
     UpdatePinMutation,
     UpdatePinMutationVariables
@@ -133,24 +160,41 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
     setCategories(selected);
   };
 
+  const handleCheckIsAccessible = () => {
+    setIsAccessible(!isAccessible);
+  };
+
+  const handleCheckIsChildFriendly = () => {
+    setIsChildFriendly(!isChildFriendly);
+  };
+
+  const handleCheckIsOutDoor = () => {
+    setIsOutdoor(!isOutdoor);
+  };
+
   const onSubmit = async (event: React.MouseEvent<HTMLElement>) => {
     try {
       event.preventDefault();
       await updatePin({
         variables: {
-          pinId: id,
+          updatePinId: id,
           name,
           address,
+          city,
+          zipcode,
           categories,
           description,
           latitude,
           longitude,
+          isAccessible,
+          isChildFriendly,
+          isOutdoor,
         },
       });
       toast({
         title: `Pin ${name} a été modifié avec succès.`,
         status: "success",
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
       onClose();
@@ -159,7 +203,7 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
         title: "Erreur",
         status: "error",
         description: getErrorMessage(error),
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
     }
@@ -199,6 +243,30 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
                 value={address}
                 onChange={(event) => {
                   setAddress(event.target.value);
+                }}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Ville</FormLabel>
+              <Input
+                type="text"
+                id="city"
+                name="city"
+                value={city}
+                onChange={(event) => {
+                  setCity(event.target.value);
+                }}
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Code postal</FormLabel>
+              <Input
+                type="text"
+                id="zipcode"
+                name="zipcode"
+                value={zipcode}
+                onChange={(event) => {
+                  setZipcode(event.target.value);
                 }}
               />
             </FormControl>
@@ -247,6 +315,25 @@ const UpdatePinModal = (pin: updatePinModalProps) => {
                 }}
               />
             </FormControl>
+            <CheckboxGroup colorScheme="green" defaultValue={[]}>
+              <Stack spacing={[1, 5]} direction={["column", "row"]}>
+                <Checkbox
+                  isChecked={isAccessible}
+                  onChange={handleCheckIsAccessible}
+                >
+                  Accessible
+                </Checkbox>
+                <Checkbox
+                  isChecked={isChildFriendly}
+                  onChange={handleCheckIsChildFriendly}
+                >
+                  Child Friendly
+                </Checkbox>
+                <Checkbox isChecked={isOutdoor} onChange={handleCheckIsOutDoor}>
+                  Outdoor
+                </Checkbox>
+              </Stack>
+            </CheckboxGroup>
           </ModalBody>
 
           <ModalFooter>

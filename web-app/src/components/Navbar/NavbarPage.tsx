@@ -1,4 +1,4 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import {
   Box,
   Button,
@@ -12,27 +12,13 @@ import {
 } from "@chakra-ui/react";
 import { FaUser, FaHome, FaSignOutAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import {
-  MyProfileQuery,
-  SignOutMutation,
-  SignOutMutationVariables,
-} from "../../gql/graphql";
-import { HOME_PATH, SIGN_IN_PATH, SIGN_UP_PATH } from "../../pages/paths";
+import { SignOutMutation, SignOutMutationVariables } from "../../gql/graphql";
+import { HOME_PATH, SIGN_UP_PATH } from "../../pages/paths";
 import { getErrorMessage } from "../../utils";
 import PinMeLogo from "../../media/logo.png";
-import { BlueButton, RedButton } from "styles/base-styles";
-
-const MY_PROFILE = gql`
-  query MyProfile {
-    myProfile {
-      id
-      firstName
-      lastName
-      emailAddress
-      userStatus
-    }
-  }
-`;
+import { BtnBlueRounded, RedButton } from "styles/base-styles";
+import { useContext } from "react";
+import { AppContext } from "context/AppContext";
 
 const SIGN_OUT = gql`
   mutation SignOut($currentUserId: String!) {
@@ -43,37 +29,47 @@ const SIGN_OUT = gql`
 `;
 
 const NavbarPage = () => {
-  const { data, refetch } = useQuery<MyProfileQuery>(MY_PROFILE);
   const navigate = useNavigate();
   const toast = useToast();
-
-  const currentUserId = data?.myProfile.id as string;
+  const appContext = useContext(AppContext);
+  const currentUserId = appContext?.userProfile?.myProfile.id as string;
   const [signOut] = useMutation<SignOutMutation, SignOutMutationVariables>(
     SIGN_OUT,
     {
       variables: { currentUserId },
-      onCompleted: () => {
-        toast({
-          title: "Vous vous êtes déconnecté avec succès.",
-          status: "success",
-          duration: 9000,
-          isClosable: true,
-        });
-        navigate(HOME_PATH);
-      },
-      onError: (error) => {
-        toast({
-          title: "Something went wrong",
-          description: getErrorMessage(error),
-          duration: 9000,
-          isClosable: true,
-        });
+      onCompleted: async () => {
+        await onSignOutSuccess();
       },
     }
   );
 
   const handleSignOut = async (): Promise<void> => {
-    await signOut();
+    try {
+      await signOut();
+    } catch (error) {
+      toast({
+        title: "Error",
+        status: "error",
+        description: getErrorMessage(error),
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const onSignOutSuccess = async () => {
+    try {
+      await appContext?.refetch();
+      console.log(appContext?.userProfile);
+    } finally {
+      navigate(HOME_PATH);
+      toast({
+        title: "Vous vous êtes déconnecté avec succès.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -85,11 +81,14 @@ const NavbarPage = () => {
           </RedButton>
 
           <Spacer />
-          {data?.myProfile ? (
+          {appContext?.userProfile?.myProfile ? (
             <>
-              <i>{data?.myProfile.emailAddress}</i>
+              <BtnBlueRounded>
+                {appContext?.userProfile?.myProfile.firstName}{" "}
+                {appContext?.userProfile?.myProfile.lastName}
+              </BtnBlueRounded>
               <Button colorScheme="teal" type="submit" onClick={handleSignOut}>
-                Déconnexion
+                <FaSignOutAlt />
               </Button>
             </>
           ) : (
@@ -97,9 +96,6 @@ const NavbarPage = () => {
               <RedButton to={SIGN_UP_PATH} icon>
                 <FaUser />
               </RedButton>
-              <BlueButton to={SIGN_IN_PATH} icon>
-                <FaSignOutAlt />
-              </BlueButton>
             </ButtonGroup>
           )}
         </Flex>

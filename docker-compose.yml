@@ -6,12 +6,12 @@ services:
       context: ./back-end
       target: dev
     environment:
-      NODE_ENV: development
       DATABASE_URL: postgres://postgres:password@database:5432/postgres
+      TEST_DATABASE_URL: postgres://postgres:password@test-database:5432/postgres
     ports:
       - 4000:4000
     volumes:
-      - ./back-end/src:/app/src
+      - ./back-end:/app
       - /app/node_modules
     depends_on:
       - database
@@ -23,7 +23,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ./web-app/src:/app/src
+      - ./web-app:/app
       - /app/node_modules
     depends_on:
       - back-end
@@ -47,6 +47,13 @@ services:
       POSTGRES_PASSWORD: password
     volumes:
       - database-content:/var/lib/postgresql/data
+    expose:
+      - 5432
+
+  test-database:
+    image: postgres:14.5-alpine
+    environment:
+      POSTGRES_PASSWORD: password
     expose:
       - 5432
 

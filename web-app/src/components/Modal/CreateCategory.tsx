@@ -29,7 +29,7 @@ import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import { getErrorMessage } from "utils";
 
-const CREATE_CATEGORY = gql`
+export const CREATE_CATEGORY = gql`
   mutation createCategory($categoryName: String!) {
     createCategory(categoryName: $categoryName) {
       id
@@ -38,7 +38,7 @@ const CREATE_CATEGORY = gql`
   }
 `;
 
-type crateCategoryProps = {
+export type crateCategoryProps = {
   refetch: (
     variables?: Partial<OperationVariables> | undefined
   ) => Promise<ApolloQueryResult<GetCategoriesQuery>>;
@@ -63,10 +63,11 @@ const CreateCategory = ({ refetch }: crateCategoryProps) => {
         },
       });
       refetch();
+      setCategoryName("");
       toast({
         title: `Categorie ${categoryName} a été créé avec succès.`,
         status: "success",
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
       onClose();
@@ -75,25 +76,29 @@ const CreateCategory = ({ refetch }: crateCategoryProps) => {
         title: "Erreur",
         status: "error",
         description: getErrorMessage(error),
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
     }
   };
   return (
     <>
-      <Button colorScheme="teal" onClick={onOpen}>
+      <Button
+        data-testid="add-new-category"
+        colorScheme="teal"
+        onClick={onOpen}
+      >
         <FaPlus /> <Text pl="5px">Category</Text>
       </Button>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal data-testid="modal-category" isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Ajouter une categorie</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
-              <FormLabel>Nom</FormLabel>
+              <FormLabel htmlFor="categoryName">Nom</FormLabel>
               <Input
                 type="text"
                 id="categoryName"
@@ -106,10 +111,17 @@ const CreateCategory = ({ refetch }: crateCategoryProps) => {
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={onSubmit} colorScheme="teal" mr={3}>
+            <Button
+              data-testid="submit-new-category"
+              onClick={onSubmit}
+              colorScheme="teal"
+              mr={3}
+            >
               Sauvegarder
             </Button>
-            <Button onClick={onClose}>Annuler</Button>
+            <Button data-testid="cancel-add-category" onClick={onClose}>
+              Annuler
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

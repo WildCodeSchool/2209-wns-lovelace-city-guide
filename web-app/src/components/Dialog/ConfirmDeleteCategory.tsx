@@ -15,7 +15,11 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { GetCategoriesQuery } from "gql/graphql";
+import {
+  DeleteCategoryMutation,
+  DeleteCategoryMutationVariables,
+  GetCategoriesQuery,
+} from "gql/graphql";
 import React from "react";
 import { FaTrashAlt } from "react-icons/fa";
 import { getErrorMessage } from "utils";
@@ -41,20 +45,24 @@ const ConfirmDeleteCategory = ({
   categoryName,
   refetch,
 }: confirmDeleteCategoryProps) => {
-  const [deleteCategory] = useMutation(DELETE_CATEGORY);
+  const [deleteCategory] = useMutation<
+    DeleteCategoryMutation,
+    DeleteCategoryMutationVariables
+  >(DELETE_CATEGORY);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = React.useRef(null);
   const toast = useToast();
 
   const onDelete = async () => {
     try {
-      await deleteCategory({ variables: { categoryId } });
-      await refetch();
+      await deleteCategory({
+        variables: { categoryId },
+      });
       await refetch();
       toast({
         title: `Catégorie : ${categoryName} a été supprimé avec succès.`,
         status: "success",
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
       onClose();
@@ -63,7 +71,7 @@ const ConfirmDeleteCategory = ({
         title: "Erreur",
         status: "error",
         description: getErrorMessage(error),
-        duration: 9000,
+        duration: 5000,
         isClosable: true,
       });
     }

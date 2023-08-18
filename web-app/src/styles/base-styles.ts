@@ -23,6 +23,8 @@ export const SectionTitle = styled.h2`
 `;
 
 export const RedButton = styled(Link)<{rounded?:boolean, icon?:boolean, light?:boolean}>`
+  display: flex;
+  justify-content: center;
   margin: 5px;
   text-align: center;
   padding: ${props => props.icon ? "8px" : "5px"};
@@ -53,11 +55,28 @@ export const HollowButtonTitle = styled.h1<{rounded:boolean}>`
 text-align: center;
 padding: 5px;
 font-size: 1.2rem;
-border-radius: ${props => props.rounded ? "25px" : "0px"};
 background-color: #FF8787;
 margin: 10px ;
-box-shadow: -3px -3px 0 #912B2B;
+// box-shadow: -3px -3px 0 #912B2B;
 `;
+
+export const FavButton = styled.button<{fave?:boolean}>`
+  margin: 5px;
+  text-align: center;
+  padding: 8px;
+  color: ${props => props.fave ? "#FF8787" : "#222231"} ;
+  font-size: 1.3rem;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 3px 3px 0 #888;
+  transition: 0.1s;
+  &:hover, :focus {
+    opacity: 0.9;
+    transform: translate(3px, 3px);
+    box-shadow: none;
+  }
+`;
+
 
 export const DashboardButton = styled(BlueButton)`
   padding: 1rem;
@@ -74,9 +93,12 @@ export const BtnRedSquare = styled.button`
 `;
 
 export const BtnBlueRounded = styled.button`
+  color: #222231;
   margin: 10px;
-  padding: 6px;
-  border-radius: 15px;
+  font-size: 1.2rem;
+
+  padding: 4px 12px;
+  border-radius: 8px;
   background-color: #93CFD2;
   box-shadow: 3px 3px 0 #31777A;
 `;

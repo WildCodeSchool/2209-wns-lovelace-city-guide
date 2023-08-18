@@ -1,7 +1,5 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-
-import { MAIN_THEME_COLOR } from "../styles/style-constants";
 import { baseContainerStyles, baseTitleStyles } from "../styles/base-styles";
 
 export const Container = styled.div`
@@ -10,11 +8,8 @@ export const Container = styled.div`
 
 export const MainContainer = styled.main`
   padding: 0;
-  background-color: #222231;
-`;
-
-export const Footer = styled.footer`
-  border-top: 2px solid ${MAIN_THEME_COLOR};
+  min-height: 100vh;
+  position: relative;
 `;
 
 export const PageTitle = styled.h1`
