@@ -197,7 +197,7 @@ const Profile = () => {
                   Dashboard Admin{" "}
                 </RedButton>
               ) : (
-                <></>
+                ""
               )}
             </Box>
             <Box textAlign="center">
