@@ -6,7 +6,6 @@ on:
       - staging
  
 
-
 jobs:
   tests:
     uses: ./.github/workflows/run-tests.yml
