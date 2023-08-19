@@ -8,7 +8,10 @@ on:
 
 
 jobs:
-  build-and-deploy:
+  tests:
+    uses: ./.github/workflow/run-tests.yml
+  trigger-webhook-to-deploy(staging):
+    needs: [tests]
     runs-on: ubuntu-latest
     steps:
       - name: Call webhook to deploy on staging
