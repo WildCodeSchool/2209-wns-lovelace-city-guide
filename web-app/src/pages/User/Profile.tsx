@@ -1,10 +1,30 @@
-import { Avatar, Box, Button, Center, Editable, EditableInput, EditablePreview, Flex, FormControl, FormLabel, Heading, Input, WrapItem, useToast } from "@chakra-ui/react"
+import {
+  Avatar,
+  Box,
+  Button,
+  Center,
+  Editable,
+  EditableInput,
+  EditablePreview,
+  Flex,
+  FormControl,
+  FormLabel,
+  Heading,
+  Input,
+  WrapItem,
+  useToast,
+} from "@chakra-ui/react";
 import { useContext, useState } from "react";
 import { AppContext } from "context/AppContext";
 import { FaSignOutAlt } from "react-icons/fa";
 import { gql, useMutation } from "@apollo/client";
-import { SignOutMutation, SignOutMutationVariables, UpdateUserMutation, UpdateUserMutationVariables } from "gql/graphql";
-import { HOME_PATH } from "pages/paths";
+import {
+  SignOutMutation,
+  SignOutMutationVariables,
+  UpdateUserMutation,
+  UpdateUserMutationVariables,
+} from "gql/graphql";
+import { ADMIN_DASHBOARD, HOME_PATH } from "pages/paths";
 import { useNavigate } from "react-router-dom";
 import { getErrorMessage } from "utils";
 import { RedButton } from "styles/base-styles";
@@ -40,16 +60,20 @@ const UPDATE_USER = gql`
   }
 `;
 
-
 const Profile = () => {
   const navigate = useNavigate();
   const toast = useToast();
   const appContext = useContext(AppContext);
   const currentUserId = appContext?.userProfile?.myProfile.id as string;
-  const [firstName, setFirstName] = useState(appContext?.userProfile?.myProfile.firstName);
-  const [lastName, setLastName] = useState(appContext?.userProfile?.myProfile.lastName);
-  const [emailAddress, setEmailAddress] = useState(appContext?.userProfile?.myProfile.emailAddress);
-
+  const [firstName, setFirstName] = useState(
+    appContext?.userProfile?.myProfile.firstName
+  );
+  const [lastName, setLastName] = useState(
+    appContext?.userProfile?.myProfile.lastName
+  );
+  const [emailAddress, setEmailAddress] = useState(
+    appContext?.userProfile?.myProfile.emailAddress
+  );
 
   const [signOut] = useMutation<SignOutMutation, SignOutMutationVariables>(
     SIGN_OUT,
@@ -62,9 +86,9 @@ const Profile = () => {
   );
 
   const [updateUser] = useMutation<
-    UpdateUserMutation, 
+    UpdateUserMutation,
     UpdateUserMutationVariables
-  >(UPDATE_USER)
+  >(UPDATE_USER);
 
   const handleSignOut = async (): Promise<void> => {
     try {
@@ -95,7 +119,6 @@ const Profile = () => {
     }
   };
 
-
   const onSubmit = async (event: React.MouseEvent<HTMLElement>) => {
     try {
       event.preventDefault();
@@ -104,7 +127,7 @@ const Profile = () => {
           updateUserId: currentUserId,
           firstName: firstName!,
           lastName: lastName!,
-          emailAddress: emailAddress!
+          emailAddress: emailAddress!,
         },
       });
       toast({
@@ -124,7 +147,6 @@ const Profile = () => {
     }
   };
 
-
   return (
     <>
       <ContainerTable>
@@ -137,27 +159,51 @@ const Profile = () => {
             borderRadius={8}
             boxShadow="lg"
           >
-
             <Box textAlign="center">
-              <Heading>Bonjour {appContext?.userProfile?.myProfile.firstName}</Heading>
+              <Heading>
+                Bonjour {appContext?.userProfile?.myProfile.firstName}
+              </Heading>
             </Box>
             <Center>
-              <Avatar size='xl' m={6} name={`${appContext?.userProfile?.myProfile.firstName} ${appContext?.userProfile?.myProfile.lastName}`} src='https://bit.ly/broken-link' />
+              <Avatar
+                size="xl"
+                m={6}
+                name={`${appContext?.userProfile?.myProfile.firstName} ${appContext?.userProfile?.myProfile.lastName}`}
+                src="https://bit.ly/broken-link"
+              />
             </Center>
             <Center>
-              <Button colorScheme="red" type="submit" onClick={handleSignOut} >
-                    Déconnexion &nbsp; <FaSignOutAlt />
+              <Button colorScheme="red" type="submit" onClick={handleSignOut}>
+                Déconnexion &nbsp; <FaSignOutAlt />
               </Button>
             </Center>
             <Box textAlign="center">
-              <Heading as='h2'size='md' mt='6'>Mes Pins</Heading>
+              <Heading as="h2" size="md" mt="6">
+                Mes Pins
+              </Heading>
             </Box>
             <Box mt={5}>
-              <RedButton to={`#`} icon> Mes Pins </RedButton>
-              <RedButton to={MAP_PATH} state={{favoris: true}} icon> Mes Favoris </RedButton>
+              <RedButton to={`#`} icon>
+                {" "}
+                Mes Pins{" "}
+              </RedButton>
+              <RedButton to={MAP_PATH} state={{ favoris: true }} icon>
+                {" "}
+                Mes Favoris{" "}
+              </RedButton>
+              {appContext?.isAdmin ? (
+                <RedButton to={ADMIN_DASHBOARD} icon>
+                  {" "}
+                  Dashboard Admin{" "}
+                </RedButton>
+              ) : (
+                <></>
+              )}
             </Box>
             <Box textAlign="center">
-              <Heading as='h2'size='md' mt='8'>Mettre les informations à jour</Heading>
+              <Heading as="h2" size="md" mt="8">
+                Mettre les informations à jour
+              </Heading>
             </Box>
             <FormControl>
               <FormLabel>Prénom</FormLabel>
@@ -200,13 +246,13 @@ const Profile = () => {
               />
             </FormControl>
             <Button onClick={onSubmit} colorScheme="teal" mr={3} mt={3}>
-                Mettre à jour
+              Mettre à jour
             </Button>
           </Box>
         </Flex>
       </ContainerTable>
     </>
-  )
-}
+  );
+};
 
-export default Profile
+export default Profile;
