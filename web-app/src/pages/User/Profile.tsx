@@ -24,7 +24,7 @@ import {
   UpdateUserMutation,
   UpdateUserMutationVariables,
 } from "gql/graphql";
-import { HOME_PATH } from "pages/paths";
+import { ADMIN_DASHBOARD, HOME_PATH } from "pages/paths";
 import { useNavigate } from "react-router-dom";
 import { getErrorMessage } from "utils";
 import { RedButton } from "styles/base-styles";
