@@ -1,4 +1,4 @@
-name: build and deploy (staging)
+name: run tests on push
 
 on:
   push
@@ -12,5 +12,5 @@ jobs:
       - name: Goto client and run tests
         run: cd web-app && npm i && npm test
       - name: Goto backend and run tests
-        run: cd backend && npm i && npm test
+        run: cd ../backend && npm i && npm test
                
