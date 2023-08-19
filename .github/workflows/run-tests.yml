@@ -4,13 +4,18 @@ on:
   push
 
 jobs:
-  tests:
+  test-front:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Goto client and run tests
         run: cd web-app && npm i && npm test
+  test-back:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
       - name: Goto backend and run tests
-        run: cd ../back-end && npm i && npm test
+        run: cd back-end && npm i && npm test
                
