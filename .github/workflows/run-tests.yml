@@ -1,7 +1,7 @@
-name: run tests on call
+name: run tests on push
 
 on:
-  workflow_call
+  push
 
 jobs:
   test-front:
