@@ -44,7 +44,9 @@ export default class PinRepository extends PinDb {
       "bellecour3.jpg"
     )) as Image;
 
-    const ardents1 = (await ImageRepository.addImage("ardents1.jpg")) as Image;
+    const ardents1 = (await ImageRepository.addImage(
+      "ardents1.jpg"
+    )) as Image;
 
     const firstResto = new Pin(
       "Pokawa",
@@ -152,7 +154,7 @@ export default class PinRepository extends PinDb {
 
     const firstGame = new Pin(
       "DreamAway Lyon",
-      "36 Rue du Plat",
+      "36 Rue du Plat", 
       "Lyon",
       "69002",
       [gameCategory],
@@ -182,12 +184,12 @@ export default class PinRepository extends PinDb {
 
     const firstArt = new Pin(
       "Fontaine Bartholdi",
-      "Pl. des Terreaux",
+      "Pl. des Terreaux", 
       "Lyon",
-      "69001",
+      "69001", 
       [artCategory],
       "Magnifique fontaine du célèbre sculpteur français Frédéric Auguste Bartholdi inaugurée en 1892.",
-      45.76775910087315,
+      45.76775910087315, 
       4.833419782193786,
       undefined,
       true,
