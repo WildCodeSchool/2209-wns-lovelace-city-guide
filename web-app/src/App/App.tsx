@@ -33,7 +33,10 @@ import ProtectedRoute from "pages/Protected/ProtectedRoute";
 import AlreadyLoggedIn from "pages/Protected/AlreadyLoggedIn";
 import AdminRoute from "pages/Protected/AdminRoute";
 import NavbarPage from "components/Navbar/NavbarPage";
+import PageTitle from "components/PageTitle";
 import AllUsersTable from "pages/Admin/AllUsersTable";
+import { AppContext } from "context/AppContext";
+import { useContext } from "react";
 
 function App() {
   const { pathname } = useLocation();
@@ -43,13 +46,23 @@ function App() {
         {pathname !== "/" && pathname !== "/map" && <NavbarPage />}
 
         <Routes>
-          <Route path={HOME_PATH} element={<Home />} />
-          <Route path={MAP_PATH} element={<Map />} />
+          <Route path={HOME_PATH} element={
+            <PageTitle title="Accueil">
+              <Home />
+            </PageTitle>
+          } />
+          <Route path={MAP_PATH} element={
+            <PageTitle title="Carte">
+              <Map />
+            </PageTitle>
+          } />
           <Route
             path={SIGN_UP_PATH}
             element={
               <AlreadyLoggedIn>
-                <SignUp />
+                <PageTitle title="Inscription">
+                  <SignUp />
+                </PageTitle>
               </AlreadyLoggedIn>
             }
           />
@@ -57,7 +70,9 @@ function App() {
             path={SIGN_IN_PATH}
             element={
               <AlreadyLoggedIn>
-                <SignIn />
+                <PageTitle title="Connexion">
+                  <SignIn />
+                </PageTitle>
               </AlreadyLoggedIn>
             }
           />
@@ -65,7 +80,9 @@ function App() {
             path={PROFILE_PATH}
             element={
               <ProtectedRoute>
-                <Profile />
+                  <PageTitle title={useContext(AppContext)?.userProfile?.myProfile.firstName || 'profile'}>
+                    <Profile />
+                  </PageTitle>
               </ProtectedRoute>
             }
           />
