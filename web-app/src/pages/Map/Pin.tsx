@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Marker, Popup, Tooltip } from "react-leaflet";
 
 import {
@@ -9,7 +9,8 @@ import {
   PinModalContent,
   Slideshow,
   Row,
-  RatingColor
+  RatingColor,
+  ImageIcon
 } from "./Map.styled";
 import { FavButton, BtnBlueRounded  } from "../../styles/base-styles";
 
@@ -31,6 +32,8 @@ import "./TooltipStyle.css";
 import { Text, Image, Button, Card, CardBody, FormControl, FormLabel, Input, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, SimpleGrid, useDisclosure, useToast, Flex, Heading } from "@chakra-ui/react";
 import Comment from "components/Comments/Comment"
 import { Column } from "components/Footer/Footer.styled";
+import { Link } from "react-router-dom";
+import { AppContext } from "context/AppContext";
 const ADD_PIN_TO_USER_FAVORITE = gql`
   mutation addPinToUserFavorite($pinId: String!) {
     addPinToUserFavorite(pinId: $pinId) {
@@ -106,7 +109,7 @@ const Pin = ({
     return (
       <Row>
       <RatingColor>
-        {defaultRating.toFixed(1)} &nbsp;
+        {defaultRating ? defaultRating.toFixed(1) : 'N/A'} &nbsp;
         <FaStar/>
       </RatingColor>
       <SmallText>
@@ -169,6 +172,7 @@ const Pin = ({
   };
 
   const BasicUsage = () => {
+    const appContext = useContext(AppContext);
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     return (
@@ -216,12 +220,12 @@ const Pin = ({
                 {isChildFriendly && <MdChildFriendly title="Famillial" />}{" "}
               </Infos>
             </Flex>
-            {images[0] && (
+
               <Flex flexDirection='column' my='2rem'>
               <Heading as='h2' size='md' mb='0.5rem'>Galerie</Heading>
               <Slideshow> 
                 <Row>
-                {images.map((image: any) => (
+                {images[0] && images.map((image: {fileName: string; id: string;}) => (
                         <Image
                           objectFit="cover"
                           maxH='220px'
@@ -232,16 +236,27 @@ const Pin = ({
                           mr="1rem"
                         />
                   ))}
+                  {appContext?.isLoggedIn && 
+                    <Link to={`/upload-image/${id}`}>
+                      <Card color='white' backgroundColor='blackAlpha.300' height='220px' width='180px' p='1rem' textAlign='center'>
+                        <ImageIcon/>
+                        <p> Ajouter une image </p>
+                      </Card>
+                    </Link>
+                  }
                   </Row>
               </Slideshow>
               </Flex>
-            )}
             <Flex flexDirection='column' my='2rem'>
             <Heading as='h2' size='md' mb='0.5rem'> Avis</Heading>
-            <Comment pinId={id}/>
+            {appContext?.isLoggedIn ? 
+              <Comment pinId={id}/>
+              : 
+              <Link to={'/sign-in'}>Connectez vous pour écrire un commentaire </Link>
+            }
             {comments[0] ? (
               <>
-                {comments.map((comment: any) => (
+                {comments.map((comment: {content: string; rating: number;}) => (
                   <>
                     <Card color='white' backgroundColor='blackAlpha.300' mt='1rem'>
                       <CardBody>
@@ -258,8 +273,9 @@ const Pin = ({
                 ))}
               </>
             ) : (
-              <>
-              Il n'y a pas encore d'avis... Donnez le vôtre !</>
+              <Text mt={'1rem'}>
+                Il n'y a pas encore d'avis... Donnez le vôtre !
+              </Text>
             )}
             </Flex>
             </ModalBody>
