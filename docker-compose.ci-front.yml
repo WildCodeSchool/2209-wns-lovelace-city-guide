@@ -5,4 +5,6 @@ services:
     build:
       context: ./web-app
       target: ci
-    environment: CI=true
+      
+    environment: 
+    - CI=true
