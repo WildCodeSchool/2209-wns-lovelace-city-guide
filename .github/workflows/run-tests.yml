@@ -1,7 +1,7 @@
 name: run tests on call
 
 on:
-  workflow_call
+  push
 
 jobs:
   test-front:
@@ -9,5 +9,9 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-      - name: Goto client and run tests
-        run: cd web-app && npm i && npm test
+      - name: Build app
+        run: docker compose up --build
+      - name: run front end tests
+        run: docker compose exec web-app npm test
+      - name: run back end tests
+        run: docker compose exec back-app npm test
