@@ -10,7 +10,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Build app
-        run: docker compose -f docker-compose.yml up --build
+        run: docker compose -f docker-compose.yml up --build -d
       - name: run front end tests
         run: docker compose exec web-app npm test
       - name: run back end tests
