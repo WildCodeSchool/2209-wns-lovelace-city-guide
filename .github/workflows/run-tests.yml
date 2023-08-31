@@ -4,18 +4,14 @@ on:
   push
 
 jobs:
-  build app:
+  test-front:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Build app
         run: docker compose -f docker-compose.yml up --build
-  tests front end:
-    steps:
       - name: run front end tests
         run: docker compose exec web-app npm test
-  tests back end:
-    steps:
       - name: run back end tests
-        run: docker compose exec back-app npm test
+        run: docker compose exec web-app npm test
