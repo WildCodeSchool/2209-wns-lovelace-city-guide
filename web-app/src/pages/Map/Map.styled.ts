@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { MapContainer, Popup } from 'react-leaflet'
 import Loader from "../../components/Loader";
 import {  ModalContent, ModalFooter } from "@chakra-ui/react";
-
+import {FaFileImage} from "react-icons/fa"
 
 export const Header = styled.header`
   width: 100%;
@@ -109,5 +109,11 @@ export const RatingColor = styled.div`
   flex-direction: row;
   align-items: center;
   margin-right: 0.2rem;
+`
+
+export const ImageIcon = styled(FaFileImage)`
+  font-size: 4rem;
+  align-self: center;
+  margin: 2rem 0;
 `
 

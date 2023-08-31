@@ -1,4 +1,4 @@
-version: "3.8"
+specifiedversion: "3.8"
 
 services:
   back-end:
